@@ -42,9 +42,3 @@ jobs:
         run: |
           cd android
           ./gradlew assembleRelease --stacktrace
-
-      - name: Upload APK
-        uses: actions/upload-artifact@v3
-        with:
-          name: app-release-apk
-          path: android/app/build/outputs/apk/release/app-release.apk
