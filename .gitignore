@@ -17,7 +17,6 @@ android/app/build/
 android/build/
 *.iml
 .gradle/
-local.properties
 captures/
 .externalNativeBuild/
 
