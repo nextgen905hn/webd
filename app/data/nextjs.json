@@ -1,0 +1,810 @@
+{
+    "course":"Complete Next js ",
+    "sections":[
+
+{
+  "section": 1,
+  "title": "Introduction to Next.js",
+  "description": "Learn the fundamentals of Next.js, a powerful React framework for building high-performance, SEO-friendly web applications. This section introduces key features like server-side rendering, static site generation, and hybrid app architecture.",
+  "lessons": [
+    {
+      "id": 1,
+      "title": "What is Next.js and Why Use It",
+      "content": "Next.js is a React framework that enables server-side rendering (SSR), static site generation (SSG), and hybrid apps. It provides performance, SEO optimization, and developer experience improvements over traditional React SPAs. It also includes built-in routing, API endpoints, and image optimization.",
+      "examples": [
+        {
+          "code": "// pages/index.js\nexport default function Home() {\n  return <h1>Welcome to Next.js!</h1>;\n}\n\n// pages/about.js\nexport default function About() {\n  return <h1>About Page - Rendered by Next.js</h1>;\n}",
+          "description": "Each file inside the 'pages' folder automatically becomes a route in Next.js."
+        }
+      ],
+      "quiz": [
+        {
+          "question": "What makes Next.js different from React?",
+          "options": ["Built-in SSR and routing", "It uses Vue.js internally", "It requires no JavaScript", "It’s a database framework"],
+          "answer": "Built-in SSR and routing",
+          "hint": "Think about rendering and routing features.",
+          "explanation": "Next.js extends React by adding server-side rendering, static site generation, and built-in routing."
+        },
+        {
+          "question": "Which company maintains Next.js?",
+          "options": ["Vercel", "Meta", "Google", "Netflix"],
+          "answer": "Vercel",
+          "hint": "They are also known for deployment tools.",
+          "explanation": "Next.js is maintained by Vercel, which provides seamless deployment integration for Next.js apps."
+        }
+      ],
+      "challenge": "Create a simple Next.js app with two pages — Home and About — and navigate between them using links.",
+      "tips": [
+        "Remember that each file in 'pages' automatically becomes a route.",
+        "Use the built-in Link component for client-side navigation."
+      ]
+    },
+    {
+      "id": 2,
+      "title": "Setting Up Next.js Environment",
+      "content": "Setting up a Next.js project is simple using 'create-next-app'. You’ll need Node.js and npm installed. This tool scaffolds a full Next.js application with minimal setup, including ESLint and React integration.",
+      "examples": [
+        {
+          "code": "npx create-next-app@latest my-next-app\ncd my-next-app\nnpm run dev",
+          "description": "This command initializes a new Next.js project and starts the development server on localhost:3000."
+        }
+      ],
+      "quiz": [
+        {
+          "question": "Which command initializes a new Next.js project?",
+          "options": ["npx create-next-app@latest", "npm init react-app", "npx create-react-app", "yarn new next"],
+          "answer": "npx create-next-app@latest",
+          "hint": "Think about the official CLI tool for Next.js.",
+          "explanation": "The 'create-next-app' command is the official way to bootstrap a new Next.js project quickly."
+        },
+        {
+          "question": "What is the default port for the Next.js development server?",
+          "options": ["3000", "8080", "5000", "4000"],
+          "answer": "3000",
+          "hint": "You usually visit this in the browser after running npm run dev.",
+          "explanation": "Next.js apps run on port 3000 by default in development mode."
+        }
+      ],
+      "challenge": "Install Node.js, create a new Next.js project, and start the local development server.",
+      "tips": [
+        "Ensure Node.js version 18+ for the latest Next.js compatibility.",
+        "Use VS Code with the 'ES7+ React/Redux/Next.js snippets' extension for faster development."
+      ]
+    },
+    {
+      "id": 3,
+      "title": "Project Structure Overview",
+      "content": "A Next.js project has a structured layout with key folders like 'pages', 'public', 'components', and 'styles'. Each file in the 'pages' folder becomes a route. The 'public' folder is used for static assets like images, and 'components' store reusable UI parts.",
+      "examples": [
+        {
+          "code": "my-next-app/\n├── pages/\n│   ├── index.js\n│   ├── about.js\n├── components/\n│   └── Navbar.js\n├── public/\n│   └── logo.png\n├── styles/\n│   └── globals.css\n└── next.config.js",
+          "description": "Typical Next.js folder structure showing separation of routes, reusable components, and assets."
+        }
+      ],
+      "quiz": [
+        {
+          "question": "Which folder in Next.js is used for static assets?",
+          "options": ["public", "assets", "static", "images"],
+          "answer": "public",
+          "hint": "Files inside it can be accessed directly via URLs.",
+          "explanation": "Static assets like images and icons go into the 'public' folder and are accessible from the root path."
+        },
+        {
+          "question": "Where should reusable UI elements be placed?",
+          "options": ["components folder", "pages folder", "public folder", "api folder"],
+          "answer": "components folder",
+          "hint": "Think of modular and reusable React components.",
+          "explanation": "The 'components' folder is used to organize reusable UI pieces like buttons or navigation bars."
+        }
+      ],
+      "challenge": "Create a new 'Navbar.js' component and import it into the 'index.js' page.",
+      "tips": [
+        "Keep the folder structure clean for scalability.",
+        "Use clear and consistent naming conventions for components."
+      ]
+    }
+  ]
+},
+{
+  "section": 2,
+  "title": "Pages & Routing",
+  "description": "Understand how routing works in Next.js. Learn how pages automatically become routes, how to handle dynamic and nested routes, and how to use catch-all routes for advanced URL structures.",
+  "lessons": [
+    {
+      "id": 4,
+      "title": "Pages Folder and Automatic Routing",
+      "content": "Next.js uses a file-based routing system. Every file you create inside the 'pages' directory automatically becomes a route. There’s no need to manually configure a router like in traditional React apps.",
+      "examples": [
+        {
+          "code": "// pages/index.js\nexport default function Home() {\n  return <h1>Home Page</h1>;\n}\n\n// pages/about.js\nexport default function About() {\n  return <h1>About Page</h1>;\n}\n\n// pages/contact.js\nexport default function Contact() {\n  return <h1>Contact Page</h1>;\n}",
+          "description": "Each file inside the 'pages' folder automatically becomes a route. For example, /about maps to pages/about.js."
+        }
+      ],
+      "quiz": [
+        {
+          "question": "What happens when you create a new file called 'services.js' in the pages folder?",
+          "options": ["It breaks the app", "It creates a route at /services", "It requires manual routing", "It won't be accessible"],
+          "answer": "It creates a route at /services",
+          "hint": "Think about how Next.js maps file names to routes.",
+          "explanation": "Next.js automatically maps every file in the 'pages' directory to a corresponding route based on its file name."
+        },
+        {
+          "question": "Where should your main homepage component be placed?",
+          "options": ["pages/index.js", "components/home.js", "public/index.html", "pages/home.js"],
+          "answer": "pages/index.js",
+          "hint": "It’s the default entry point for the root route.",
+          "explanation": "The file 'pages/index.js' serves as the root route (/) in a Next.js app."
+        }
+      ],
+      "challenge": "Create a new page named 'services.js' inside the pages folder and test if it appears at '/services' in your browser.",
+      "tips": [
+        "Every file in 'pages' automatically becomes a route — no manual setup needed.",
+        "Use the Link component from 'next/link' for client-side navigation."
+      ]
+    },
+    {
+      "id": 5,
+      "title": "Dynamic Routes – Using [param].js and getStaticPaths",
+      "content": "Dynamic routes allow you to create pages that adapt based on parameters. Files with square brackets like [id].js create parameterized routes. These are often used for blogs, profiles, or product detail pages.",
+      "examples": [
+        {
+          "code": "// pages/blog/[id].js\nimport { useRouter } from 'next/router';\n\nexport default function BlogPost() {\n  const router = useRouter();\n  const { id } = router.query;\n\n  return <h1>Blog Post ID: {id}</h1>;\n}",
+          "description": "The '[id].js' file creates a dynamic route where the 'id' can change based on the URL, e.g., /blog/1 or /blog/hello-world."
+        },
+        {
+          "code": "// For static generation:\nexport async function getStaticPaths() {\n  return {\n    paths: [\n      { params: { id: '1' } },\n      { params: { id: '2' } }\n    ],\n    fallback: false\n  };\n}\n\nexport async function getStaticProps({ params }) {\n  return {\n    props: { id: params.id }\n  };\n}",
+          "description": "getStaticPaths and getStaticProps work together to statically generate dynamic routes at build time."
+        }
+      ],
+      "quiz": [
+        {
+          "question": "What does '[id].js' represent in the pages directory?",
+          "options": ["A static page", "A route that accepts dynamic parameters", "A folder name", "A 404 page"],
+          "answer": "A route that accepts dynamic parameters",
+          "hint": "Think about parameterized URLs like /blog/123.",
+          "explanation": "Files with square brackets define dynamic routes that adapt based on the URL segment provided."
+        },
+        {
+          "question": "Which function defines which dynamic paths should be pre-rendered at build time?",
+          "options": ["getStaticProps", "getServerSideProps", "getStaticPaths", "useRouter"],
+          "answer": "getStaticPaths",
+          "hint": "It's used alongside getStaticProps for static generation.",
+          "explanation": "getStaticPaths defines the dynamic routes that should be generated during the build process for static generation."
+        }
+      ],
+      "challenge": "Build a blog route using 'pages/blog/[id].js' that dynamically displays post titles based on URL parameters.",
+      "tips": [
+        "Use the useRouter hook to access route parameters.",
+        "Combine getStaticPaths and getStaticProps for static dynamic pages."
+      ]
+    },
+    {
+      "id": 6,
+      "title": "Nested Routes & Catch-All Routes",
+      "content": "Next.js supports nested routes by placing folders inside the 'pages' directory. Catch-all routes, defined with [...slug].js, capture multiple URL segments for flexible routing patterns.",
+      "examples": [
+        {
+          "code": "// pages/docs/[...slug].js\nimport { useRouter } from 'next/router';\n\nexport default function Docs() {\n  const router = useRouter();\n  const { slug } = router.query;\n\n  return <h1>Docs Path: {slug?.join(' / ')}</h1>;\n}",
+          "description": "A catch-all route '[...slug].js' matches any nested path like /docs/setup/installation or /docs/api/config."
+        },
+        {
+          "code": "// Folder structure example:\nmy-next-app/\n├── pages/\n│   ├── docs/\n│   │   └── [...slug].js\n│   ├── index.js",
+          "description": "Organizing files in subfolders automatically creates nested routes like /docs/intro or /docs/setup."
+        }
+      ],
+      "quiz": [
+        {
+          "question": "What is a catch-all route used for?",
+          "options": ["Handling errors", "Matching multiple dynamic segments", "Serving static files", "Preventing routing"],
+          "answer": "Matching multiple dynamic segments",
+          "hint": "It’s defined with three dots before the name.",
+          "explanation": "Catch-all routes like '[...slug].js' capture multiple segments of the URL and make them available as an array."
+        },
+        {
+          "question": "What does Next.js do if a folder contains an index.js file?",
+          "options": ["It ignores it", "It treats it as the default route for that folder", "It throws an error", "It becomes a 404 page"],
+          "answer": "It treats it as the default route for that folder",
+          "hint": "Think of it as a homepage within a nested folder.",
+          "explanation": "The index.js inside any folder serves as the default route for that path, similar to the root index.js."
+        }
+      ],
+      "challenge": "Create a nested folder structure 'pages/docs/[...slug].js' and display the path segments on screen using router.query.",
+      "tips": [
+        "Use catch-all routes for documentation, blog categories, or hierarchical data.",
+        "slug is always an array, so use join(' / ') to display it clearly."
+      ]
+    }
+  ]
+},
+{
+  "section": 3,
+  "title": "Components & Layouts",
+  "description": "Learn how to build reusable React components and apply layout patterns in Next.js. This section covers how to organize UI components, pass data using props, and implement shared layouts for consistent page design.",
+  "lessons": [
+    {
+      "id": 7,
+      "title": "Creating Reusable Components",
+      "content": "Components are the building blocks of a Next.js app. Reusable components help maintain consistency and reduce code repetition. You can pass data to components using props, allowing for dynamic rendering.",
+      "examples": [
+        {
+          "code": "// components/Button.js\nexport default function Button({ label, onClick }) {\n  return <button onClick={onClick}>{label}</button>;\n}\n\n// pages/index.js\nimport Button from '../components/Button';\n\nexport default function Home() {\n  return (\n    <div>\n      <h1>Welcome</h1>\n      <Button label='Click Me' onClick={() => alert('Button Clicked!')} />\n    </div>\n  );\n}",
+          "description": "A reusable Button component that accepts props for flexibility and is imported into the Home page."
+        }
+      ],
+      "quiz": [
+        {
+          "question": "What is the main purpose of creating reusable components?",
+          "options": ["To reduce code duplication", "To make apps slower", "To avoid using JSX", "To remove props"],
+          "answer": "To reduce code duplication",
+          "hint": "Think about DRY (Don't Repeat Yourself) principles.",
+          "explanation": "Reusable components let you use the same logic and UI multiple times across pages, reducing redundancy and improving maintainability."
+        },
+        {
+          "question": "How do you pass data to a React component?",
+          "options": ["Using props", "Using getStaticProps", "Through environment variables", "Directly editing the component"],
+          "answer": "Using props",
+          "hint": "Props are parameters for components.",
+          "explanation": "Props allow parent components to pass dynamic data and event handlers to child components."
+        }
+      ],
+      "challenge": "Create a 'Card' component that displays a title, description, and button. Reuse it multiple times in a page to display different cards.",
+      "tips": [
+        "Keep components small and focused on one purpose.",
+        "Use props for data that changes and hardcode what stays constant."
+      ]
+    },
+    {
+      "id": 8,
+      "title": "Layouts in Next.js",
+      "content": "Layouts are used to apply consistent structure and design across pages — like headers, footers, or sidebars. Next.js allows creating layout components that wrap around page components for shared UI elements.",
+      "examples": [
+        {
+          "code": "// components/Layout.js\nexport default function Layout({ children }) {\n  return (\n    <div>\n      <header>My Site Header</header>\n      <main>{children}</main>\n      <footer>© 2025 MySite</footer>\n    </div>\n  );\n}\n\n// pages/_app.js\nimport Layout from '../components/Layout';\n\nexport default function App({ Component, pageProps }) {\n  return (\n    <Layout>\n      <Component {...pageProps} />\n    </Layout>\n  );\n}",
+          "description": "A shared layout with a header and footer that wraps around all pages using the custom _app.js file."
+        }
+      ],
+      "quiz": [
+        {
+          "question": "What file in Next.js allows you to apply a global layout?",
+          "options": ["_app.js", "index.js", "_document.js", "layout.js"],
+          "answer": "_app.js",
+          "hint": "This file customizes how all pages are rendered.",
+          "explanation": "The '_app.js' file is a custom entry point in Next.js where you can wrap all pages with a shared layout or provider."
+        },
+        {
+          "question": "What is the 'children' prop used for in layouts?",
+          "options": ["To pass nested components", "To add CSS styles", "To fetch data", "To define page routes"],
+          "answer": "To pass nested components",
+          "hint": "It represents whatever is wrapped inside the layout.",
+          "explanation": "The 'children' prop allows you to render nested components or page content inside a layout component."
+        }
+      ],
+      "challenge": "Create a 'Layout' component with a navbar and footer, and use it in your _app.js file so that all pages share the same structure.",
+      "tips": [
+        "Use the Layout component to maintain consistent design across pages.",
+        "Avoid repeating header/footer code in individual pages."
+      ]
+    }
+  ]
+},
+{
+  "section": 4,
+  "title": "Data Fetching",
+  "description": "Learn how to fetch data efficiently in Next.js using static generation, server-side rendering, and client-side fetching. Understand when to use each method and how they affect performance, SEO, and user experience.",
+  "lessons": [
+    {
+      "id": 9,
+      "title": "Static Generation (getStaticProps)",
+      "content": "Static Generation (SSG) pre-renders pages at build time. It’s ideal for content that doesn’t change frequently, like blogs or product listings. Next.js provides the getStaticProps function to fetch data before build and generate static HTML.",
+      "examples": [
+        {
+          "code": "// pages/posts.js\nexport async function getStaticProps() {\n  const res = await fetch('https://jsonplaceholder.typicode.com/posts');\n  const posts = await res.json();\n\n  return { props: { posts } };\n}\n\nexport default function Posts({ posts }) {\n  return (\n    <div>\n      <h1>Blog Posts</h1>\n      <ul>\n        {posts.slice(0, 5).map(post => (\n          <li key={post.id}>{post.title}</li>\n        ))}\n      </ul>\n    </div>\n  );\n}",
+          "description": "This example pre-renders the posts page at build time using data fetched from an external API."
+        }
+      ],
+      "quiz": [
+        {
+          "question": "When does getStaticProps run?",
+          "options": ["At build time", "On every request", "On client-side navigation", "After component mounts"],
+          "answer": "At build time",
+          "hint": "Think about when static pages are generated.",
+          "explanation": "getStaticProps runs during build time to pre-render static pages that can be served instantly from a CDN."
+        },
+        {
+          "question": "What type of apps benefit from Static Generation?",
+          "options": ["Blogs and documentation sites", "Real-time dashboards", "User-authenticated apps", "Chat applications"],
+          "answer": "Blogs and documentation sites",
+          "hint": "Think about data that doesn’t change often.",
+          "explanation": "Static Generation is best for sites where data changes rarely, allowing for fast loading and SEO benefits."
+        }
+      ],
+      "challenge": "Build a static 'Products' page using getStaticProps that displays product names and prices from an API.",
+      "tips": [
+        "Use getStaticProps only in page components.",
+        "Avoid using it for frequently changing data."
+      ]
+    },
+    {
+      "id": 10,
+      "title": "Server-Side Rendering (getServerSideProps)",
+      "content": "Server-Side Rendering (SSR) fetches data on every request. It’s useful for dynamic data that changes frequently, such as dashboards or user-specific content.",
+      "examples": [
+        {
+          "code": "// pages/news.js\nexport async function getServerSideProps() {\n  const res = await fetch('https://newsapi.org/api/top-headlines?country=us');\n  const news = await res.json();\n\n  return { props: { news: news.articles.slice(0, 5) } };\n}\n\nexport default function News({ news }) {\n  return (\n    <div>\n      <h1>Latest News</h1>\n      <ul>\n        {news.map((item, index) => (\n          <li key={index}>{item.title}</li>\n        ))}\n      </ul>\n    </div>\n  );\n}",
+          "description": "getServerSideProps runs on each request, ensuring the data is always fresh from the API."
+        }
+      ],
+      "quiz": [
+        {
+          "question": "When is getServerSideProps executed?",
+          "options": ["On every request to the server", "At build time", "After deployment only", "During component rendering"],
+          "answer": "On every request to the server",
+          "hint": "It ensures fresh data every time.",
+          "explanation": "getServerSideProps runs on the server for each request, making it ideal for dynamic or personalized content."
+        },
+        {
+          "question": "What is the drawback of using SSR for all pages?",
+          "options": ["Slower response time", "Better SEO", "Smaller bundle size", "Increased caching speed"],
+          "answer": "Slower response time",
+          "hint": "Because it runs for every request.",
+          "explanation": "SSR requires a new server request for every page load, which can impact performance compared to static pages."
+        }
+      ],
+      "challenge": "Create a 'Weather' page using getServerSideProps that fetches live weather data from an API.",
+      "tips": [
+        "Use SSR only for data that changes on every request.",
+        "Avoid unnecessary API calls to improve response times."
+      ]
+    },
+    {
+      "id": 11,
+      "title": "Client-side Data Fetching",
+      "content": "Client-side fetching occurs after the page loads, typically using useEffect with fetch or Axios. It’s best used for user-triggered or non-critical data that doesn’t need pre-rendering.",
+      "examples": [
+        {
+          "code": "import { useEffect, useState } from 'react';\n\nexport default function Users() {\n  const [users, setUsers] = useState([]);\n\n  useEffect(() => {\n    fetch('https://jsonplaceholder.typicode.com/users')\n      .then(res => res.json())\n      .then(data => setUsers(data));\n  }, []);\n\n  return (\n    <div>\n      <h1>User List</h1>\n      <ul>\n        {users.map(user => (\n          <li key={user.id}>{user.name}</li>\n        ))}\n      </ul>\n    </div>\n  );\n}",
+          "description": "Client-side fetching retrieves data in the browser after the component has mounted."
+        }
+      ],
+      "quiz": [
+        {
+          "question": "When is client-side data fetching executed?",
+          "options": ["After the page is loaded in the browser", "During build time", "Before rendering the page", "On server startup"],
+          "answer": "After the page is loaded in the browser",
+          "hint": "It happens after initial render.",
+          "explanation": "Client-side fetching runs in the browser after the component mounts, suitable for dynamic or user-triggered updates."
+        },
+        {
+          "question": "Which hook is commonly used for client-side fetching?",
+          "options": ["useEffect", "useState", "useMemo", "useReducer"],
+          "answer": "useEffect",
+          "hint": "Think of side effects after render.",
+          "explanation": "useEffect is used to perform side effects such as fetching data from APIs after rendering."
+        }
+      ],
+      "challenge": "Build a 'Users' page that fetches user data client-side and displays it in a list format.",
+      "tips": [
+        "Use loading and error states for better UX.",
+        "Avoid client-side fetching for SEO-critical content."
+      ]
+    },
+    {
+      "id": 12,
+      "title": "Incremental Static Regeneration (ISR)",
+      "content": "ISR allows you to update static pages after deployment without rebuilding the whole site. It combines the benefits of Static Generation and dynamic updates by revalidating data periodically.",
+      "examples": [
+        {
+          "code": "// pages/products.js\nexport async function getStaticProps() {\n  const res = await fetch('https://fakestoreapi.com/products');\n  const products = await res.json();\n\n  return {\n    props: { products },\n    revalidate: 60 // Revalidate every 60 seconds\n  };\n}\n\nexport default function Products({ products }) {\n  return (\n    <div>\n      <h1>Products</h1>\n      <ul>\n        {products.slice(0, 5).map(product => (\n          <li key={product.id}>{product.title}</li>\n        ))}\n      </ul>\n    </div>\n  );\n}",
+          "description": "ISR enables static pages to be regenerated at runtime in the background after a set interval."
+        }
+      ],
+      "quiz": [
+        {
+          "question": "What does the revalidate property do in getStaticProps?",
+          "options": ["Defines how often the page regenerates", "Sets build time delay", "Specifies cache expiration for fetch", "Controls image size"],
+          "answer": "Defines how often the page regenerates",
+          "hint": "Think about when pages get updated.",
+          "explanation": "The revalidate value specifies in seconds how frequently a static page should be regenerated in the background."
+        },
+        {
+          "question": "Which feature combines static generation with dynamic updates?",
+          "options": ["Incremental Static Regeneration", "Client-side fetching", "SSR", "Middleware"],
+          "answer": "Incremental Static Regeneration",
+          "hint": "It’s unique to Next.js.",
+          "explanation": "ISR allows pages to stay fast and static while still updating over time based on new data."
+        }
+      ],
+      "challenge": "Create a 'Blog' page that uses ISR with revalidate set to 30 seconds to update new posts automatically.",
+      "tips": [
+        "Use ISR for content that updates occasionally (e.g., news or blogs).",
+        "Keep revalidate intervals balanced to reduce server load."
+      ]
+    }
+  ]
+},
+{
+  "section": 4,
+  "title": "Data Fetching",
+  "description": "Learn how to fetch data efficiently in Next.js using static generation, server-side rendering, and client-side fetching. Understand when to use each method and how they affect performance, SEO, and user experience.",
+  "lessons": [
+    {
+      "id": 9,
+      "title": "Static Generation (getStaticProps)",
+      "content": "Static Generation (SSG) pre-renders pages at build time. It’s ideal for content that doesn’t change frequently, like blogs or product listings. Next.js provides the getStaticProps function to fetch data before build and generate static HTML.",
+      "examples": [
+        {
+          "code": "// pages/posts.js\nexport async function getStaticProps() {\n  const res = await fetch('https://jsonplaceholder.typicode.com/posts');\n  const posts = await res.json();\n\n  return { props: { posts } };\n}\n\nexport default function Posts({ posts }) {\n  return (\n    <div>\n      <h1>Blog Posts</h1>\n      <ul>\n        {posts.slice(0, 5).map(post => (\n          <li key={post.id}>{post.title}</li>\n        ))}\n      </ul>\n    </div>\n  );\n}",
+          "description": "This example pre-renders the posts page at build time using data fetched from an external API."
+        }
+      ],
+      "quiz": [
+        {
+          "question": "When does getStaticProps run?",
+          "options": ["At build time", "On every request", "On client-side navigation", "After component mounts"],
+          "answer": "At build time",
+          "hint": "Think about when static pages are generated.",
+          "explanation": "getStaticProps runs during build time to pre-render static pages that can be served instantly from a CDN."
+        },
+        {
+          "question": "What type of apps benefit from Static Generation?",
+          "options": ["Blogs and documentation sites", "Real-time dashboards", "User-authenticated apps", "Chat applications"],
+          "answer": "Blogs and documentation sites",
+          "hint": "Think about data that doesn’t change often.",
+          "explanation": "Static Generation is best for sites where data changes rarely, allowing for fast loading and SEO benefits."
+        }
+      ],
+      "challenge": "Build a static 'Products' page using getStaticProps that displays product names and prices from an API.",
+      "tips": [
+        "Use getStaticProps only in page components.",
+        "Avoid using it for frequently changing data."
+      ]
+    },
+    {
+      "id": 10,
+      "title": "Server-Side Rendering (getServerSideProps)",
+      "content": "Server-Side Rendering (SSR) fetches data on every request. It’s useful for dynamic data that changes frequently, such as dashboards or user-specific content.",
+      "examples": [
+        {
+          "code": "// pages/news.js\nexport async function getServerSideProps() {\n  const res = await fetch('https://newsapi.org/api/top-headlines?country=us');\n  const news = await res.json();\n\n  return { props: { news: news.articles.slice(0, 5) } };\n}\n\nexport default function News({ news }) {\n  return (\n    <div>\n      <h1>Latest News</h1>\n      <ul>\n        {news.map((item, index) => (\n          <li key={index}>{item.title}</li>\n        ))}\n      </ul>\n    </div>\n  );\n}",
+          "description": "getServerSideProps runs on each request, ensuring the data is always fresh from the API."
+        }
+      ],
+      "quiz": [
+        {
+          "question": "When is getServerSideProps executed?",
+          "options": ["On every request to the server", "At build time", "After deployment only", "During component rendering"],
+          "answer": "On every request to the server",
+          "hint": "It ensures fresh data every time.",
+          "explanation": "getServerSideProps runs on the server for each request, making it ideal for dynamic or personalized content."
+        },
+        {
+          "question": "What is the drawback of using SSR for all pages?",
+          "options": ["Slower response time", "Better SEO", "Smaller bundle size", "Increased caching speed"],
+          "answer": "Slower response time",
+          "hint": "Because it runs for every request.",
+          "explanation": "SSR requires a new server request for every page load, which can impact performance compared to static pages."
+        }
+      ],
+      "challenge": "Create a 'Weather' page using getServerSideProps that fetches live weather data from an API.",
+      "tips": [
+        "Use SSR only for data that changes on every request.",
+        "Avoid unnecessary API calls to improve response times."
+      ]
+    },
+    {
+      "id": 11,
+      "title": "Client-side Data Fetching",
+      "content": "Client-side fetching occurs after the page loads, typically using useEffect with fetch or Axios. It’s best used for user-triggered or non-critical data that doesn’t need pre-rendering.",
+      "examples": [
+        {
+          "code": "import { useEffect, useState } from 'react';\n\nexport default function Users() {\n  const [users, setUsers] = useState([]);\n\n  useEffect(() => {\n    fetch('https://jsonplaceholder.typicode.com/users')\n      .then(res => res.json())\n      .then(data => setUsers(data));\n  }, []);\n\n  return (\n    <div>\n      <h1>User List</h1>\n      <ul>\n        {users.map(user => (\n          <li key={user.id}>{user.name}</li>\n        ))}\n      </ul>\n    </div>\n  );\n}",
+          "description": "Client-side fetching retrieves data in the browser after the component has mounted."
+        }
+      ],
+      "quiz": [
+        {
+          "question": "When is client-side data fetching executed?",
+          "options": ["After the page is loaded in the browser", "During build time", "Before rendering the page", "On server startup"],
+          "answer": "After the page is loaded in the browser",
+          "hint": "It happens after initial render.",
+          "explanation": "Client-side fetching runs in the browser after the component mounts, suitable for dynamic or user-triggered updates."
+        },
+        {
+          "question": "Which hook is commonly used for client-side fetching?",
+          "options": ["useEffect", "useState", "useMemo", "useReducer"],
+          "answer": "useEffect",
+          "hint": "Think of side effects after render.",
+          "explanation": "useEffect is used to perform side effects such as fetching data from APIs after rendering."
+        }
+      ],
+      "challenge": "Build a 'Users' page that fetches user data client-side and displays it in a list format.",
+      "tips": [
+        "Use loading and error states for better UX.",
+        "Avoid client-side fetching for SEO-critical content."
+      ]
+    },
+    {
+      "id": 12,
+      "title": "Incremental Static Regeneration (ISR)",
+      "content": "ISR allows you to update static pages after deployment without rebuilding the whole site. It combines the benefits of Static Generation and dynamic updates by revalidating data periodically.",
+      "examples": [
+        {
+          "code": "// pages/products.js\nexport async function getStaticProps() {\n  const res = await fetch('https://fakestoreapi.com/products');\n  const products = await res.json();\n\n  return {\n    props: { products },\n    revalidate: 60 // Revalidate every 60 seconds\n  };\n}\n\nexport default function Products({ products }) {\n  return (\n    <div>\n      <h1>Products</h1>\n      <ul>\n        {products.slice(0, 5).map(product => (\n          <li key={product.id}>{product.title}</li>\n        ))}\n      </ul>\n    </div>\n  );\n}",
+          "description": "ISR enables static pages to be regenerated at runtime in the background after a set interval."
+        }
+      ],
+      "quiz": [
+        {
+          "question": "What does the revalidate property do in getStaticProps?",
+          "options": ["Defines how often the page regenerates", "Sets build time delay", "Specifies cache expiration for fetch", "Controls image size"],
+          "answer": "Defines how often the page regenerates",
+          "hint": "Think about when pages get updated.",
+          "explanation": "The revalidate value specifies in seconds how frequently a static page should be regenerated in the background."
+        },
+        {
+          "question": "Which feature combines static generation with dynamic updates?",
+          "options": ["Incremental Static Regeneration", "Client-side fetching", "SSR", "Middleware"],
+          "answer": "Incremental Static Regeneration",
+          "hint": "It’s unique to Next.js.",
+          "explanation": "ISR allows pages to stay fast and static while still updating over time based on new data."
+        }
+      ],
+      "challenge": "Create a 'Blog' page that uses ISR with revalidate set to 30 seconds to update new posts automatically.",
+      "tips": [
+        "Use ISR for content that updates occasionally (e.g., news or blogs).",
+        "Keep revalidate intervals balanced to reduce server load."
+      ]
+    }
+  ]
+},
+{
+  "section": 6,
+  "title": "Styling & Assets",
+  "description": "Learn how to style Next.js applications using CSS Modules, global styles, and optimized image handling. This section explains the difference between scoped and global styling, and how to use the public folder and next/image for better performance.",
+  "lessons": [
+    {
+      "id": 15,
+      "title": "CSS Modules and Global Styles",
+      "content": "Next.js supports CSS Modules for component-level scoped styles and global CSS for app-wide styling. CSS Modules prevent style conflicts by automatically generating unique class names. Global styles are typically defined in styles/globals.css and imported in _app.js.",
+      "examples": [
+        {
+          "code": "// components/Button.module.css\n.button {\n  background-color: #0070f3;\n  color: white;\n  border: none;\n  padding: 10px 20px;\n  border-radius: 5px;\n  cursor: pointer;\n}\n\n// components/Button.js\nimport styles from './Button.module.css';\n\nexport default function Button({ label }) {\n  return <button className={styles.button}>{label}</button>;\n}",
+          "description": "Example of using CSS Modules to apply scoped styles to a button component."
+        },
+        {
+          "code": "// styles/globals.css\nbody {\n  margin: 0;\n  font-family: Arial, sans-serif;\n  background-color: #f9f9f9;\n}\n\n// pages/_app.js\nimport '../styles/globals.css';\n\nexport default function App({ Component, pageProps }) {\n  return <Component {...pageProps} />;\n}",
+          "description": "Global CSS imported in _app.js for site-wide styles."
+        }
+      ],
+      "quiz": [
+        {
+          "question": "What is the main advantage of CSS Modules?",
+          "options": ["Scoped styles without conflicts", "Global variables", "Server-side styling only", "Faster page loads"],
+          "answer": "Scoped styles without conflicts",
+          "hint": "Think about style isolation per component.",
+          "explanation": "CSS Modules ensure styles apply only to specific components, preventing CSS clashes across the app."
+        },
+        {
+          "question": "Where should global CSS be imported in a Next.js app?",
+          "options": ["_app.js", "index.js", "next.config.js", "document.js"],
+          "answer": "_app.js",
+          "hint": "It's the main entry point for all pages.",
+          "explanation": "Global CSS must be imported in pages/_app.js so it loads once for the entire application."
+        }
+      ],
+      "challenge": "Create a 'Card' component styled using CSS Modules and apply global background styling through globals.css.",
+      "tips": [
+        "Use CSS Modules for isolated component styles.",
+        "Global CSS is best for typography, layout, and resets."
+      ]
+    },
+    {
+      "id": 16,
+      "title": "Static Assets & Images",
+      "content": "Next.js provides optimized handling of static assets through the public folder and the next/image component. Files placed in the public folder are served directly, while next/image automatically optimizes images for performance and responsive design.",
+      "examples": [
+        {
+          "code": "// public/logo.png\n\n// components/Header.js\nimport Image from 'next/image';\n\nexport default function Header() {\n  return (\n    <header>\n      <Image src=\"/logo.png\" alt=\"Site Logo\" width={100} height={100} />\n      <h1>Welcome to My Next.js App</h1>\n    </header>\n  );\n}",
+          "description": "Using next/image for optimized and responsive image rendering."
+        },
+        {
+          "code": "// Example of accessing a static file\n<img src=\"/banner.jpg\" alt=\"Banner\" />",
+          "description": "Static assets like images and files in the public folder can be accessed via root-relative paths."
+        }
+      ],
+      "quiz": [
+        {
+          "question": "Where should static images be placed in a Next.js app?",
+          "options": ["public folder", "pages folder", "components folder", "api folder"],
+          "answer": "public folder",
+          "hint": "Think about which folder allows root-level URL access.",
+          "explanation": "Static files like images, icons, and documents belong in the public folder and are served from the root path."
+        },
+        {
+          "question": "Which component provides automatic image optimization?",
+          "options": ["next/image", "img", "picture", "ImageOptimizer"],
+          "answer": "next/image",
+          "hint": "It’s a built-in Next.js component.",
+          "explanation": "The next/image component handles image optimization, resizing, and lazy loading automatically."
+        }
+      ],
+      "challenge": "Add a responsive hero section with an optimized background image using next/image and static assets.",
+      "tips": [
+        "Use next/image for better performance and responsive images.",
+        "Access assets directly via /filename from the public folder."
+      ]
+    }
+  ]
+},
+{
+  "section": 7,
+  "title": "Advanced Next.js Features",
+  "description": "Dive into some of Next.js’s advanced features, including middleware for route handling and redirects, as well as environment variables for managing sensitive configuration. These tools help you build secure, flexible, and production-ready applications.",
+  "lessons": [
+    {
+      "id": 17,
+      "title": "Middleware & Redirects",
+      "content": "Middleware in Next.js allows you to intercept and modify requests before they reach your routes. You can use it for authentication, redirects, or logging. Middleware runs on the Edge Runtime for faster performance and flexibility. Redirects and rewrites can also be defined in next.config.js for permanent or conditional routing.",
+      "examples": [
+        {
+          "code": "// middleware.js\nimport { NextResponse } from 'next/server';\n\nexport function middleware(request) {\n  const isLoggedIn = request.cookies.get('auth');\n  if (!isLoggedIn && request.nextUrl.pathname.startsWith('/dashboard')) {\n    return NextResponse.redirect(new URL('/login', request.url));\n  }\n  return NextResponse.next();\n}\n\nexport const config = {\n  matcher: ['/dashboard/:path*'],\n};",
+          "description": "Example middleware that checks if a user is authenticated before accessing protected routes."
+        },
+        {
+          "code": "// next.config.js\nmodule.exports = {\n  async redirects() {\n    return [\n      {\n        source: '/old-blog/:slug',\n        destination: '/new-blog/:slug',\n        permanent: true,\n      },\n    ];\n  },\n};",
+          "description": "Redirect users from old routes to new ones using the redirects configuration in next.config.js."
+        }
+      ],
+      "quiz": [
+        {
+          "question": "What is the main purpose of middleware in Next.js?",
+          "options": ["To handle requests before they reach routes", "To render UI components", "To manage API responses", "To optimize images"],
+          "answer": "To handle requests before they reach routes",
+          "hint": "Think about pre-processing requests.",
+          "explanation": "Middleware intercepts and processes requests before they reach route handlers, enabling authentication, logging, and redirects."
+        },
+        {
+          "question": "Where can permanent redirects be defined in Next.js?",
+          "options": ["next.config.js", "pages/_app.js", "pages/_document.js", "middleware.js"],
+          "answer": "next.config.js",
+          "hint": "It’s part of the main configuration file.",
+          "explanation": "Redirects and rewrites are declared in next.config.js for better control over routing behavior."
+        }
+      ],
+      "challenge": "Implement middleware to restrict access to a '/dashboard' route and redirect unauthenticated users to '/login'.",
+      "tips": [
+        "Use middleware for auth, logging, or geolocation logic.",
+        "Always define matchers to limit where middleware runs."
+      ]
+    },
+    {
+      "id": 18,
+      "title": "Environment Variables & Configuration",
+      "content": "Next.js supports environment variables for managing sensitive data like API keys or database URLs. Variables prefixed with NEXT_PUBLIC_ are available in both client and server code, while others remain private to the server. Environment variables are defined in a .env.local file and accessed via process.env.",
+      "examples": [
+        {
+          "code": "// .env.local\nNEXT_PUBLIC_API_URL=https://api.example.com\nSECRET_KEY=mySuperSecretKey",
+          "description": "Defining environment variables for both client and server in the .env.local file."
+        },
+        {
+          "code": "// pages/index.js\nexport async function getServerSideProps() {\n  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/posts`);\n  const posts = await res.json();\n  return { props: { posts } };\n}\n\nexport default function Home({ posts }) {\n  return (\n    <div>\n      <h1>Blog Posts</h1>\n      <ul>\n        {posts.map((p) => (\n          <li key={p.id}>{p.title}</li>\n        ))}\n      </ul>\n    </div>\n  );\n}",
+          "description": "Accessing a public API URL defined in environment variables during server-side rendering."
+        }
+      ],
+      "quiz": [
+        {
+          "question": "Which prefix makes environment variables available to the client in Next.js?",
+          "options": ["NEXT_PUBLIC_", "CLIENT_", "PUBLIC_VAR_", "NEXT_ENV_"],
+          "answer": "NEXT_PUBLIC_",
+          "hint": "Think about public exposure of variables.",
+          "explanation": "Only variables prefixed with NEXT_PUBLIC_ are exposed to the browser; others stay private to the server."
+        },
+        {
+          "question": "Where are environment variables typically stored in a Next.js project?",
+          "options": [".env.local", ".config.js", "next.config.js", "globals.css"],
+          "answer": ".env.local",
+          "hint": "It’s a hidden file for environment configuration.",
+          "explanation": "Environment variables are stored in a .env.local file, which should be added to .gitignore to prevent sensitive data leaks."
+        }
+      ],
+      "challenge": "Set up .env.local with a public API URL and use it in getServerSideProps to fetch and display data.",
+      "tips": [
+        "Never expose private keys without NEXT_PUBLIC_.",
+        "Add .env.local to .gitignore for security."
+      ]
+    }
+  ]
+},
+{
+  "section": 8,
+  "title": "Deployment & Optimization",
+  "description": "Learn how to deploy your Next.js applications to production using platforms like Vercel and Netlify, and discover key optimization strategies for speed, performance, and SEO. This section ensures your app runs efficiently and delivers a great user experience.",
+  "lessons": [
+    {
+      "id": 19,
+      "title": "Deploying Next.js App",
+      "content": "Next.js apps can be deployed easily on several platforms, including Vercel (the creators of Next.js), Netlify, and other cloud providers. Deployment automatically handles build steps, environment variables, and serverless functions. Vercel offers seamless integration and continuous deployment directly from GitHub or GitLab.",
+      "examples": [
+        {
+          "code": "# Steps to Deploy on Vercel:\n1. Push your project to GitHub.\n2. Go to https://vercel.com and import your repository.\n3. Click 'Deploy' — Vercel will automatically detect Next.js.\n4. Access your deployed site at your-project.vercel.app",
+          "description": "Deploying to Vercel is effortless — it automatically detects Next.js and configures builds and SSR routes."
+        },
+        {
+          "code": "# Netlify Deployment (Alternative)\n1. Run: npm run build\n2. Drag and drop the '.next' output folder into Netlify dashboard or link via Git.\n3. Configure 'build command' as 'next build' and 'publish directory' as '.next'.",
+          "description": "Netlify also supports Next.js with some additional configuration for server-side features."
+        }
+      ],
+      "quiz": [
+        {
+          "question": "Which company created and maintains Next.js?",
+          "options": ["Vercel", "Meta", "Google", "Microsoft"],
+          "answer": "Vercel",
+          "hint": "It’s the same platform that offers one-click deployment for Next.js apps.",
+          "explanation": "Vercel is the company behind Next.js and provides native hosting and optimization support."
+        },
+        {
+          "question": "What is the main advantage of deploying on Vercel?",
+          "options": ["Automatic Next.js detection and configuration", "Manual build steps required", "No environment variable support", "Static-only hosting"],
+          "answer": "Automatic Next.js detection and configuration",
+          "hint": "Think about what simplifies deployment the most.",
+          "explanation": "Vercel automatically configures builds and optimizations for Next.js projects, making deployment seamless."
+        }
+      ],
+      "challenge": "Deploy your Next.js project to Vercel and test your app’s live URL. Ensure pages, API routes, and dynamic routes work correctly.",
+      "tips": [
+        "Link your GitHub repository for automatic re-deploys on new commits.",
+        "Use environment variables in the Vercel dashboard for sensitive data."
+      ]
+    },
+    {
+      "id": 20,
+      "title": "Performance Optimization",
+      "content": "Next.js includes powerful features to optimize your app’s performance, such as automatic code splitting, image optimization, and lazy loading. You can also use the next/image component, React.lazy, and Lighthouse audits to ensure fast loading times and high SEO scores.",
+      "examples": [
+        {
+          "code": "// Using next/image for optimized images\nimport Image from 'next/image';\n\nexport default function Hero() {\n  return (\n    <div>\n      <h1>Welcome to Next.js!</h1>\n      <Image src=\"/hero.jpg\" alt=\"Hero\" width={800} height={400} priority />\n    </div>\n  );\n}",
+          "description": "The next/image component automatically optimizes images for different devices, improving performance."
+        },
+        {
+          "code": "// Dynamic import for lazy loading\nimport dynamic from 'next/dynamic';\n\nconst HeavyComponent = dynamic(() => import('../components/HeavyComponent'));\n\nexport default function Home() {\n  return (\n    <div>\n      <h2>Home Page</h2>\n      <HeavyComponent />\n    </div>\n  );\n}",
+          "description": "Dynamic imports load components only when needed, reducing initial bundle size and improving speed."
+        }
+      ],
+      "quiz": [
+        {
+          "question": "What does the next/image component do?",
+          "options": ["Optimizes and serves images for different devices", "Creates image galleries", "Handles user uploads", "Stores images in the cloud"],
+          "answer": "Optimizes and serves images for different devices",
+          "hint": "It’s mainly for performance and responsive delivery.",
+          "explanation": "next/image automatically optimizes image size, format, and quality for each device and viewport."
+        },
+        {
+          "question": "Which Next.js feature helps reduce initial page load by loading code only when needed?",
+          "options": ["Dynamic import", "Server-side rendering", "Middleware", "API routes"],
+          "answer": "Dynamic import",
+          "hint": "Think about splitting your JavaScript bundles efficiently.",
+          "explanation": "Dynamic imports in Next.js allow components or modules to load on demand, improving loading speed and performance."
+        }
+      ],
+      "challenge": "Optimize your Next.js project by replacing regular <img> tags with next/image and using dynamic imports for large components.",
+      "tips": [
+        "Use Lighthouse or Web Vitals to measure performance improvements.",
+        "Prefer next/image for responsive and fast-loading images."
+      ]
+    }
+  ]
+}
+
+
+
+
+
+
+
+
+
+
+
+
+]
+}

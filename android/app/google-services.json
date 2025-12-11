@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "308191456185",
+    "project_id": "webdev-73fca",
+    "storage_bucket": "webdev-73fca.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:308191456185:android:f113ac4175e352903c6468",
+        "android_client_info": {
+          "package_name": "com.webd"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDM4y9jTQIc8icjAGY0fBgbENkzhzIZStw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

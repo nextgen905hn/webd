@@ -1,0 +1,1510 @@
+{
+  "course": "Complete JavaScript Course",
+  "sections": [
+    {
+      "section": 1,
+      "title": "🧩 Introduction to JavaScript",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "What is JavaScript and How It Works",
+          "content": "JavaScript is a high-level, dynamic programming language that enables interactivity in websites. It runs in the browser and can also work on servers using Node.js. JavaScript is single-threaded and event-driven, meaning it executes code line by line but can handle asynchronous tasks using callbacks, promises, or async/await.",
+          "examples": [
+            {
+              "code": "console.log('Hello, JavaScript!');",
+              "description": "Outputs a message to the browser console — the simplest way to start coding in JavaScript."
+            }
+          ],
+          "quiz": [
+            {
+              "question": "Where does JavaScript primarily run?",
+              "options": ["In the browser", "In the database", "Only on the backend", "In a compiler"],
+              "answer": "In the browser",
+              "hint": "Think about where web interactivity happens.",
+              "explanation": "JavaScript was originally designed to run in browsers, enabling dynamic and interactive web pages. However, with Node.js, it can also run on servers."
+            }
+          ],
+          "challenge": "Write a simple JavaScript program that displays 'Welcome to JS!' in the console.",
+          "tips": [
+            "Use console.log() to print messages.",
+            "Modern browsers include powerful DevTools for testing JS code."
+          ]
+        },
+        {
+          "id": 2,
+          "title": "Setting Up Your Environment (VS Code, Browser Console)",
+          "content": "Before writing JavaScript, you need a text editor and a browser. VS Code is a popular editor that supports syntax highlighting, extensions, and debugging. You can also run quick tests in the browser's Developer Console (F12).",
+          "examples": [
+            {
+              "code": "// In VS Code\ndocument.body.style.background = 'lightblue';",
+              "description": "A simple script to change the background color of a webpage."
+            }
+          ],
+          "quiz": [
+            {
+              "question": "Which shortcut opens the browser console on most browsers?",
+              "options": ["Ctrl + Alt + D", "Ctrl + Shift + I", "F12", "Alt + F4"],
+              "answer": "F12",
+              "hint": "It opens Developer Tools directly.",
+              "explanation": "Pressing F12 (or Ctrl + Shift + I) opens the Developer Tools, where you can access the Console tab to test JavaScript code."
+            }
+          ],
+          "challenge": "Install VS Code and write your first JavaScript program that changes the page background.",
+          "tips": [
+            "Use VS Code extensions like Prettier and ESLint.",
+            "Use the Console tab to debug and test snippets instantly."
+          ]
+        },
+        {
+          "id": 3,
+          "title": "Writing Your First JavaScript Program",
+          "content": "The simplest way to write JavaScript is by using the console or a script tag inside an HTML document. Every statement ends with a semicolon (;). JavaScript is case-sensitive, so variables like 'Name' and 'name' are different.",
+          "examples": [
+            {
+              "code": "<!DOCTYPE html>\n<html>\n  <body>\n    <h1>My First JavaScript</h1>\n    <script>\n      alert('Hello from JavaScript!');\n    </script>\n  </body>\n</html>",
+              "description": "A simple HTML page that runs a JavaScript alert when loaded."
+            }
+          ],
+          "quiz": [
+            {
+              "question": "Which HTML tag is used to include JavaScript code?",
+              "options": ["<code>", "<js>", "<script>", "<javascript>"],
+              "answer": "<script>",
+              "hint": "It's the tag used to embed JS inside HTML.",
+              "explanation": "The <script> tag is used to embed or reference external JavaScript files within an HTML document."
+            }
+          ],
+          "challenge": "Create a webpage that shows an alert message 'Welcome User!' when loaded.",
+          "tips": [
+            "Use alert(), console.log(), or document.write() to display output.",
+            "Keep script tags near the bottom of HTML body for faster loading."
+          ]
+        },
+        {
+          "id": 4,
+          "title": "Understanding <script> and Where to Place JS",
+          "content": "JavaScript can be placed in three ways: inline, internal, and external. Inline JS uses the 'onclick' attribute, internal JS uses <script> tags in the HTML, and external JS is stored in a .js file and linked using the src attribute. Best practice is to use external scripts placed before </body> for performance.",
+          "examples": [
+            {
+              "code": "<!DOCTYPE html>\n<html>\n<head>\n  <script src='app.js' defer></script>\n</head>\n<body>\n  <button onclick='alert(\"Clicked!\")'>Click Me</button>\n</body>\n</html>",
+              "description": "Example showing internal, inline, and external script usage."
+            }
+          ],
+          "quiz": [
+            {
+              "question": "What attribute is used to include an external JavaScript file?",
+              "options": ["href", "src", "link", "import"],
+              "answer": "src",
+              "hint": "Similar to including images.",
+              "explanation": "The src attribute specifies the path of an external JavaScript file linked inside the <script> tag."
+            },
+            {
+              "question": "Where is the best place to include JavaScript for optimal performance?",
+              "options": ["At the top of <head>", "Inside <meta>", "Before </body>", "In <title>"],
+              "answer": "Before </body>",
+              "hint": "Think about when the HTML should load first.",
+              "explanation": "Placing scripts before </body> ensures the HTML content loads before the script executes, improving perceived page speed."
+            }
+          ],
+          "challenge": "Link an external JavaScript file called main.js and make it log 'Script Loaded!' in the console.",
+          "tips": [
+            "Use the defer attribute to load JS after HTML parsing.",
+            "Keep logic separate from HTML using external JS files."
+          ]
+        },
+        {
+          "id": 5,
+          "title": "Variables and Constants (var, let, const)",
+          "content": "Variables store data values in JavaScript. The 'var' keyword is function-scoped and older, 'let' is block-scoped, and 'const' is block-scoped but cannot be reassigned. Use 'let' for changeable values and 'const' for fixed values.",
+          "examples": [
+            {
+              "code": "var name = 'Ali';\nlet age = 21;\nconst country = 'Pakistan';\nconsole.log(name, age, country);",
+              "description": "Declaring variables using var, let, and const."
+            }
+          ],
+          "quiz": [
+            {
+              "question": "Which variable type cannot be reassigned?",
+              "options": ["var", "let", "const", "none"],
+              "answer": "const",
+              "hint": "Think about constants in mathematics.",
+              "explanation": "Variables declared with const are constant and cannot be reassigned after their initial definition."
+            },
+            {
+              "question": "What is the difference between let and var?",
+              "options": ["No difference", "let is block-scoped; var is function-scoped", "var is faster", "let is global"],
+              "answer": "let is block-scoped; var is function-scoped",
+              "hint": "Consider the scope where they can be accessed.",
+              "explanation": "The key difference is scope: 'let' respects block-level scoping, while 'var' is accessible within the whole function it’s defined in."
+            }
+          ],
+          "challenge": "Declare a constant for your country name, and a variable for your age. Print both using console.log().",
+          "tips": [
+            "Prefer 'let' and 'const' over 'var' in modern code.",
+            "Use uppercase names for constants that never change."
+          ]
+        }
+      ]
+    },
+    {
+  "section": 2,
+  "title": "📊 Data Types & Operators",
+  "lessons": [
+    {
+      "id": 6,
+      "title": "JavaScript Data Types Overview",
+      "content": "JavaScript has two main categories of data types: Primitive and Non-Primitive. Primitive types include String, Number, Boolean, Undefined, Null, Symbol, and BigInt. Non-primitive types include Objects, Arrays, and Functions. JavaScript is dynamically typed, meaning variable types are determined at runtime.",
+      "examples": [
+        {
+          "code": "let name = 'Ali'; // String\nlet age = 25; // Number\nlet isStudent = true; // Boolean\nlet x; // Undefined\nlet y = null; // Null",
+          "description": "Examples showing different primitive data types."
+        }
+      ],
+      "quiz": [
+        {
+          "question": "Which of the following is NOT a primitive data type?",
+          "options": ["String", "Number", "Object", "Boolean"],
+          "answer": "Object",
+          "hint": "Think about data structures.",
+          "explanation": "Objects are non-primitive because they can store multiple values and properties, unlike primitive types which hold a single value."
+        }
+      ],
+      "challenge": "Create variables of at least four different data types and print their types using typeof operator.",
+      "tips": [
+        "Use typeof variableName to check data types.",
+        "Remember: typeof null returns 'object' due to a historical bug in JavaScript."
+      ]
+    },
+    {
+      "id": 7,
+      "title": "Strings and String Methods",
+      "content": "Strings represent text in JavaScript and are enclosed in single (' '), double (\" \"), or backticks (` `). Common string methods include length, toUpperCase(), toLowerCase(), trim(), slice(), and concat(). Template literals using backticks allow embedding expressions inside ${}.",
+      "examples": [
+        {
+          "code": "let name = 'Ali';\nconsole.log(`Hello, ${name}!`); // Template literal\nconsole.log(name.toUpperCase()); // 'ALI'\nconsole.log(name.slice(0, 2)); // 'Al'",
+          "description": "Example using string methods and template literals."
+        }
+      ],
+      "quiz": [
+        {
+          "question": "Which symbol is used for template literals?",
+          "options": ["'", "\"", "`", "~"],
+          "answer": "`",
+          "hint": "It's located on the same key as tilde (~).",
+          "explanation": "Template literals use backticks (` `) and allow expression interpolation like ${variable} for dynamic string creation."
+        }
+      ],
+      "challenge": "Create a greeting message using template literals and include the user's name and age dynamically.",
+      "tips": [
+        "Use backticks for readable, multiline strings.",
+        "Use string interpolation instead of concatenation for cleaner code."
+      ]
+    },
+    {
+      "id": 8,
+      "title": "Numbers and Math Operations",
+      "content": "Numbers in JavaScript can be integers or floating-point values. You can perform arithmetic operations like +, -, *, /, and %. JavaScript also includes the Math object for advanced operations like Math.round(), Math.random(), and Math.sqrt().",
+      "examples": [
+        {
+          "code": "let x = 10;\nlet y = 3;\nconsole.log(x % y); // 1\nconsole.log(Math.pow(2, 3)); // 8\nconsole.log(Math.random()); // random number between 0 and 1",
+          "description": "Basic and advanced math operations using operators and Math object."
+        }
+      ],
+      "quiz": [
+        {
+          "question": "Which method returns a random number between 0 and 1?",
+          "options": ["Math.random()", "Math.rand()", "Math.number()", "Math.float()"],
+          "answer": "Math.random()",
+          "hint": "It's the simplest way to generate random numbers.",
+          "explanation": "Math.random() returns a floating-point number between 0 (inclusive) and 1 (exclusive). It’s often used for random selections and games."
+        }
+      ],
+      "challenge": "Generate a random number between 1 and 100 using Math.random().",
+      "tips": [
+        "Use Math.floor(Math.random() * 100) + 1 to get whole numbers between 1–100.",
+        "Remember that dividing by zero returns Infinity in JavaScript."
+      ]
+    },
+    {
+      "id": 9,
+      "title": "Booleans and Comparison Operators",
+      "content": "Booleans represent true or false values. Comparison operators are used to compare two values. Common ones include == (equal), === (strict equal), != (not equal), >, <, >=, and <=. The strict versions (=== and !==) also check for type equality.",
+      "examples": [
+        {
+          "code": "let a = 10;\nlet b = '10';\nconsole.log(a == b); // true\nconsole.log(a === b); // false",
+          "description": "Difference between loose and strict equality operators."
+        }
+      ],
+      "quiz": [
+        {
+          "question": "What is the main difference between == and ===?",
+          "options": ["None", "== checks both value and type", "=== checks both value and type", "== is faster"],
+          "answer": "=== checks both value and type",
+          "hint": "One is strict, one is loose.",
+          "explanation": "The strict equality operator (===) compares both value and data type, while == performs type conversion before comparing."
+        }
+      ],
+      "challenge": "Write a program that checks if two inputs are equal in both value and type using ===.",
+      "tips": [
+        "Always use === and !== to avoid unexpected type coercion.",
+        "Boolean values can result from comparisons directly, e.g., 5 > 2 returns true."
+      ]
+    },
+    {
+      "id": 10,
+      "title": "Null, Undefined, and NaN",
+      "content": "Undefined means a variable is declared but not assigned. Null represents an intentional absence of value. NaN stands for 'Not a Number' and occurs when mathematical operations fail (e.g., 'text' * 5).",
+      "examples": [
+        {
+          "code": "let a;\nlet b = null;\nlet c = 'text' * 5;\nconsole.log(a, b, c); // undefined, null, NaN",
+          "description": "Demonstrates undefined, null, and NaN usage."
+        }
+      ],
+      "quiz": [
+        {
+          "question": "What does NaN stand for?",
+          "options": ["Not any Number", "Not a Null", "Not a Number", "Number and Null"],
+          "answer": "Not a Number",
+          "hint": "It appears when numeric operations fail.",
+          "explanation": "NaN stands for 'Not a Number' and indicates that a numeric computation failed (e.g., dividing a string by a number)."
+        }
+      ],
+      "challenge": "Create three variables to show undefined, null, and NaN in one program and print their types.",
+      "tips": [
+        "typeof NaN returns 'number' — a known JavaScript quirk.",
+        "Use isNaN() to check if a value is NaN."
+      ]
+    },
+    {
+      "id": 11,
+      "title": "Operators in JavaScript",
+      "content": "Operators perform operations on variables and values. Categories include Arithmetic (+, -, *, /, %), Assignment (=, +=, -=), Comparison (==, ===, >, <), Logical (&&, ||, !), and Ternary (condition ? true : false).",
+      "examples": [
+        {
+          "code": "let x = 5;\nx += 3; // 8\nconsole.log(x > 5 && x < 10); // true\nlet result = (x === 8) ? 'Correct' : 'Wrong';\nconsole.log(result);",
+          "description": "Demonstrates assignment, comparison, logical, and ternary operators."
+        }
+      ],
+      "quiz": [
+        {
+          "question": "What does the '&&' operator do?",
+          "options": ["OR", "AND", "NOT", "Equals"],
+          "answer": "AND",
+          "hint": "It requires both sides to be true.",
+          "explanation": "The logical AND (&&) operator returns true only if both conditions on either side are true."
+        }
+      ],
+      "challenge": "Write a program using the ternary operator that prints 'Adult' if age >= 18, else 'Minor'.",
+      "tips": [
+        "Use parentheses to control order of operations.",
+        "Logical operators short-circuit: in (a && b), if a is false, b isn’t checked."
+      ]
+    }
+  ]
+},
+{
+  "section": 3,
+  "title": "🧮 Control Flow & Conditions",
+  "lessons": [
+    {
+      "id": 12,
+      "title": "Introduction to Control Flow",
+      "content": "Control flow in JavaScript determines the order in which code statements are executed. By default, the browser reads code line-by-line from top to bottom. Control flow statements such as conditions and loops allow you to alter this sequence to make decisions and repeat actions based on logic.",
+      "examples": [
+        {
+          "code": "let temperature = 25;\nif (temperature > 30) {\n  console.log('It’s hot!');\n} else {\n  console.log('The weather is nice.');\n}",
+          "description": "Simple control flow using an if-else condition to decide what message to print."
+        }
+      ],
+      "quiz": [
+        {
+          "question": "What is control flow in JavaScript?",
+          "options": [
+            "How data is stored in memory",
+            "The order in which code executes",
+            "The structure of an HTML page",
+            "The way CSS is applied"
+          ],
+          "answer": "The order in which code executes",
+          "hint": "It decides which part of code runs next.",
+          "explanation": "Control flow defines how JavaScript decides which statements to run and when, based on conditions and logic."
+        }
+      ],
+      "challenge": "Write a program that checks if a number is positive, negative, or zero and prints an appropriate message.",
+      "tips": [
+        "Always indent nested blocks for better readability.",
+        "Use meaningful variable names to make control logic easy to understand."
+      ]
+    },
+    {
+      "id": 13,
+      "title": "If, Else If, and Else Statements",
+      "content": "Conditional statements let you execute different code blocks based on specific conditions. The 'if' block runs when a condition is true, 'else if' checks another condition, and 'else' executes when none are true.",
+      "examples": [
+        {
+          "code": "let marks = 75;\nif (marks >= 90) {\n  console.log('A Grade');\n} else if (marks >= 70) {\n  console.log('B Grade');\n} else {\n  console.log('C Grade');\n}",
+          "description": "An if-else-if ladder used to determine grades based on marks."
+        }
+      ],
+      "quiz": [
+        {
+          "question": "When does the 'else' block execute?",
+          "options": [
+            "When all previous conditions are true",
+            "When the first condition is true",
+            "When none of the previous conditions are true",
+            "Always executes"
+          ],
+          "answer": "When none of the previous conditions are true",
+          "hint": "‘Else’ is the fallback condition.",
+          "explanation": "The 'else' block runs when all preceding if and else if conditions evaluate to false."
+        }
+      ],
+      "challenge": "Create a program that checks a person’s age and prints 'Child', 'Teen', 'Adult', or 'Senior' accordingly.",
+      "tips": [
+        "Check specific conditions first (e.g., highest or lowest range).",
+        "You can nest if statements inside others for complex conditions."
+      ]
+    },
+    {
+      "id": 14,
+      "title": "Nested Conditions and Logical Operators",
+      "content": "You can combine multiple conditions using logical operators. && (AND) requires all conditions to be true, || (OR) requires at least one true, and ! (NOT) reverses a condition. Nested conditions are if statements inside another if, useful for multi-level logic.",
+      "examples": [
+        {
+          "code": "let age = 20;\nlet hasID = true;\nif (age >= 18 && hasID) {\n  console.log('Access granted');\n} else {\n  console.log('Access denied');\n}",
+          "description": "Combining two conditions with logical AND (&&)."
+        }
+      ],
+      "quiz": [
+        {
+          "question": "Which operator checks if both conditions are true?",
+          "options": ["||", "&&", "!", "="],
+          "answer": "&&",
+          "hint": "It represents logical AND.",
+          "explanation": "The && operator returns true only if both operands are true; otherwise, it returns false."
+        }
+      ],
+      "challenge": "Write a program that checks if a person can drive based on two conditions — age must be >=18 and must have a valid license.",
+      "tips": [
+        "Use parentheses to clarify complex conditions.",
+        "Be careful with operator precedence when mixing && and ||."
+      ]
+    },
+    {
+      "id": 15,
+      "title": "Switch Statements",
+      "content": "A switch statement evaluates an expression and executes code matching a case. It’s often cleaner than multiple else-if statements. Use 'break' to stop code from running into the next case, and 'default' for unmatched cases.",
+      "examples": [
+        {
+          "code": "let fruit = 'apple';\nswitch (fruit) {\n  case 'apple':\n    console.log('Apples are red!');\n    break;\n  case 'banana':\n    console.log('Bananas are yellow!');\n    break;\n  default:\n    console.log('Unknown fruit');\n}",
+          "description": "Using switch to print messages based on fruit type."
+        }
+      ],
+      "quiz": [
+        {
+          "question": "What keyword prevents a switch case from falling through to the next one?",
+          "options": ["stop", "break", "exit", "continue"],
+          "answer": "break",
+          "hint": "You use it in loops too.",
+          "explanation": "The 'break' statement stops further case evaluation in a switch, ensuring only one case executes."
+        }
+      ],
+      "challenge": "Write a program using switch that prints a weekday name based on a number (1 = Monday, 7 = Sunday).",
+      "tips": [
+        "Always include a default case for unmatched values.",
+        "Use switch for cleaner code when checking many possible values."
+      ]
+    },
+    {
+      "id": 16,
+      "title": "Ternary Operator and Practice",
+      "content": "The ternary operator is a compact alternative to if-else. It takes the form condition ? valueIfTrue : valueIfFalse. It’s great for short, simple decisions but avoid overusing for complex logic.",
+      "examples": [
+        {
+          "code": "let age = 17;\nlet canVote = (age >= 18) ? 'Yes' : 'No';\nconsole.log(`Can vote: ${canVote}`);",
+          "description": "Example of using a ternary operator to check voting eligibility."
+        }
+      ],
+      "quiz": [
+        {
+          "question": "What is the syntax of a ternary operator?",
+          "options": [
+            "condition : valueIfTrue ? valueIfFalse",
+            "condition ? valueIfTrue : valueIfFalse",
+            "if ? else :",
+            "if ? then : else"
+          ],
+          "answer": "condition ? valueIfTrue : valueIfFalse",
+          "hint": "Think of ‘?’ as if and ‘:’ as else.",
+          "explanation": "The ternary operator uses ‘?’ to separate the condition and ‘:’ to specify the else part, making it a one-line decision maker."
+        }
+      ],
+      "challenge": "Write a program that checks if a number is even or odd using the ternary operator.",
+      "tips": [
+        "Use ternary for concise decisions only.",
+        "You can nest ternary operators but keep readability in mind."
+      ]
+    }
+  ]
+},
+{
+  "section": 4,
+  "title": "🔁 Loops and Iteration",
+  "lessons": [
+    {
+      "id": 17,
+      "title": "Introduction to Loops",
+      "content": "Loops allow you to execute a block of code repeatedly until a certain condition is met. They’re essential for handling repetitive tasks like iterating over arrays, generating patterns, or processing data dynamically.",
+      "examples": [
+        {
+          "code": "for (let i = 1; i <= 5; i++) {\n  console.log(`Iteration ${i}`);\n}",
+          "description": "A simple for loop printing iteration numbers from 1 to 5."
+        }
+      ],
+      "quiz": [
+        {
+          "question": "What is the purpose of a loop in JavaScript?",
+          "options": [
+            "To execute code only once",
+            "To repeat a block of code multiple times",
+            "To define constants",
+            "To handle conditional logic only"
+          ],
+          "answer": "To repeat a block of code multiple times",
+          "hint": "Think about repetition or iteration.",
+          "explanation": "Loops help automate repetitive tasks by executing the same code block multiple times until a specific condition is false."
+        }
+      ],
+      "challenge": "Print numbers from 1 to 10 using a for loop.",
+      "tips": [
+        "Always define a clear stop condition to avoid infinite loops.",
+        "Use console.log inside loops to track iteration behavior."
+      ]
+    },
+    {
+      "id": 18,
+      "title": "For Loop Deep Dive",
+      "content": "The for loop is the most common loop structure in JavaScript. It consists of three parts: initialization, condition, and increment/decrement — all handled in one line. It’s ideal when you know the exact number of iterations needed.",
+      "examples": [
+        {
+          "code": "for (let i = 0; i < 3; i++) {\n  console.log('Hello World!');\n}",
+          "description": "Executes the statement 3 times."
+        }
+      ],
+      "quiz": [
+        {
+          "question": "Which part of the for loop runs after each iteration?",
+          "options": ["Initialization", "Condition", "Increment/Decrement", "None"],
+          "answer": "Increment/Decrement",
+          "hint": "It controls loop progression.",
+          "explanation": "After every iteration, the increment/decrement expression updates the loop variable before rechecking the condition."
+        }
+      ],
+      "challenge": "Use a for loop to print all even numbers between 1 and 20.",
+      "tips": [
+        "Start with small loops to understand control flow.",
+        "Increment variables carefully to avoid infinite loops."
+      ]
+    },
+    {
+      "id": 19,
+      "title": "While and Do...While Loops",
+      "content": "The while loop runs as long as its condition is true. The do...while loop is similar, but it executes the block at least once before checking the condition. This makes do...while useful when you need guaranteed initial execution.",
+      "examples": [
+        {
+          "code": "let i = 1;\nwhile (i <= 3) {\n  console.log(`While Loop ${i}`);\n  i++;\n}\n\ndo {\n  console.log(`Do...While Loop ${i}`);\n  i++;\n} while (i <= 5);",
+          "description": "Demonstrating both while and do...while loops."
+        }
+      ],
+      "quiz": [
+        {
+          "question": "Which loop guarantees at least one execution?",
+          "options": ["for", "while", "do...while", "none"],
+          "answer": "do...while",
+          "hint": "It checks the condition after executing the loop body.",
+          "explanation": "Unlike other loops, do...while executes once before verifying the condition, ensuring at least one run."
+        }
+      ],
+      "challenge": "Create a do...while loop that prints numbers from 5 to 1 in reverse order.",
+      "tips": [
+        "Ensure the condition eventually becomes false.",
+        "Use while loops when you don’t know the exact iteration count."
+      ]
+    },
+    {
+      "id": 20,
+      "title": "For...of and For...in Loops",
+      "content": "ES6 introduced new loop types — 'for...of' for iterating over iterable objects like arrays, and 'for...in' for looping through object properties. They simplify working with data collections.",
+      "examples": [
+        {
+          "code": "const fruits = ['apple', 'banana', 'mango'];\nfor (let fruit of fruits) {\n  console.log(fruit);\n}\n\nconst user = {name: 'Ali', age: 22};\nfor (let key in user) {\n  console.log(`${key}: ${user[key]}`);\n}",
+          "description": "Using 'for...of' to iterate arrays and 'for...in' to iterate object keys."
+        }
+      ],
+      "quiz": [
+        {
+          "question": "Which loop is best for iterating over array values?",
+          "options": ["for...in", "for...of", "while", "do...while"],
+          "answer": "for...of",
+          "hint": "It gives you the direct value, not the index.",
+          "explanation": "The 'for...of' loop directly accesses array elements, while 'for...in' is better suited for object properties."
+        }
+      ],
+      "challenge": "Use a 'for...of' loop to print all elements in an array of colors, and a 'for...in' loop to print all properties of an object.",
+      "tips": [
+        "Avoid using 'for...in' on arrays — it’s meant for objects.",
+        "Use 'for...of' for strings, arrays, maps, or sets."
+      ]
+    },
+    {
+      "id": 21,
+      "title": "Break and Continue Statements",
+      "content": "‘break’ immediately exits a loop, while ‘continue’ skips the current iteration and moves to the next one. These are helpful for controlling loop execution based on conditions.",
+      "examples": [
+        {
+          "code": "for (let i = 1; i <= 5; i++) {\n  if (i === 3) continue;\n  if (i === 5) break;\n  console.log(i);\n}",
+          "description": "Skips 3 using continue and stops the loop entirely at 5 using break."
+        }
+      ],
+      "quiz": [
+        {
+          "question": "What does the 'continue' statement do in a loop?",
+          "options": [
+            "Stops the entire loop",
+            "Restarts the program",
+            "Skips the current iteration",
+            "Exits the function"
+          ],
+          "answer": "Skips the current iteration",
+          "hint": "It lets the loop continue to the next step.",
+          "explanation": "‘continue’ skips the rest of the code in the current loop iteration but doesn’t end the loop itself."
+        }
+      ],
+      "challenge": "Write a loop that prints numbers from 1 to 10 but skips 5 and stops completely at 8.",
+      "tips": [
+        "Use break sparingly; too many can make code hard to follow.",
+        "‘continue’ is great for skipping unwanted data during iteration."
+      ]
+    }
+  ]
+},
+{
+  "section": 5,
+  "title": "🧠 Functions in JavaScript",
+  "lessons": [
+    {
+      "id": 22,
+      "title": "Introduction to Functions",
+      "content": "Functions are reusable blocks of code designed to perform specific tasks. They help make code modular, cleaner, and more maintainable. A function can take inputs (called parameters) and return an output (using the return keyword).",
+      "examples": [
+        {
+          "code": "function greet() {\n  console.log('Hello, Developer!');\n}\n\n// Calling the function\ngreet();",
+          "description": "A simple function that prints a greeting when called."
+        }
+      ],
+      "quiz": [
+        {
+          "question": "What keyword is used to define a function in JavaScript?",
+          "options": ["func", "define", "function", "method"],
+          "answer": "function",
+          "hint": "It’s the standard keyword used to declare functions.",
+          "explanation": "The 'function' keyword declares a new function followed by its name and parentheses."
+        }
+      ],
+      "challenge": "Create a function named 'sayHello' that prints 'Welcome to JavaScript Functions!' when called.",
+      "tips": [
+        "Use functions to avoid repeating code blocks.",
+        "Function names should clearly describe their purpose."
+      ]
+    },
+    {
+      "id": 23,
+      "title": "Function Parameters and Return Values",
+      "content": "Parameters allow you to pass data into a function, and the return statement sends data back. This makes functions dynamic and reusable for different inputs.",
+      "examples": [
+        {
+          "code": "function add(a, b) {\n  return a + b;\n}\n\nlet result = add(5, 3);\nconsole.log(result); // 8",
+          "description": "Function with parameters that returns the sum of two numbers."
+        }
+      ],
+      "quiz": [
+        {
+          "question": "What keyword is used to send a value back from a function?",
+          "options": ["output", "return", "send", "yield"],
+          "answer": "return",
+          "hint": "It stops the function and gives back a value.",
+          "explanation": "The 'return' keyword ends a function’s execution and provides a value to the caller."
+        }
+      ],
+      "challenge": "Write a function named 'multiply' that takes two numbers as parameters and returns their product.",
+      "tips": [
+        "If no return value is provided, a function returns 'undefined' by default.",
+        "Parameters act as placeholders for real values (arguments)."
+      ]
+    },
+    {
+      "id": 24,
+      "title": "Function Expressions and Anonymous Functions",
+      "content": "Functions can be stored in variables. Such functions are called function expressions. When a function has no name, it’s called an anonymous function. These are often used in callbacks and event handlers.",
+      "examples": [
+        {
+          "code": "const greetUser = function(name) {\n  console.log(`Hello, ${name}!`);\n};\n\ngreetUser('Ali');",
+          "description": "Assigning an anonymous function to a variable."
+        }
+      ],
+      "quiz": [
+        {
+          "question": "What do we call a function without a name?",
+          "options": ["hidden function", "anonymous function", "callback", "void function"],
+          "answer": "anonymous function",
+          "hint": "Think about what 'anonymous' means.",
+          "explanation": "Anonymous functions are unnamed and usually assigned to variables or used as arguments in other functions."
+        }
+      ],
+      "challenge": "Create an anonymous function that takes one parameter (name) and logs 'Hello, [name]!' to the console.",
+      "tips": [
+        "Function expressions must end with a semicolon when assigned to a variable.",
+        "Use them when you need a function for short-term or inline use."
+      ]
+    },
+    {
+      "id": 25,
+      "title": "Arrow Functions (ES6)",
+      "content": "Arrow functions provide a shorter syntax for writing functions. They are often used for simple one-liners and automatically bind the 'this' keyword from their parent scope. However, they can’t be used as constructors.",
+      "examples": [
+        {
+          "code": "const add = (a, b) => a + b;\nconsole.log(add(4, 6)); // 10",
+          "description": "An arrow function returning the sum of two numbers."
+        },
+        {
+          "code": "const greet = name => console.log(`Hi, ${name}!`);\ngreet('Sara');",
+          "description": "Arrow function with a single parameter (no parentheses needed)."
+        }
+      ],
+      "quiz": [
+        {
+          "question": "Which of the following is a correct arrow function?",
+          "options": [
+            "function add(a,b) => a + b;",
+            "(a,b) => { return a + b; }",
+            "(a,b) { a + b; }",
+            "arrow(a,b) = a + b;"
+          ],
+          "answer": "(a,b) => { return a + b; }",
+          "hint": "Arrow functions use '=>' after the parameter list.",
+          "explanation": "The correct syntax for arrow functions is '(parameters) => expression' or with curly braces if the body has multiple lines."
+        }
+      ],
+      "challenge": "Convert a regular function 'square(n)' that returns n*n into an arrow function.",
+      "tips": [
+        "Use parentheses around parameters unless there’s only one.",
+        "Omit 'return' when the function body is a single expression."
+      ]
+    },
+    {
+      "id": 26,
+      "title": "Function Scope and Hoisting",
+      "content": "Scope defines where variables and functions are accessible. JavaScript has function scope (inside functions) and block scope (with let/const). Function declarations are hoisted — they can be called before their definition.",
+      "examples": [
+        {
+          "code": "sayHello(); // Works due to hoisting\n\nfunction sayHello() {\n  console.log('Hello!');\n}\n\nif (true) {\n  let x = 10;\n  const y = 20;\n  var z = 30;\n}\n\n// console.log(x); // Error\n// console.log(y); // Error\nconsole.log(z); // Works - var is function-scoped",
+          "description": "Demonstrating function hoisting and variable scope differences."
+        }
+      ],
+      "quiz": [
+        {
+          "question": "Which keyword creates a function-scoped variable?",
+          "options": ["let", "const", "var", "scope"],
+          "answer": "var",
+          "hint": "It’s the old variable declaration method.",
+          "explanation": "Variables declared with 'var' are function-scoped and hoisted, unlike 'let' and 'const' which are block-scoped."
+        }
+      ],
+      "challenge": "Write a function that declares variables with var, let, and const, and log which ones are accessible outside a block.",
+      "tips": [
+        "Avoid 'var' in modern code — prefer 'let' and 'const'.",
+        "Understand scope to prevent accidental variable overwrites.",
+        "Hoisting moves declarations to the top, but not assignments."
+      ]
+    }
+  ]
+},
+{
+  "section": 6,
+  "title": "🧰 Arrays in JavaScript",
+  "lessons": [
+    {
+      "id": 27,
+      "title": "Introduction to Arrays",
+      "content": "Arrays are special variables that can hold multiple values at once. They are used to store ordered collections of items, such as numbers, strings, or even objects. Arrays in JavaScript are zero-indexed, meaning the first element starts at index 0.",
+      "examples": [
+        {
+          "code": "const fruits = ['Apple', 'Banana', 'Mango'];\nconsole.log(fruits[0]); // Apple\nconsole.log(fruits.length); // 3",
+          "description": "Creating an array of fruits and accessing its elements and length."
+        }
+      ],
+      "quiz": [
+        {
+          "question": "What index number does the first element of an array have?",
+          "options": ["0", "1", "first", "-1"],
+          "answer": "0",
+          "hint": "Arrays in most programming languages start from this number.",
+          "explanation": "JavaScript arrays are zero-indexed, so the first element is always accessed using index 0."
+        }
+      ],
+      "challenge": "Create an array named 'colors' containing at least three color names and log the first and last color.",
+      "tips": [
+        "Use square brackets [] to define arrays.",
+        "Array indexes start from 0 and go up to array.length - 1."
+      ]
+    },
+    {
+      "id": 28,
+      "title": "Adding and Removing Elements",
+      "content": "JavaScript provides built-in methods to add and remove array elements. Use push() to add to the end, unshift() to add to the beginning, pop() to remove from the end, and shift() to remove from the beginning.",
+      "examples": [
+        {
+          "code": "const numbers = [1, 2, 3];\nnumbers.push(4); // [1,2,3,4]\nnumbers.pop(); // [1,2,3]\nnumbers.unshift(0); // [0,1,2,3]\nnumbers.shift(); // [1,2,3]",
+          "description": "Using push, pop, shift, and unshift to modify arrays."
+        }
+      ],
+      "quiz": [
+        {
+          "question": "Which method removes the last element of an array?",
+          "options": ["pop()", "shift()", "remove()", "delete()"],
+          "answer": "pop()",
+          "hint": "It 'pops' from the top of the stack.",
+          "explanation": "The pop() method removes and returns the last element of an array."
+        }
+      ],
+      "challenge": "Start with an empty array and use push() and unshift() to add items at both ends. Then remove one item using pop().",
+      "tips": [
+        "push() and pop() work on the end of an array.",
+        "unshift() and shift() work on the beginning of an array."
+      ]
+    },
+    {
+      "id": 29,
+      "title": "Looping Through Arrays",
+      "content": "You can loop through arrays using traditional for loops or modern methods like for...of and forEach. These loops help process each array element efficiently.",
+      "examples": [
+        {
+          "code": "const names = ['Ali', 'Sara', 'John'];\nfor (let i = 0; i < names.length; i++) {\n  console.log(names[i]);\n}\n\n// for...of loop\nfor (const name of names) {\n  console.log(name);\n}\n\n// forEach loop\nnames.forEach((name, index) => console.log(index, name));",
+          "description": "Different ways to iterate through array elements."
+        }
+      ],
+      "quiz": [
+        {
+          "question": "Which loop directly gives you array elements without using indexes?",
+          "options": ["for loop", "for...of", "while loop", "do...while loop"],
+          "answer": "for...of",
+          "hint": "Introduced in ES6 for simpler iteration.",
+          "explanation": "The for...of loop iterates directly over the values of iterable objects like arrays, without requiring index access."
+        }
+      ],
+      "challenge": "Use forEach to log each number in an array along with its square value.",
+      "tips": [
+        "Use forEach for readability and simplicity.",
+        "Use traditional loops when you need index control or to break early."
+      ]
+    },
+    {
+      "id": 30,
+      "title": "Transforming Arrays (map, filter, reduce)",
+      "content": "The map(), filter(), and reduce() methods are powerful functional tools for transforming arrays. map() creates a new array by applying a function to each element. filter() creates a new array with elements that pass a test. reduce() combines all elements into a single result.",
+      "examples": [
+        {
+          "code": "const numbers = [1, 2, 3, 4, 5];\n\nconst doubled = numbers.map(n => n * 2);\nconst evens = numbers.filter(n => n % 2 === 0);\nconst sum = numbers.reduce((acc, n) => acc + n, 0);\n\nconsole.log(doubled); // [2,4,6,8,10]\nconsole.log(evens);   // [2,4]\nconsole.log(sum);     // 15",
+          "description": "Using map, filter, and reduce for array transformation."
+        }
+      ],
+      "quiz": [
+        {
+          "question": "Which method creates a new array without modifying the original?",
+          "options": ["map()", "push()", "splice()", "pop()"],
+          "answer": "map()",
+          "hint": "It’s commonly used for transforming arrays.",
+          "explanation": "The map() method applies a function to each element and returns a new array, leaving the original unchanged."
+        }
+      ],
+      "challenge": "Use reduce() to calculate the product of all numbers in an array.",
+      "tips": [
+        "map() is great for applying transformations.",
+        "filter() helps extract elements meeting certain conditions.",
+        "reduce() is ideal for computing totals or combining values."
+      ]
+    },
+    {
+      "id": 31,
+      "title": "Searching and Sorting Arrays",
+      "content": "To find elements in arrays, use methods like indexOf(), find(), and includes(). For sorting, JavaScript provides the sort() method, which sorts elements as strings by default but can be customized using a compare function.",
+      "examples": [
+        {
+          "code": "const nums = [10, 2, 30, 25];\nconsole.log(nums.indexOf(30)); // 2\nconsole.log(nums.includes(25)); // true\n\n// Sorting numerically\nnums.sort((a, b) => a - b);\nconsole.log(nums); // [2,10,25,30]",
+          "description": "Finding and sorting numbers in an array using built-in methods."
+        }
+      ],
+      "quiz": [
+        {
+          "question": "Which method checks if an array contains a specific element?",
+          "options": ["indexOf()", "find()", "includes()", "has()"],
+          "answer": "includes()",
+          "hint": "Introduced in ES6 for checking existence easily.",
+          "explanation": "The includes() method returns true if an element is found in the array, and false otherwise."
+        }
+      ],
+      "challenge": "Create an array of numbers and sort it in descending order using sort() with a compare function.",
+      "tips": [
+        "Use find() when you need the actual element, not its index.",
+        "Always provide a compare function for numeric sorting."
+      ]
+    },
+    {
+      "id": 32,
+      "title": "Multidimensional Arrays and Spread Operator",
+      "content": "Arrays can contain other arrays, forming multidimensional structures. You can use nested loops to access elements. The spread operator (...) is useful for copying or merging arrays easily.",
+      "examples": [
+        {
+          "code": "const matrix = [\n  [1, 2, 3],\n  [4, 5, 6],\n  [7, 8, 9]\n];\nconsole.log(matrix[1][2]); // 6\n\n// Spread operator\nconst nums1 = [1, 2];\nconst nums2 = [3, 4];\nconst combined = [...nums1, ...nums2];\nconsole.log(combined); // [1,2,3,4]",
+          "description": "Accessing a 2D array and combining arrays with the spread operator."
+        }
+      ],
+      "quiz": [
+        {
+          "question": "What does the spread operator (...) do when used in arrays?",
+          "options": [
+            "Repeats array elements",
+            "Copies and expands elements",
+            "Removes duplicates",
+            "Merges objects only"
+          ],
+          "answer": "Copies and expands elements",
+          "hint": "It ‘spreads’ out elements from one array into another.",
+          "explanation": "The spread operator allows an iterable like an array to be expanded into individual elements."
+        }
+      ],
+      "challenge": "Create a 2D array representing 3x3 grid numbers and print all elements using nested loops.",
+      "tips": [
+        "Multidimensional arrays are great for tables or grids.",
+        "Use the spread operator for quick array copying or merging.",
+        "Be careful—nested arrays are still references, not deep copies."
+      ]
+    }
+  ]
+},
+{
+  "section": 7,
+  "title": "🧱 Objects in JavaScript",
+  "lessons": [
+    {
+      "id": 33,
+      "title": "Introduction to Objects",
+      "content": "Objects in JavaScript are collections of key–value pairs. They allow you to store structured data and represent real-world entities like users, products, or settings. Each property has a key (name) and a value, which can be any data type — even another object or function.",
+      "examples": [
+        {
+          "code": "const user = {\n  name: 'Ali',\n  age: 25,\n  isStudent: true\n};\nconsole.log(user.name); // Ali\nconsole.log(user['age']); // 25",
+          "description": "Creating an object and accessing its properties using dot and bracket notation."
+        }
+      ],
+      "quiz": [
+        {
+          "question": "Which of the following best describes an object in JavaScript?",
+          "options": ["An ordered list of elements", "A collection of key–value pairs", "A function definition", "A primitive data type"],
+          "answer": "A collection of key–value pairs",
+          "hint": "Think about how data is stored and accessed using keys.",
+          "explanation": "Objects store related data as properties in the form of key–value pairs, making them useful for representing entities."
+        }
+      ],
+      "challenge": "Create an object called 'book' with properties title, author, and year. Log each property to the console.",
+      "tips": [
+        "Use dot notation for direct access (obj.key).",
+        "Bracket notation is useful when keys have spaces or dynamic names."
+      ]
+    },
+    {
+      "id": 34,
+      "title": "Adding, Updating, and Deleting Properties",
+      "content": "You can dynamically modify objects by adding, updating, or removing properties. Use dot or bracket notation to add or update, and the delete keyword to remove properties.",
+      "examples": [
+        {
+          "code": "const car = { brand: 'Toyota', year: 2020 };\ncar.model = 'Corolla'; // add property\ncar.year = 2022; // update property\ndelete car.brand; // remove property\nconsole.log(car); // { year: 2022, model: 'Corolla' }",
+          "description": "Adding, updating, and deleting object properties dynamically."
+        }
+      ],
+      "quiz": [
+        {
+          "question": "Which keyword is used to remove a property from an object?",
+          "options": ["remove", "delete", "clear", "unset"],
+          "answer": "delete",
+          "hint": "This keyword permanently removes a property from an object.",
+          "explanation": "The delete keyword removes a property from an object entirely, freeing up memory and making it undefined."
+        }
+      ],
+      "challenge": "Create an object called 'student', add a property 'grade', then update it and finally delete the 'grade' property.",
+      "tips": [
+        "Adding properties doesn’t require predefined structure.",
+        "Use delete sparingly — it can affect performance in large apps."
+      ]
+    },
+    {
+      "id": 35,
+      "title": "Nested Objects",
+      "content": "Objects can contain other objects as values, creating nested structures. You can access nested properties using chained dot notation or bracket syntax.",
+      "examples": [
+        {
+          "code": "const person = {\n  name: 'Sara',\n  address: {\n    city: 'Lahore',\n    zip: 54000\n  }\n};\nconsole.log(person.address.city); // Lahore",
+          "description": "Defining and accessing nested object properties."
+        }
+      ],
+      "quiz": [
+        {
+          "question": "How do you access the 'zip' property in the example above?",
+          "options": ["person.zip", "person['zip']", "person.address.zip", "address.zip"],
+          "answer": "person.address.zip",
+          "hint": "Follow the hierarchy using dot notation.",
+          "explanation": "Nested properties are accessed by chaining property names with dots — in this case, person.address.zip."
+        }
+      ],
+      "challenge": "Create a 'company' object that contains a nested 'employee' object with properties name and role. Log both properties.",
+      "tips": [
+        "Deeply nested objects can make code harder to maintain.",
+        "Consider destructuring for cleaner access to nested data."
+      ]
+    },
+    {
+      "id": 36,
+      "title": "Looping Through Objects",
+      "content": "Unlike arrays, objects aren’t directly iterable. To loop through them, you can use for...in or Object.keys(), Object.values(), and Object.entries() to get keys, values, or both.",
+      "examples": [
+        {
+          "code": "const user = { name: 'Ali', age: 25, city: 'Karachi' };\n\nfor (let key in user) {\n  console.log(key, user[key]);\n}\n\nObject.keys(user).forEach(key => console.log(key, user[key]));",
+          "description": "Different methods to iterate over object properties."
+        }
+      ],
+      "quiz": [
+        {
+          "question": "Which method returns an array of all keys in an object?",
+          "options": ["Object.values()", "Object.keys()", "Object.entries()", "for...in"],
+          "answer": "Object.keys()",
+          "hint": "It returns just the property names, not the values.",
+          "explanation": "Object.keys() returns an array of all property names (keys) of a given object."
+        }
+      ],
+      "challenge": "Write a loop that prints all keys and values from an object using Object.entries().",
+      "tips": [
+        "Use for...in for simplicity, but Object.keys() offers better control.",
+        "Combine Object.entries() with destructuring for clean loops."
+      ]
+    },
+    {
+      "id": 37,
+      "title": "The 'this' Keyword and Object Methods",
+      "content": "The 'this' keyword refers to the object that owns the current code. In methods, it points to the object itself. This allows functions inside objects to access other properties of the same object.",
+      "examples": [
+        {
+          "code": "const user = {\n  name: 'Ahmed',\n  greet() {\n    console.log(`Hello, my name is ${this.name}`);\n  }\n};\nuser.greet(); // Hello, my name is Ahmed",
+          "description": "Using 'this' inside an object method to reference its properties."
+        }
+      ],
+      "quiz": [
+        {
+          "question": "What does 'this' refer to inside an object method?",
+          "options": ["The global window object", "The current object", "The parent function", "Undefined"],
+          "answer": "The current object",
+          "hint": "It refers to the object that owns the method being executed.",
+          "explanation": "Inside an object method, 'this' refers to the object that contains the method, allowing access to its other properties."
+        }
+      ],
+      "challenge": "Create an object called 'player' with properties 'name' and 'score' and a method 'display' that logs both using 'this'.",
+      "tips": [
+        "Arrow functions do not have their own 'this' binding.",
+        "Avoid using 'this' in nested functions unless properly bound."
+      ]
+    },
+    {
+      "id": 38,
+      "title": "JSON and Object Conversion",
+      "content": "JSON (JavaScript Object Notation) is a lightweight data format used for exchanging data between client and server. You can convert objects to JSON strings using JSON.stringify() and back using JSON.parse().",
+      "examples": [
+        {
+          "code": "const user = { name: 'Ali', age: 25 };\nconst jsonStr = JSON.stringify(user);\nconsole.log(jsonStr); // '{\"name\":\"Ali\",\"age\":25}'\n\nconst parsed = JSON.parse(jsonStr);\nconsole.log(parsed.name); // Ali",
+          "description": "Converting an object to a JSON string and back using JSON methods."
+        }
+      ],
+      "quiz": [
+        {
+          "question": "Which method converts a JSON string back into an object?",
+          "options": ["JSON.stringify()", "JSON.parse()", "JSON.objectify()", "JSON.convert()"],
+          "answer": "JSON.parse()",
+          "hint": "Think of the opposite of stringify.",
+          "explanation": "JSON.parse() takes a JSON string and converts it back into a JavaScript object."
+        }
+      ],
+      "challenge": "Create an object, convert it into a JSON string, store it in a variable, then parse it back and log the result.",
+      "tips": [
+        "JSON keys and string values must be wrapped in double quotes.",
+        "JSON is used for APIs, data storage, and configuration files."
+      ]
+    }
+  ]
+},
+{
+  "section": 8,
+  "title": "⚙️ DOM Manipulation",
+  "lessons": [
+    {
+      "id": 39,
+      "title": "Introduction to the DOM",
+      "content": "The DOM (Document Object Model) is a programming interface that represents an HTML document as a tree of nodes. It allows JavaScript to interact with and change HTML and CSS dynamically — such as updating content, styles, or structure.",
+      "examples": [
+        {
+          "code": "<p id='demo'>Hello</p>\n<script>\n  const element = document.getElementById('demo');\n  console.log(element.textContent); // Hello\n</script>",
+          "description": "Accessing an HTML element using the DOM and printing its content."
+        }
+      ],
+      "quiz": [
+        {
+          "question": "What does DOM stand for?",
+          "options": ["Document Object Module", "Data Object Model", "Document Object Model", "Dynamic Output Model"],
+          "answer": "Document Object Model",
+          "hint": "It’s the structure that represents an HTML document as objects.",
+          "explanation": "DOM stands for Document Object Model — a tree-like representation of web pages that JavaScript can modify."
+        }
+      ],
+      "challenge": "Create an HTML page with a paragraph and use JavaScript to log its text to the console.",
+      "tips": [
+        "Think of the DOM as a bridge between HTML and JavaScript.",
+        "Every element on a web page is a node in the DOM tree."
+      ]
+    },
+    {
+      "id": 40,
+      "title": "Selecting Elements",
+      "content": "JavaScript offers several methods to select elements from the DOM. Common ones include getElementById(), getElementsByClassName(), getElementsByTagName(), querySelector(), and querySelectorAll().",
+      "examples": [
+        {
+          "code": "<h2 class='title'>Hello</h2>\n<script>\n  const title = document.querySelector('.title');\n  console.log(title.textContent);\n</script>",
+          "description": "Using querySelector() to select an element by class name."
+        }
+      ],
+      "quiz": [
+        {
+          "question": "Which method returns the first element that matches a CSS selector?",
+          "options": ["getElementById()", "getElementsByClassName()", "querySelector()", "querySelectorAll()"],
+          "answer": "querySelector()",
+          "hint": "It’s the modern method similar to CSS selectors.",
+          "explanation": "querySelector() returns the first element that matches a specified CSS selector, while querySelectorAll() returns all matches."
+        }
+      ],
+      "challenge": "Select an element by its ID and change its color to red using JavaScript.",
+      "tips": [
+        "querySelector() works with CSS-like syntax for flexibility.",
+        "Use querySelectorAll() when selecting multiple elements."
+      ]
+    },
+    {
+      "id": 41,
+      "title": "Changing Content and Styles",
+      "content": "Once you have selected an element, you can modify its content and styles dynamically. Use textContent, innerHTML, or style properties to make changes in real-time.",
+      "examples": [
+        {
+          "code": "<p id='info'>Old Text</p>\n<script>\n  const p = document.getElementById('info');\n  p.textContent = 'New Text';\n  p.style.color = 'blue';\n</script>",
+          "description": "Updating text and style of an HTML element."
+        }
+      ],
+      "quiz": [
+        {
+          "question": "Which property changes an element’s text without affecting HTML tags?",
+          "options": ["innerHTML", "textContent", "outerHTML", "value"],
+          "answer": "textContent",
+          "hint": "It only deals with text, not markup.",
+          "explanation": "textContent safely replaces only the text inside an element, while innerHTML can render HTML tags."
+        }
+      ],
+      "challenge": "Change the text of a heading to 'Welcome!' and make it green using JavaScript.",
+      "tips": [
+        "Use innerHTML when you need to insert HTML tags.",
+        "Use style.propertyName for inline CSS updates."
+      ]
+    },
+    {
+      "id": 42,
+      "title": "Handling Events",
+      "content": "Events are actions like clicks, mouseovers, or keypresses that occur in the browser. You can use event listeners to run functions when these events happen.",
+      "examples": [
+        {
+          "code": "<button id='btn'>Click Me</button>\n<script>\n  const btn = document.getElementById('btn');\n  btn.addEventListener('click', () => {\n    alert('Button clicked!');\n  });\n</script>",
+          "description": "Attaching a click event listener to a button."
+        }
+      ],
+      "quiz": [
+        {
+          "question": "Which method adds an event listener to an element?",
+          "options": ["onClick()", "addEventListener()", "attachEvent()", "listenEvent()"],
+          "answer": "addEventListener()",
+          "hint": "It’s the standard modern method for event handling.",
+          "explanation": "addEventListener() lets you register event handlers for any valid DOM event, ensuring clean and flexible code."
+        }
+      ],
+      "challenge": "Create a button that changes the background color of the page when clicked.",
+      "tips": [
+        "Use removeEventListener() to detach listeners when not needed.",
+        "Arrow functions are ideal for short event callbacks."
+      ]
+    },
+    {
+      "id": 43,
+      "title": "Creating and Removing Elements",
+      "content": "JavaScript can create, insert, and remove elements from the DOM dynamically using methods like createElement(), appendChild(), and remove().",
+      "examples": [
+        {
+          "code": "<div id='container'></div>\n<script>\n  const div = document.getElementById('container');\n  const newEl = document.createElement('p');\n  newEl.textContent = 'Dynamically Added!';\n  div.appendChild(newEl);\n</script>",
+          "description": "Creating a new element and adding it to the DOM."
+        }
+      ],
+      "quiz": [
+        {
+          "question": "Which method is used to create a new HTML element?",
+          "options": ["appendChild()", "createElement()", "insert()", "new Element()"],
+          "answer": "createElement()",
+          "hint": "It’s the first step before appending elements to the DOM.",
+          "explanation": "createElement() creates a new DOM element node that you can then modify and insert into the document."
+        }
+      ],
+      "challenge": "Create a button that adds a new paragraph when clicked, and another button that removes it.",
+      "tips": [
+        "Always append created elements to existing DOM nodes.",
+        "Use remove() to delete an element directly."
+      ]
+    },
+    {
+      "id": 44,
+      "title": "Mini Project: Interactive To-Do List",
+      "content": "Now let’s combine everything you’ve learned! In this mini project, you’ll build a simple to-do list app that allows users to add and remove tasks dynamically using DOM methods and event listeners.",
+      "examples": [
+        {
+          "code": "<input id='task' placeholder='New task'> <button id='add'>Add</button>\n<ul id='list'></ul>\n<script>\n  const input = document.getElementById('task');\n  const btn = document.getElementById('add');\n  const list = document.getElementById('list');\n\n  btn.addEventListener('click', () => {\n    const li = document.createElement('li');\n    li.textContent = input.value;\n    list.appendChild(li);\n    input.value = '';\n\n    li.addEventListener('click', () => li.remove());\n  });\n</script>",
+          "description": "Simple interactive to-do list with add and remove functionality."
+        }
+      ],
+      "quiz": [
+        {
+          "question": "Which DOM concept is used to add new tasks to the to-do list?",
+          "options": ["innerHTML", "createElement() and appendChild()", "alert()", "querySelector() only"],
+          "answer": "createElement() and appendChild()",
+          "hint": "You dynamically generate and insert new nodes.",
+          "explanation": "To add new tasks, you create new list items using createElement() and attach them to the parent with appendChild()."
+        }
+      ],
+      "challenge": "Enhance the to-do list by adding a delete button next to each task instead of clicking the text to remove it.",
+      "tips": [
+        "Use event delegation for efficiency when managing many list items.",
+        "Always clear input fields after adding tasks."
+      ]
+    }
+  ]
+},{
+  "section": 9,
+  "title": "🧭 ES6+ Modern JavaScript",
+  "lessons": [
+    {
+      "id": 45,
+      "title": "Let, Const, and Block Scope",
+      "content": "ES6 introduced let and const for declaring variables with block scope. Unlike var, which is function-scoped, let and const respect block boundaries (like inside if or loops). const is used for constants whose reference cannot be reassigned.",
+      "examples": [
+        {
+          "code": "{\n  let x = 10;\n  const y = 20;\n  var z = 30;\n}\nconsole.log(typeof z); // 'number'\nconsole.log(typeof x); // 'undefined' because block-scoped",
+          "description": "let and const are block-scoped, var is not."
+        }
+      ],
+      "quiz": [
+        {
+          "question": "What’s the main difference between var and let?",
+          "options": [
+            "var is block-scoped, let is function-scoped",
+            "let is block-scoped, var is function-scoped",
+            "Both are block-scoped",
+            "No difference"
+          ],
+          "answer": "let is block-scoped, var is function-scoped",
+          "hint": "Think about visibility inside curly braces.",
+          "explanation": "Variables declared with let are only accessible inside the block they’re defined in, unlike var which leaks outside."
+        }
+      ],
+      "challenge": "Create a loop using let and another with var, and log the index inside and outside to see scoping differences.",
+      "tips": [
+        "Always prefer const for values that won’t change.",
+        "Use let instead of var to avoid accidental scope leaks."
+      ]
+    },
+    {
+      "id": 46,
+      "title": "Template Literals and String Interpolation",
+      "content": "Template literals use backticks (`) instead of quotes and allow embedding expressions using ${}. They can also span multiple lines, making string formatting cleaner and more readable.",
+      "examples": [
+        {
+          "code": "const name = 'Alex';\nconst age = 25;\nconsole.log(`My name is ${name} and I am ${age} years old.`);",
+          "description": "Using template literals for interpolation."
+        }
+      ],
+      "quiz": [
+        {
+          "question": "What symbol is used for template literals?",
+          "options": ["'", "\"", "`", "~"],
+          "answer": "`",
+          "hint": "It’s located above the Tab key on most keyboards.",
+          "explanation": "Template literals use backticks (`) instead of single or double quotes, enabling expression embedding and multiline strings."
+        }
+      ],
+      "challenge": "Write a sentence using a template literal that includes two variables for name and favorite food.",
+      "tips": [
+        "Use ${} to inject variables directly into strings.",
+        "Great for generating HTML templates dynamically."
+      ]
+    },
+    {
+      "id": 47,
+      "title": "Destructuring in ES6",
+      "content": "Destructuring allows you to extract values from arrays or properties from objects into separate variables, making code more concise and readable.",
+      "examples": [
+        {
+          "code": "const user = { name: 'Sara', age: 30 };\nconst { name, age } = user;\nconsole.log(name, age); // Sara 30",
+          "description": "Extracting object properties using destructuring."
+        }
+      ],
+      "quiz": [
+        {
+          "question": "How do you destructure the first two elements from an array?",
+          "options": [
+            "let [a, b] = array;",
+            "let {a, b} = array;",
+            "let a = array[0], b = array[1];",
+            "array.destructure(a, b)"
+          ],
+          "answer": "let [a, b] = array;",
+          "hint": "Think about using brackets for arrays.",
+          "explanation": "Array destructuring uses square brackets [ ] to unpack elements into variables."
+        }
+      ],
+      "challenge": "Use object destructuring to extract ‘title’ and ‘author’ from a book object.",
+      "tips": [
+        "You can rename variables: const {name: userName} = user;",
+        "Use default values in destructuring: const {age = 18} = user;"
+      ]
+    },
+    {
+      "id": 48,
+      "title": "Spread and Rest Operators",
+      "content": "The spread operator (...) expands arrays or objects, while the rest operator collects multiple elements into a single array parameter. Context determines which role it plays.",
+      "examples": [
+        {
+          "code": "const nums = [1, 2, 3];\nconst more = [...nums, 4, 5];\nconsole.log(more); // [1,2,3,4,5]\n\nfunction sum(...args) {\n  return args.reduce((a,b) => a+b, 0);\n}\nconsole.log(sum(1,2,3)); // 6",
+          "description": "Using spread to expand and rest to gather arguments."
+        }
+      ],
+      "quiz": [
+        {
+          "question": "Which operator is used to spread elements in arrays or objects?",
+          "options": ["...", "=>", "??", "||"],
+          "answer": "...",
+          "hint": "It looks like three dots.",
+          "explanation": "The spread operator (...) expands elements of arrays or objects, while in function parameters, it acts as the rest operator."
+        }
+      ],
+      "challenge": "Combine two arrays using the spread operator and write a function that sums any number of inputs using rest.",
+      "tips": [
+        "Spread helps clone arrays: const copy = [...arr];",
+        "Rest is useful in functions with unknown argument counts."
+      ]
+    },
+    {
+      "id": 49,
+      "title": "Modules and Import/Export",
+      "content": "Modules in JavaScript help organize code by splitting it into separate files. You can export variables, functions, or classes from one file and import them into another using export and import statements.",
+      "examples": [
+        {
+          "code": "// math.js\nexport function add(a,b){ return a+b; }\n\n// main.js\nimport { add } from './math.js';\nconsole.log(add(5,3)); // 8",
+          "description": "Exporting and importing a function in ES6 modules."
+        }
+      ],
+      "quiz": [
+        {
+          "question": "Which keyword is used to bring in functionality from another file?",
+          "options": ["require", "import", "include", "fetch"],
+          "answer": "import",
+          "hint": "It’s the modern replacement for CommonJS require().",
+          "explanation": "import is used in ES6 modules to bring exported items from another file into the current one."
+        }
+      ],
+      "challenge": "Create two JS files: one exporting a greeting function and another importing and executing it.",
+      "tips": [
+        "Use default exports for single main functions or classes.",
+        "Remember to add type='module' in script tags when using imports in browsers."
+      ]
+    }
+  ]
+},
+{
+  "section": 10,
+  "title": "🌐 Asynchronous JavaScript",
+  "lessons": [
+    {
+      "id": 50,
+      "title": "Synchronous vs Asynchronous JavaScript",
+      "content": "JavaScript executes code line by line (synchronously) by default. However, some operations like API calls or timers take time. Asynchronous programming allows these tasks to run in the background, preventing the main thread from blocking.",
+      "examples": [
+        {
+          "code": "console.log('Start');\nsetTimeout(() => console.log('Async Task Complete'), 2000);\nconsole.log('End');",
+          "description": "Demonstrating asynchronous behavior — 'End' logs before the async task completes."
+        }
+      ],
+      "quiz": [
+        {
+          "question": "Why is asynchronous programming important in JavaScript?",
+          "options": [
+            "It slows down the execution",
+            "It blocks other operations",
+            "It prevents blocking and keeps the app responsive",
+            "It makes all code run at once"
+          ],
+          "answer": "It prevents blocking and keeps the app responsive",
+          "hint": "Think about what happens when an API call takes time.",
+          "explanation": "Asynchronous programming allows JavaScript to handle long-running tasks without freezing the browser or blocking user interactions."
+        }
+      ],
+      "challenge": "Create a small script that prints 'Downloading...' immediately, waits 2 seconds using setTimeout, and then prints 'Download complete!'.",
+      "tips": [
+        "Use asynchronous patterns for network calls, timers, and file I/O.",
+        "JavaScript uses a single-threaded event loop to manage async tasks."
+      ]
+    },
+    {
+      "id": 51,
+      "title": "Callbacks and Callback Hell",
+      "content": "A callback is a function passed as an argument to another function and executed after a task completes. While useful, nested callbacks can become hard to read and maintain — this problem is known as 'callback hell'.",
+      "examples": [
+        {
+          "code": "function fetchData(callback) {\n  setTimeout(() => {\n    console.log('Data fetched');\n    callback();\n  }, 1000);\n}\n\nfetchData(() => console.log('Processing data...'));",
+          "description": "Example showing how a callback function runs after data fetching."
+        }
+      ],
+      "quiz": [
+        {
+          "question": "What is 'callback hell'?",
+          "options": [
+            "An error type in JavaScript",
+            "Nested callbacks making code difficult to read",
+            "A synchronous error handling method",
+            "A problem caused by promises"
+          ],
+          "answer": "Nested callbacks making code difficult to read",
+          "hint": "It happens when multiple callbacks depend on each other.",
+          "explanation": "Callback hell refers to deeply nested callback functions that make code messy and hard to maintain, often seen in older asynchronous code."
+        }
+      ],
+      "challenge": "Write a nested callback example where three async steps (connect, fetch, display) occur sequentially — then refactor it to use promises.",
+      "tips": [
+        "Always name your callback functions for clarity.",
+        "Consider using Promises or async/await to avoid callback hell."
+      ]
+    },
+    {
+      "id": 52,
+      "title": "Promises in JavaScript",
+      "content": "Promises represent the eventual completion or failure of an asynchronous operation. They provide a cleaner syntax to handle async results using .then() and .catch() instead of deeply nested callbacks.",
+      "examples": [
+        {
+          "code": "const fetchUser = new Promise((resolve, reject) => {\n  setTimeout(() => resolve('User data received'), 1000);\n});\n\nfetchUser\n  .then(data => console.log(data))\n  .catch(err => console.error(err));",
+          "description": "Basic Promise example with resolve and then for success handling."
+        }
+      ],
+      "quiz": [
+        {
+          "question": "Which method runs when a Promise resolves successfully?",
+          "options": [".done()", ".then()", ".catch()", ".finally()"],
+          "answer": ".then()",
+          "hint": "It handles success values from Promises.",
+          "explanation": ".then() is used to handle resolved values of a Promise, while .catch() handles errors."
+        }
+      ],
+      "challenge": "Create a Promise that resolves after 2 seconds with the message 'Success!', and use .then() to log the message.",
+      "tips": [
+        "Promises have three states: pending, fulfilled, and rejected.",
+        "Use .finally() to execute cleanup code regardless of outcome."
+      ]
+    },
+    {
+      "id": 53,
+      "title": "Async/Await Syntax",
+      "content": "Async/await provides a modern and cleaner way to handle asynchronous code. The 'async' keyword defines an asynchronous function, and 'await' pauses execution until a Promise resolves, making code look synchronous.",
+      "examples": [
+        {
+          "code": "async function getData() {\n  const result = await new Promise(resolve => setTimeout(() => resolve('Data loaded!'), 1500));\n  console.log(result);\n}\ngetData();",
+          "description": "Using async/await to handle asynchronous operations smoothly."
+        }
+      ],
+      "quiz": [
+        {
+          "question": "What does 'await' do in JavaScript?",
+          "options": [
+            "Stops the entire program",
+            "Pauses the async function until a Promise resolves",
+            "Turns sync code into async code",
+            "Handles rejected Promises automatically"
+          ],
+          "answer": "Pauses the async function until a Promise resolves",
+          "hint": "It can only be used inside async functions.",
+          "explanation": "await pauses execution inside an async function until the Promise settles, resuming with its resolved value."
+        }
+      ],
+      "challenge": "Write an async function that waits 3 seconds and then logs 'Task complete!' using await and setTimeout wrapped in a Promise.",
+      "tips": [
+        "You can combine async/await with try...catch for error handling.",
+        "Async/await makes asynchronous code easier to debug."
+      ]
+    },
+    {
+      "id": 54,
+      "title": "Fetch API and Real-world Data Fetching",
+      "content": "The Fetch API allows you to make network requests and work with REST APIs easily. It returns a Promise that resolves to a Response object, which can be converted into JSON or text.",
+      "examples": [
+        {
+          "code": "async function loadUsers() {\n  try {\n    const response = await fetch('https://jsonplaceholder.typicode.com/users');\n    const users = await response.json();\n    console.log(users);\n  } catch (error) {\n    console.error('Error fetching users:', error);\n  }\n}\nloadUsers();",
+          "description": "Fetching and displaying user data from a public API using async/await."
+        }
+      ],
+      "quiz": [
+        {
+          "question": "What does fetch() return?",
+          "options": ["A Promise", "A Response object", "A callback", "A JSON object"],
+          "answer": "A Promise",
+          "hint": "It must be handled using .then() or await.",
+          "explanation": "The Fetch API returns a Promise that resolves with a Response object, which can then be processed (e.g., converted to JSON)."
+        }
+      ],
+      "challenge": "Use the Fetch API to get data from an API endpoint and display it in the console. Handle errors gracefully using try...catch.",
+      "tips": [
+        "Always check response.ok to ensure the request was successful.",
+        "Use await response.json() to parse JSON data from a response."
+      ]
+    }
+  ]
+}
+
+
+
+
+
+
+
+  ]
+}
+
+
+
+
+
+
+  
+
