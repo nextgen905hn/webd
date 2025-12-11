@@ -48,13 +48,13 @@ jobs:
       - name: Make gradlew executable
         run: chmod +x android/gradlew
 
-      # Build Release APK
+      
+      # 7️⃣ Make gradlew executable & build APK
       - name: Build Android Release
         run: |
-           cd android
-           chmod +x ./gradlew
+          cd android
+          chmod +x ./gradlew
           ./gradlew assembleRelease --stacktrace
-
       # Upload APK as artifact
       - name: Upload APK
         uses: actions/upload-artifact@v4
