@@ -29,9 +29,14 @@ jobs:
       - name: Install dependencies
         run: yarn install
 
-      # FIXED!! correct SDK setup
       - name: Setup Android SDK
-        uses: android-actions/setup-android@v2
+        uses: android-actions/setup-android@v3
+        with:
+          api-level: 34
+          build-tools: 34.0.0
+
+      - name: Create local.properties
+        run: echo "sdk.dir=$ANDROID_HOME" > android/local.properties
 
       - name: Make gradlew executable
         run: chmod +x android/gradlew
