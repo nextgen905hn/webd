@@ -32,9 +32,7 @@ android {
             keyAlias 'androiddebugkey'
             keyPassword 'android'
         }
-       release {
-        signingConfig null
-    }
+    
     }
 
 
