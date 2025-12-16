@@ -1,0 +1,565 @@
+{
+  "course": "Node.js Fundamentals",
+  "description": "Master the fundamentals of Node.js — from setup to creating servers, handling files, events, and packages. Learn the event-driven architecture and asynchronous programming model that powers modern back-end development.",
+  "sections": [
+    {
+      "section": 1,
+      "title": "Introduction to Node.js",
+      "description": "Understand what Node.js is, why it’s used for backend development, and how to set up the environment on your system.",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "What is Node.js and Why Use It",
+          "content": "Node.js is a runtime environment that allows you to run JavaScript outside the browser. It’s built on Chrome’s V8 engine and designed for scalable network applications using an event-driven, non-blocking I/O model.",
+          "examples": [
+            {
+              "code": "console.log('Hello from Node.js!');",
+              "description": "A simple Node.js script that logs a message to the console."
+            },
+            {
+              "code": "// Checking Node.js version\nnode -v",
+              "description": "Use this command to verify your Node.js installation and version."
+            }
+          ],
+          "quiz": [
+            {
+              "question": "Which engine powers Node.js?",
+              "options": ["V8", "SpiderMonkey", "Chakra", "Java"],
+              "answer": "V8",
+              "hint": "It’s the same engine that powers Google Chrome.",
+              "explanation": "Node.js is built on the V8 JavaScript engine for fast performance."
+            },
+            {
+              "question": "What makes Node.js suitable for real-time apps?",
+              "options": ["Event-driven architecture", "Blocking I/O", "Multi-threading", "Synchronous execution"],
+              "answer": "Event-driven architecture",
+              "hint": "Node.js uses callbacks and events for scalability.",
+              "explanation": "Node.js handles multiple requests concurrently using an event loop and non-blocking I/O."
+            }
+          ],
+          "challenge": "Write a Node.js script that prints your name and current date to the console.",
+          "tips": [
+            "Node.js is ideal for chat apps, APIs, and streaming services.",
+            "Understand the difference between synchronous and asynchronous code in Node.js."
+          ]
+        },
+        {
+          "id": 2,
+          "title": "Setting Up Node.js Environment",
+          "content": "Install Node.js and npm, verify installation, and learn to run JavaScript files directly from the terminal.",
+          "examples": [
+            {
+              "code": "// Run a script\nnode app.js",
+              "description": "Use the Node command followed by the filename to execute a script."
+            },
+            {
+              "code": "// Check npm version\nnpm -v",
+              "description": "npm (Node Package Manager) comes bundled with Node.js."
+            }
+          ],
+          "quiz": [
+            {
+              "question": "What command runs a Node.js script?",
+              "options": ["node <filename>", "npm start", "run node", "execute <file>"],
+              "answer": "node <filename>",
+              "hint": "It starts with the Node.js runtime.",
+              "explanation": "The `node` command executes JavaScript files in Node.js."
+            },
+            {
+              "question": "Which tool comes bundled with Node.js for managing packages?",
+              "options": ["npm", "yarn", "pip", "composer"],
+              "answer": "npm",
+              "hint": "It’s the official Node.js package manager.",
+              "explanation": "npm helps install, update, and manage dependencies for Node.js projects."
+            }
+          ],
+          "challenge": "Install Node.js, create a simple JavaScript file, and run it using the terminal.",
+          "tips": [
+            "Use nvm (Node Version Manager) to manage multiple Node.js versions.",
+            "Always verify installation using node -v and npm -v."
+          ]
+        }
+      ]
+    },
+    {
+      "section": 2,
+      "title": "Node.js Basics",
+      "description": "Learn about modules, global objects, and how the event loop enables non-blocking I/O in Node.js.",
+      "lessons": [
+        {
+          "id": 3,
+          "title": "Modules and require/import",
+          "content": "Modules help organize code into reusable files. Node.js provides core modules like fs, http, and path. You can also create custom modules.",
+          "examples": [
+            {
+              "code": "// customModule.js\nmodule.exports = function() {\n  console.log('Hello from custom module');\n};",
+              "description": "Creating and exporting a simple custom module."
+            },
+            {
+              "code": "// app.js\nconst greet = require('./customModule');\ngreet();",
+              "description": "Importing and using a custom module with require()."
+            }
+          ],
+          "quiz": [
+            {
+              "question": "Which function is used to import modules?",
+              "options": ["require()", "import()", "include()", "use()"],
+              "answer": "require()",
+              "hint": "This is a CommonJS syntax used in Node.js.",
+              "explanation": "Node.js uses require() to import modules in CommonJS format."
+            },
+            {
+              "question": "Which of these is a core Node.js module?",
+              "options": ["fs", "express", "lodash", "axios"],
+              "answer": "fs",
+              "hint": "Used for file system operations.",
+              "explanation": "fs is a built-in Node.js module for handling file system tasks."
+            }
+          ],
+          "challenge": "Create two modules — one that exports a greeting and another that imports and uses it.",
+          "tips": [
+            "Use module.exports to export objects or functions.",
+            "Use require() to import CommonJS modules."
+          ]
+        },
+        {
+          "id": 4,
+          "title": "Global Objects in Node.js",
+          "content": "Node.js provides several global objects like __dirname, __filename, and process that help interact with the environment.",
+          "examples": [
+            {
+              "code": "console.log(__dirname);\nconsole.log(__filename);",
+              "description": "Prints the current directory and file name."
+            },
+            {
+              "code": "console.log(process.platform);\nconsole.log(process.version);",
+              "description": "Displays platform and Node.js version details."
+            }
+          ],
+          "quiz": [
+            {
+              "question": "What does __dirname return?",
+              "options": ["Current directory path", "File name", "Root path", "System path"],
+              "answer": "Current directory path",
+              "hint": "It gives the absolute path of the folder.",
+              "explanation": "__dirname returns the absolute path of the folder containing the current file."
+            },
+            {
+              "question": "What object provides environment information in Node.js?",
+              "options": ["process", "global", "module", "exports"],
+              "answer": "process",
+              "hint": "Think about environment variables.",
+              "explanation": "The process object provides info about the environment, command-line arguments, and more."
+            }
+          ],
+          "challenge": "Log all global variables to understand what’s available in Node.js.",
+          "tips": [
+            "Use __dirname and __filename for path resolution.",
+            "process.env helps store sensitive info securely with environment variables."
+          ]
+        },
+        {
+          "id": 5,
+          "title": "Event Loop & Asynchronous JS",
+          "content": "The event loop allows Node.js to perform non-blocking I/O operations. It handles asynchronous tasks using callbacks, promises, or async/await.",
+          "examples": [
+            {
+              "code": "setTimeout(() => console.log('Executed later'), 1000);\nconsole.log('Executed first');",
+              "description": "Demonstrates asynchronous execution order."
+            },
+            {
+              "code": "const fs = require('fs');\nfs.readFile('file.txt', 'utf8', (err, data) => console.log(data));\nconsole.log('Reading file asynchronously');",
+              "description": "Non-blocking file read example."
+            }
+          ],
+          "quiz": [
+            {
+              "question": "What enables Node.js to handle multiple requests efficiently?",
+              "options": ["Event Loop", "Threads", "Blocking I/O", "Schedulers"],
+              "answer": "Event Loop",
+              "hint": "It uses a single-threaded loop.",
+              "explanation": "The event loop allows Node.js to handle multiple asynchronous operations without blocking the main thread."
+            },
+            {
+              "question": "Which is NOT an asynchronous method in Node.js?",
+              "options": ["fs.readFileSync", "fs.readFile", "setTimeout", "process.nextTick"],
+              "answer": "fs.readFileSync",
+              "hint": "Synchronous methods block the event loop.",
+              "explanation": "readFileSync is a blocking call, unlike readFile or setTimeout."
+            }
+          ],
+          "challenge": "Write a program that simulates delayed API responses using setTimeout.",
+          "tips": [
+            "Use async/await for readable asynchronous code.",
+            "Avoid blocking the event loop in production apps."
+          ]
+        }
+      ]
+    },
+     {
+      "section": 3,
+      "title": "File System & Streams",
+      "description": "Learn how to read, write, update, and delete files using Node.js fs module. Understand streams and buffers to handle large files efficiently.",
+      "lessons": [
+        {
+          "id": 6,
+          "title": "File Operations with fs Module",
+          "content": "Node.js fs module allows you to perform file operations like reading, writing, updating, and deleting files asynchronously or synchronously.",
+          "examples": [
+            {
+              "code": "const fs = require('fs');\n\n// Write file\nfs.writeFile('example.txt', 'Hello Node.js', (err) => {\n  if (err) throw err;\n  console.log('File created!');\n});",
+              "description": "Create a new file asynchronously with fs.writeFile."
+            },
+            {
+              "code": "fs.readFile('example.txt', 'utf8', (err, data) => {\n  if (err) throw err;\n  console.log('File content:', data);\n});",
+              "description": "Read the content of a file asynchronously."
+            }
+          ],
+          "quiz": [
+            {
+              "question": "Which module is used for file system operations?",
+              "options": ["fs", "http", "path", "os"],
+              "answer": "fs",
+              "hint": "Think about file read/write functionality.",
+              "explanation": "fs module provides methods to handle file operations in Node.js."
+            },
+            {
+              "question": "Which method writes data to a file asynchronously?",
+              "options": ["fs.writeFile", "fs.writeFileSync", "fs.readFile", "fs.appendFileSync"],
+              "answer": "fs.writeFile",
+              "hint": "It’s non-blocking.",
+              "explanation": "fs.writeFile writes files asynchronously, allowing the event loop to continue."
+            }
+          ],
+          "challenge": "Create a script that writes your name to a file, reads it back, and logs the content.",
+          "tips": [
+            "Prefer async methods to avoid blocking the event loop.",
+            "Always handle errors in callbacks or promises."
+          ]
+        },
+        {
+          "id": 7,
+          "title": "Streams and Buffers",
+          "content": "Streams let you read/write data piece by piece, which is useful for large files. Buffers are temporary memory storage for binary data.",
+          "examples": [
+            {
+              "code": "const fs = require('fs');\nconst readStream = fs.createReadStream('largefile.txt', 'utf8');\nreadStream.on('data', chunk => {\n  console.log('Chunk:', chunk);\n});",
+              "description": "Read a large file in chunks using streams."
+            },
+            {
+              "code": "const buf = Buffer.from('Hello Buffer');\nconsole.log(buf.toString());",
+              "description": "Create and use a buffer for binary data."
+            }
+          ],
+          "quiz": [
+            {
+              "question": "Why use streams in Node.js?",
+              "options": ["Handle large files efficiently", "Make synchronous calls", "Replace fs module", "For event handling"],
+              "answer": "Handle large files efficiently",
+              "hint": "Think about memory usage and performance.",
+              "explanation": "Streams allow processing of large files in small chunks without loading everything into memory."
+            },
+            {
+              "question": "What is a buffer?",
+              "options": ["Temporary memory storage", "File path", "Global object", "Event emitter"],
+              "answer": "Temporary memory storage",
+              "hint": "Used for handling binary data.",
+              "explanation": "Buffer is a Node.js object for storing binary data temporarily."
+            }
+          ],
+          "challenge": "Use a read stream to read a large text file and count the total number of lines.",
+          "tips": [
+            "Use 'data' and 'end' events to handle stream reading.",
+            "Always handle 'error' events for streams."
+          ]
+        }
+      ]
+    },
+    {
+      "section": 4,
+      "title": "Events & EventEmitter",
+      "description": "Understand Node.js's EventEmitter to create and listen for events, enabling event-driven programming.",
+      "lessons": [
+        {
+          "id": 8,
+          "title": "Understanding EventEmitter",
+          "content": "EventEmitter allows objects to emit named events and attach listeners for these events.",
+          "examples": [
+            {
+              "code": "const EventEmitter = require('events');\nconst emitter = new EventEmitter();\n\nemitter.on('message', (data) => {\n  console.log('Message received:', data);\n});\n\nemitter.emit('message', 'Hello Events!');",
+              "description": "Create an event emitter and listen to a custom event."
+            }
+          ],
+          "quiz": [
+            {
+              "question": "Which class is used for events in Node.js?",
+              "options": ["EventEmitter", "Emitter", "EventHandler", "NodeEvent"],
+              "answer": "EventEmitter",
+              "hint": "It’s part of Node.js core modules.",
+              "explanation": "EventEmitter allows objects to emit events and register listeners."
+            },
+            {
+              "question": "Which method triggers an event?",
+              "options": ["emit()", "on()", "listen()", "trigger()"],
+              "answer": "emit()",
+              "hint": "It starts with 'e'.",
+              "explanation": "emit() is used to invoke an event and call its listeners."
+            }
+          ],
+          "challenge": "Create a simple event emitter that logs messages whenever a user joins or leaves a chat.",
+          "tips": [
+            "Always remove listeners with removeListener() to prevent memory leaks.",
+            "Use once() for events that should fire only once."
+          ]
+        },
+        {
+          "id": 9,
+          "title": "Practical Example – Event-driven Notifications",
+          "content": "Use EventEmitter to build practical features like logging, notifications, or real-time updates.",
+          "examples": [
+            {
+              "code": "const EventEmitter = require('events');\nconst notification = new EventEmitter();\n\nnotification.on('newMessage', (msg) => {\n  console.log('New message:', msg);\n});\n\nnotification.emit('newMessage', 'You have a new notification!');",
+              "description": "Simulate notifications using EventEmitter."
+            }
+          ],
+          "quiz": [
+            {
+              "question": "Event-driven programming in Node.js relies on?",
+              "options": ["Callbacks and events", "Synchronous loops", "Blocking code", "Thread pools"],
+              "answer": "Callbacks and events",
+              "hint": "Non-blocking execution is key.",
+              "explanation": "Node.js uses events and callbacks to handle asynchronous operations efficiently."
+            }
+          ],
+          "challenge": "Implement a logger that writes messages to the console and a file whenever an event is emitted.",
+          "tips": [
+            "Think in terms of producers and consumers for events.",
+            "Use custom events for modular code."
+          ]
+        }
+      ]
+    },
+    {
+      "section": 5,
+      "title": "Packages & npm",
+      "description": "Learn how to use npm to manage packages, including installing, updating, and exploring popular Node.js modules.",
+      "lessons": [
+        {
+          "id": 10,
+          "title": "Using npm and package.json",
+          "content": "npm allows you to manage dependencies for Node.js projects. package.json keeps track of project metadata and dependencies.",
+          "examples": [
+            {
+              "code": "npm init -y\nnpm install lodash",
+              "description": "Initialize a project and install lodash as a dependency."
+            }
+          ],
+          "quiz": [
+            {
+              "question": "Which file tracks Node.js project dependencies?",
+              "options": ["package.json", "node_modules.json", "config.json", "dependencies.json"],
+              "answer": "package.json",
+              "hint": "It’s created by npm init.",
+              "explanation": "package.json stores project info and dependencies."
+            },
+            {
+              "question": "Which command installs a package?",
+              "options": ["npm install <package>", "npm get <package>", "npm add <package>", "npm fetch <package>"],
+              "answer": "npm install <package>",
+              "hint": "It’s the standard npm install command.",
+              "explanation": "Use npm install to add dependencies to your Node.js project."
+            }
+          ],
+          "challenge": "Create a new Node.js project and install at least two npm packages.",
+          "tips": [
+            "Use --save-dev for development dependencies.",
+            "Keep package.json updated for team collaboration."
+          ]
+        },
+        {
+          "id": 11,
+          "title": "Popular Node.js Packages",
+          "content": "Learn basic usage of popular packages like lodash (utility functions), dotenv (environment variables), and axios (HTTP requests).",
+          "examples": [
+            {
+              "code": "const _ = require('lodash');\nconsole.log(_.shuffle([1,2,3,4]));",
+              "description": "Using lodash to shuffle an array."
+            },
+            {
+              "code": "require('dotenv').config();\nconsole.log(process.env.MY_SECRET);",
+              "description": "Load environment variables using dotenv."
+            }
+          ],
+          "quiz": [
+            {
+              "question": "Which package is used to manage environment variables?",
+              "options": ["dotenv", "axios", "lodash", "express"],
+              "answer": "dotenv",
+              "hint": "It loads variables from a .env file.",
+              "explanation": "dotenv allows storing sensitive information in environment variables."
+            },
+            {
+              "question": "Which package helps with HTTP requests?",
+              "options": ["axios", "fs", "path", "os"],
+              "answer": "axios",
+              "hint": "It’s promise-based.",
+              "explanation": "axios simplifies making HTTP requests in Node.js."
+            }
+          ],
+          "challenge": "Use dotenv to store an API key and axios to make a GET request to a public API.",
+          "tips": [
+            "Always add .env to .gitignore to avoid exposing secrets.",
+            "Check npm trends for popular and maintained packages."
+          ]
+        }
+      ]
+    },
+       {
+      "section": 6,
+      "title": "Networking & HTTP Module",
+      "description": "Create basic servers and handle HTTP requests and responses using Node.js built-in http module.",
+      "lessons": [
+        {
+          "id": 12,
+          "title": "Creating a Basic HTTP Server",
+          "content": "Use http.createServer to create a server, listen on a port, and respond to requests.",
+          "examples": [
+            {
+              "code": "const http = require('http');\n\nconst server = http.createServer((req, res) => {\n  res.writeHead(200, {'Content-Type': 'text/plain'});\n  res.end('Hello Node.js Server');\n});\n\nserver.listen(3000, () => {\n  console.log('Server running at http://localhost:3000');\n});",
+              "description": "This creates a simple HTTP server that responds with plain text."
+            }
+          ],
+          "quiz": [
+            {
+              "question": "Which module is used to create HTTP servers in Node.js?",
+              "options": ["http", "net", "express", "fs"],
+              "answer": "http",
+              "hint": "It’s a core Node.js module.",
+              "explanation": "The 'http' module provides methods to create servers and handle requests/responses."
+            },
+            {
+              "question": "Which method is used to start the server?",
+              "options": ["listen()", "start()", "run()", "connect()"],
+              "answer": "listen()",
+              "hint": "It specifies the port to listen on.",
+              "explanation": "server.listen(port) makes the HTTP server start listening on the given port."
+            }
+          ],
+          "challenge": "Create a server that responds with 'Welcome to My API' when accessed in the browser.",
+          "tips": [
+            "Always include proper content-type headers.",
+            "Use different status codes for different responses."
+          ]
+        },
+        {
+          "id": 13,
+          "title": "Handling Requests and Responses",
+          "content": "Learn how to handle GET and POST requests, send JSON or HTML responses, and set headers using the http module.",
+          "examples": [
+            {
+              "code": "const http = require('http');\n\nconst server = http.createServer((req, res) => {\n  if (req.url === '/json') {\n    res.writeHead(200, {'Content-Type': 'application/json'});\n    res.end(JSON.stringify({ message: 'Hello JSON' }));\n  } else {\n    res.writeHead(200, {'Content-Type': 'text/html'});\n    res.end('<h1>Hello HTML</h1>');\n  }\n});\n\nserver.listen(3000, () => {\n  console.log('Server running at http://localhost:3000');\n});",
+              "description": "Handle different routes and send JSON or HTML responses."
+            }
+          ],
+          "quiz": [
+            {
+              "question": "Which method sends a response back to the client?",
+              "options": ["res.end()", "res.send()", "res.writeHead()", "req.on()"],
+              "answer": "res.end()",
+              "hint": "It finalizes the response.",
+              "explanation": "res.end() sends the data to the client and signals the end of the response."
+            },
+            {
+              "question": "How do you set response headers in Node.js HTTP server?",
+              "options": ["res.writeHead()", "res.header()", "req.setHeader()", "http.setHeader()"],
+              "answer": "res.writeHead()",
+              "hint": "It is called before sending response body.",
+              "explanation": "res.writeHead() sets the HTTP status code and headers for the response."
+            }
+          ],
+          "challenge": "Build a server that responds with JSON for '/api/data' and HTML for '/' route.",
+          "tips": [
+            "Use try/catch to handle errors in request handling.",
+            "For APIs, always set Content-Type to 'application/json'."
+          ]
+        }
+      ]
+    },
+    {
+      "section": 7,
+      "title": "Node.js Best Practices & Debugging",
+      "description": "Learn best practices for structuring Node.js projects and debugging efficiently to write maintainable and error-free code.",
+      "lessons": [
+        {
+          "id": 14,
+          "title": "Project Structure and Modular Code",
+          "content": "Organize Node.js projects using modules, separating routes, controllers, and utilities for better maintainability.",
+          "examples": [
+            {
+              "code": "project-folder/\n├── app.js\n├── routes/\n│   └── userRoutes.js\n├── controllers/\n│   └── userController.js\n└── utils/\n    └── helper.js",
+              "description": "Typical Node.js project structure with modular code organization."
+            }
+          ],
+          "quiz": [
+            {
+              "question": "Why use modular code in Node.js?",
+              "options": ["Better maintainability", "Faster execution", "Smaller memory usage", "To avoid npm"],
+              "answer": "Better maintainability",
+              "hint": "Think about scaling projects.",
+              "explanation": "Breaking code into modules makes it easier to maintain, test, and reuse."
+            },
+            {
+              "question": "Where should reusable helper functions be placed?",
+              "options": ["utils folder", "routes folder", "controllers folder", "public folder"],
+              "answer": "utils folder",
+              "hint": "Helpers are not routes or controllers.",
+              "explanation": "The 'utils' folder stores reusable utility functions for the project."
+            }
+          ],
+          "challenge": "Refactor a Node.js project by separating routes, controllers, and helpers into their own folders.",
+          "tips": [
+            "Use descriptive folder and file names.",
+            "Keep each module focused on a single responsibility."
+          ]
+        },
+        {
+          "id": 15,
+          "title": "Debugging Node.js Applications",
+          "content": "Learn techniques to debug Node.js applications using console logs, VS Code debugger, and Node.js built-in inspector.",
+          "examples": [
+            {
+              "code": "// Using console.log for debugging\nconst name = 'Node';\nconsole.log('Name:', name);",
+              "description": "Simple debugging using console.log."
+            },
+            {
+              "code": "// Using VS Code debugger\n// 1. Add 'debugger;' in your code\n// 2. Run in debug mode\n// 3. Inspect variables and step through code",
+              "description": "VS Code allows interactive debugging with breakpoints and variable inspection."
+            }
+          ],
+          "quiz": [
+            {
+              "question": "Which command runs Node.js with the inspector?",
+              "options": ["node --inspect app.js", "node debug app.js", "node run app.js", "node start app.js"],
+              "answer": "node --inspect app.js",
+              "hint": "Use for advanced debugging.",
+              "explanation": "The --inspect flag allows attaching a debugger like Chrome DevTools or VS Code."
+            },
+            {
+              "question": "What is a common method for quick debugging?",
+              "options": ["console.log()", "fs.readFile()", "process.exit()", "require()"],
+              "answer": "console.log()",
+              "hint": "Output values to terminal.",
+              "explanation": "console.log() is the simplest way to inspect variables during development."
+            }
+          ],
+          "challenge": "Debug a script that has a bug in a loop using console.log and VS Code debugger to find the issue.",
+          "tips": [
+            "Use breakpoints to pause execution and inspect variables.",
+            "Remove console logs in production code.",
+            "Familiarize yourself with Node.js inspector for step debugging."
+          ]
+        }
+      ]
+    }
+  ]
+}

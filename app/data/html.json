@@ -1,0 +1,1701 @@
+{
+  "course": "Complete HTML",
+  "sections": [
+    {
+      "section": 1,
+      "title": "Introduction to HTML",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "What is HTML?",
+          "content": "HTML (HyperText Markup Language) is the standard language used to structure content on the web. It defines elements like headings, paragraphs, images, and links. HTML forms the backbone of every website and works alongside CSS and JavaScript.",
+          "examples": [
+            {
+              "code": "<!DOCTYPE html>\n<html>\n  <head>\n    <title>My First HTML Page</title>\n  </head>\n  <body>\n    <h1>Hello World!</h1>\n    <p>This is my first webpage.</p>\n  </body>\n</html>",
+              "description": "A simple HTML document structure"
+            }
+          ],
+          "quiz": [
+            {
+              "question": "What does HTML stand for?",
+              "options": [
+                "HyperText Markup Language",
+                "HighText Machine Language",
+                "Hyper Tool Markup Language",
+                "Home Tool Markup Language"
+              ],
+              "answer": "HyperText Markup Language",
+              "hint": "It's the main web page structure language",
+              "explanation": "HTML stands for HyperText Markup Language, used to define the structure of web pages."
+            }
+          ],
+          "challenge": "Create your first HTML file and display 'Welcome to My Website' using <h1>.",
+          "tips": [
+            "HTML is not a programming language — it's a markup language.",
+            "Always include <!DOCTYPE html> at the top.",
+            "Tags define elements like <p>, <h1>, etc.",
+            "HTML is case-insensitive but lowercase is standard."
+          ]
+        },
+        {
+          "id": 2,
+          "title": "HTML Document Structure",
+          "content": "An HTML document has a specific structure including doctype, html, head, and body tags. Understanding this is key to writing valid pages.",
+          "examples": [
+            {
+              "code": "<!DOCTYPE html>\n<html lang='en'>\n<head>\n  <meta charset='UTF-8'>\n  <meta name='viewport' content='width=device-width, initial-scale=1.0'>\n  <title>Document Structure</title>\n</head>\n<body>\n  <h1>Heading</h1>\n  <p>Body content goes here.</p>\n</body>\n</html>",
+              "description": "Basic HTML page layout"
+            }
+          ],
+          "quiz": [
+            {
+              "question": "Which tag defines the document’s metadata?",
+              "options": ["<head>", "<body>", "<meta>", "<title>"],
+              "answer": "<head>",
+              "hint": "Contains meta information and title",
+              "explanation": "The <head> section includes metadata, styles, and the document title."
+            }
+          ],
+          "challenge": "Build an HTML skeleton with a title and one paragraph inside the body.",
+          "tips": [
+            "Always include <head> and <body> sections.",
+            "Use <meta> tags for SEO and responsiveness.",
+            "The <title> tag defines the browser tab name."
+          ]
+        },
+        {
+          "id": 3,
+          "title": "HTML Tags and Elements",
+          "content": "Tags are the building blocks of HTML. Elements are made of an opening tag, content, and closing tag.",
+          "examples": [
+            {
+              "code": "<p>This is a paragraph.</p>\n<h1>This is a heading</h1>",
+              "description": "Example of tags and elements"
+            }
+          ],
+          "quiz": [
+            {
+              "question": "What is the difference between a tag and an element?",
+              "options": [
+                "They are the same",
+                "A tag wraps content; an element includes tags and content",
+                "Tag is content, element is code",
+                "None"
+              ],
+              "answer": "A tag wraps content; an element includes tags and content",
+              "hint": "Think of open + content + close",
+              "explanation": "An element includes the opening tag, content, and closing tag together."
+            }
+          ],
+          "challenge": "Create one paragraph, one heading, and one bold text element.",
+          "tips": [
+            "Every element has a start and end tag.",
+            "Some elements are self-closing (e.g., <img>, <br>).",
+            "Indent your HTML for readability."
+          ]
+        },
+        {
+          "id": 4,
+          "title": "Headings and Paragraphs",
+          "content": "Headings are defined from <h1> to <h6>. Paragraphs are written using <p>. Use headings hierarchically for SEO and readability.",
+          "examples": [
+            {
+              "code": "<h1>Main Title</h1>\n<h2>Subtitle</h2>\n<p>This is a paragraph of text explaining the topic.</p>",
+              "description": "Using headings and paragraphs"
+            }
+          ],
+          "quiz": [
+            {
+              "question": "Which heading tag is the largest?",
+              "options": ["<h1>", "<h3>", "<h6>", "<h5>"],
+              "answer": "<h1>",
+              "hint": "The first heading is the most important",
+              "explanation": "The <h1> tag represents the top-level heading."
+            }
+          ],
+          "challenge": "Write a small article with title, subtitle, and 3 paragraphs.",
+          "tips": [
+            "Use only one <h1> per page.",
+            "Use headings in order for structure.",
+            "Avoid skipping heading levels."
+          ]
+        },
+        {
+          "id": 5,
+          "title": "Comments and Whitespace",
+          "content": "Comments help explain code and are ignored by browsers. Whitespace helps make code readable.",
+          "examples": [
+            {
+              "code": "<!-- This is a comment -->\n<p>This text will be visible.</p>",
+              "description": "Adding comments in HTML"
+            }
+          ],
+          "quiz": [
+            {
+              "question": "What syntax is used for HTML comments?",
+              "options": [
+                "// comment",
+                "/* comment */",
+                "<!-- comment -->",
+                "# comment"
+              ],
+              "answer": "<!-- comment -->",
+              "hint": "It starts with <! and ends with -->",
+              "explanation": "HTML comments are written using <!-- comment --> syntax."
+            }
+          ],
+          "challenge": "Add comments describing sections of your page.",
+          "tips": [
+            "Use comments to clarify code.",
+            "Avoid unnecessary comments for simple lines.",
+            "Whitespace doesn't affect layout."
+          ]
+        }
+      ]
+    },
+
+    {
+      "section": 2,
+      "title": "Text Formatting & Inline Elements",
+      "lessons": [
+        {
+          "id": 6,
+          "title": "Bold, Italic, and Underline",
+          "content": "Use <b> or <strong> for bold, <i> or <em> for italics, and <u> for underline. <strong> and <em> convey semantic importance.",
+          "examples": [
+            {
+              "code": "<p><b>Bold</b> and <strong>important</strong> text.</p>\n<p><i>Italic</i> and <em>emphasized</em> text.</p>",
+              "description": "Formatting text using inline elements"
+            }
+          ],
+          "quiz": [
+            {
+              "question": "Which tag conveys importance semantically?",
+              "options": ["<b>", "<strong>", "<i>", "<u>"],
+              "answer": "<strong>",
+              "hint": "Used for accessibility and SEO",
+              "explanation": "The <strong> tag indicates strong importance, useful for screen readers."
+            }
+          ],
+          "challenge": "Write a paragraph with bold, italic, and underlined keywords.",
+          "tips": [
+            "Prefer <strong> and <em> for accessibility.",
+            "Avoid using <u> for emphasis unless necessary.",
+            "Keep formatting consistent."
+          ]
+        },
+        {
+          "id": 7,
+          "title": "HTML Lists",
+          "content": "Lists help organize items. Ordered lists use <ol>, unordered use <ul>, and each item is inside <li>.",
+          "examples": [
+            {
+              "code": "<ul>\n  <li>HTML</li>\n  <li>CSS</li>\n</ul>\n<ol>\n  <li>First Step</li>\n  <li>Second Step</li>\n</ol>",
+              "description": "Unordered and ordered lists"
+            }
+          ],
+          "quiz": [
+            {
+              "question": "Which tag defines a list item?",
+              "options": ["<ul>", "<ol>", "<li>", "<list>"],
+              "answer": "<li>",
+              "hint": "Each item is wrapped in it",
+              "explanation": "<li> defines a single list item."
+            }
+          ],
+          "challenge": "Create a shopping list and a step-by-step cooking guide.",
+          "tips": [
+            "Use <ul> for unordered items.",
+            "Use <ol> when order matters.",
+            "Nest lists for subcategories."
+          ]
+        },
+        {
+          "id": 8,
+          "title": "Links and Anchors",
+          "content": "Links use the <a> tag with an href attribute. They can link to other pages, sections, or external sites.",
+          "examples": [
+            {
+              "code": "<a href='https://example.com'>Visit Example</a>\n<a href='#top'>Go to top</a>",
+              "description": "Basic and internal links"
+            }
+          ],
+          "quiz": [
+            {
+              "question": "Which attribute specifies the link destination?",
+              "options": ["src", "href", "link", "path"],
+              "answer": "href",
+              "hint": "Hyperlink reference",
+              "explanation": "The href attribute specifies the destination URL of a link."
+            }
+          ],
+          "challenge": "Add navigation links to 3 pages in your website.",
+          "tips": [
+            "Always use meaningful link text.",
+            "Use target='_blank' for new tabs.",
+            "Avoid 'click here'; describe the destination."
+          ]
+        },
+        {
+          "id": 9,
+          "title": "Images and Alt Text",
+          "content": "Images are added with the <img> tag using src and alt attributes. Alt text improves accessibility and SEO.",
+          "examples": [
+            {
+              "code": "<img src='cat.jpg' alt='A cute cat' width='300'>",
+              "description": "Adding an image with alt text"
+            }
+          ],
+          "quiz": [
+            {
+              "question": "What does the alt attribute provide?",
+              "options": [
+                "Alternative text",
+                "Animation",
+                "Alignment",
+                "Anchor text"
+              ],
+              "answer": "Alternative text",
+              "hint": "Displayed if image fails to load",
+              "explanation": "Alt text describes an image for accessibility and appears when the image can’t load."
+            }
+          ],
+          "challenge": "Add 3 images with descriptive alt text.",
+          "tips": [
+            "Always include alt text for accessibility.",
+            "Optimize image sizes for performance.",
+            "Use descriptive filenames."
+          ]
+        },
+        {
+          "id": 10,
+          "title": "HTML Line Breaks and Horizontal Rules",
+          "content": "Use <br> for line breaks and <hr> for thematic breaks or section separators.",
+          "examples": [
+            {
+              "code": "<p>Line one<br>Line two</p>\n<hr>\n<p>Next section</p>",
+              "description": "Using line and section breaks"
+            }
+          ],
+          "quiz": [
+            {
+              "question": "Which tag creates a single line break?",
+              "options": ["<break>", "<lb>", "<br>", "<newline>"],
+              "answer": "<br>",
+              "hint": "Self-closing tag",
+              "explanation": "<br> inserts a single line break."
+            }
+          ],
+          "challenge": "Create a poem layout using <br> and separate stanzas using <hr>.",
+          "tips": [
+            "Use <br> sparingly — use paragraphs instead when possible.",
+            "Use <hr> to visually separate sections.",
+            "Both are self-closing tags."
+          ]
+        }
+      ]
+    },
+
+    {
+      "section": 3,
+      "title": "Lists and Links",
+      "lessons": [
+        {
+          "id": 11,
+          "title": "Ordered and Unordered Lists",
+          "content": "HTML provides two main types of lists: ordered lists (<ol>) and unordered lists (<ul>). Ordered lists are numbered automatically, while unordered lists use bullets. Each list item is wrapped in the <li> tag.",
+          "examples": [
+            {
+              "code": "<ol>\n  <li>Step One</li>\n  <li>Step Two</li>\n</ol>\n<ul>\n  <li>Apple</li>\n  <li>Banana</li>\n</ul>",
+              "description": "Example of ordered and unordered lists"
+            }
+          ],
+          "quiz": [
+            {
+              "question": "Which tag defines a list item in HTML?",
+              "options": ["<li>", "<ul>", "<ol>", "<list>"],
+              "answer": "<li>",
+              "hint": "Each item must be wrapped inside this tag.",
+              "explanation": "The <li> tag defines an individual list item within <ul> or <ol>."
+            }
+          ],
+          "challenge": "Create a recipe list using <ol> for steps and <ul> for ingredients.",
+          "tips": [
+            "Use <ul> for unordered items.",
+            "Use <ol> when order matters.",
+            "Nest lists for subcategories."
+          ]
+        },
+        {
+          "id": 12,
+          "title": "Definition Lists",
+          "content": "Definition lists are used to display name/value pairs using <dl>, <dt>, and <dd> tags. <dt> defines the term, and <dd> describes it.",
+          "examples": [
+            {
+              "code": "<dl>\n  <dt>HTML</dt>\n  <dd>HyperText Markup Language</dd>\n  <dt>CSS</dt>\n  <dd>Cascading Style Sheets</dd>\n</dl>",
+              "description": "Creating a definition list"
+            }
+          ],
+          "quiz": [
+            {
+              "question": "Which tag defines a description in a definition list?",
+              "options": ["<dl>", "<dt>", "<dd>", "<li>"],
+              "answer": "<dd>",
+              "hint": "It's used to define the description or detail part.",
+              "explanation": "In a definition list, <dd> provides the description of the term defined by <dt>."
+            }
+          ],
+          "challenge": "Create a glossary using <dl>, <dt>, and <dd> for five web-related terms.",
+          "tips": [
+            "Use <dt> for the term and <dd> for its meaning.",
+            "Avoid using definition lists for layout purposes.",
+            "Definition lists are great for glossaries or FAQs."
+          ]
+        },
+        {
+          "id": 13,
+          "title": "Creating Basic Hyperlinks",
+          "content": "Links are created using the <a> tag and the href attribute. They allow users to navigate between pages or to external websites.",
+          "examples": [
+            {
+              "code": "<a href='https://example.com'>Visit Example</a>",
+              "description": "A basic hyperlink"
+            }
+          ],
+          "quiz": [
+            {
+              "question": "Which attribute specifies the destination of a link?",
+              "options": ["href", "src", "link", "path"],
+              "answer": "href",
+              "hint": "Stands for Hyperlink Reference.",
+              "explanation": "The href attribute defines the URL that the link will navigate to."
+            }
+          ],
+          "challenge": "Create a navigation list with links to Home, About, and Contact pages.",
+          "tips": [
+            "Use descriptive text for links.",
+            "Always include http or https for external URLs.",
+            "Avoid using 'click here' — describe the destination."
+          ]
+        },
+        {
+          "id": 14,
+          "title": "Anchor Links and Navigation",
+          "content": "Anchor links connect to specific sections of the same page using the id attribute. They make long pages easier to navigate.",
+          "examples": [
+            {
+              "code": "<a href='#about'>Go to About</a>\n<h2 id='about'>About Section</h2>",
+              "description": "Creating internal page anchors"
+            }
+          ],
+          "quiz": [
+            {
+              "question": "What attribute is used to target a specific section for an anchor link?",
+              "options": ["class", "id", "href", "name"],
+              "answer": "id",
+              "hint": "You reference it with a # symbol in the href.",
+              "explanation": "Anchor links work by matching the href='#id' to an element’s id."
+            }
+          ],
+          "challenge": "Add anchor links to jump between three sections of your webpage.",
+          "tips": [
+            "Use anchor links for long content pages.",
+            "Keep section IDs simple and descriptive.",
+            "Ensure IDs are unique within the page."
+          ]
+        },
+        {
+          "id": 15,
+          "title": "Opening Links and Link Attributes",
+          "content": "The target attribute controls how links open. Use target='_blank' to open in a new tab. The rel attribute improves security when linking externally.",
+          "examples": [
+            {
+              "code": "<a href='https://example.com' target='_blank' rel='noopener noreferrer'>Open in New Tab</a>",
+              "description": "Opening a link in a new tab"
+            }
+          ],
+          "quiz": [
+            {
+              "question": "Which target value opens a link in a new tab?",
+              "options": ["_self", "_top", "_blank", "_new"],
+              "answer": "_blank",
+              "hint": "Think of a blank new tab.",
+              "explanation": "The target='_blank' attribute opens the link in a new browser tab or window."
+            }
+          ],
+          "challenge": "Create a set of social media links that open in new tabs safely using rel='noopener noreferrer'.",
+          "tips": [
+            "Use target='_blank' with rel='noopener noreferrer' for security.",
+            "Use absolute URLs for external links.",
+            "Avoid opening too many links in new tabs — it can confuse users."
+          ]
+        }
+      ]
+    },
+
+    {
+      "section": 4,
+      "title": "Images and Multimedia",
+      "lessons": [
+        {
+          "id": 16,
+          "title": "Inserting Images",
+          "content": "The <img> tag is used to embed images. It requires the src attribute for the image source and alt for alternative text.",
+          "examples": [
+            {
+              "code": "<img src='landscape.jpg' alt='Beautiful landscape' width='400'>",
+              "description": "Basic image tag example"
+            }
+          ],
+          "quiz": [
+            {
+              "question": "Which attribute defines the image file location?",
+              "options": ["href", "src", "link", "path"],
+              "answer": "src",
+              "hint": "It stands for 'source'.",
+              "explanation": "The src attribute specifies the path or URL to the image file."
+            }
+          ],
+          "challenge": "Add three images with meaningful alt text to your webpage.",
+          "tips": [
+            "Always include alt text for accessibility.",
+            "Use proper file formats like .jpg or .png.",
+            "Optimize image size for faster loading."
+          ]
+        },
+        {
+          "id": 17,
+          "title": "Responsive Images and Picture Element",
+          "content": "Responsive images adjust to different screen sizes. Use the <picture> tag with <source> and srcset attributes for flexibility.",
+          "examples": [
+            {
+              "code": "<picture>\n  <source srcset='image-large.jpg' media='(min-width: 800px)'>\n  <img src='image-small.jpg' alt='Responsive design example'>\n</picture>",
+              "description": "Using the picture element for responsive images"
+            }
+          ],
+          "quiz": [
+            {
+              "question": "Which tag allows multiple image sources for responsiveness?",
+              "options": ["<img>", "<source>", "<picture>", "<media>"],
+              "answer": "<picture>",
+              "hint": "It’s used to wrap multiple sources.",
+              "explanation": "The <picture> tag lets you define different image sources for different screen conditions."
+            }
+          ],
+          "challenge": "Create a responsive image setup that loads different images for mobile and desktop.",
+          "tips": [
+            "Use srcset and sizes for flexible images.",
+            "Ensure fallback <img> tag always exists.",
+            "Test images on different devices."
+          ]
+        },
+        {
+          "id": 18,
+          "title": "Adding Video to Webpages",
+          "content": "The <video> tag embeds video files. It supports controls, autoplay, and loop attributes.",
+          "examples": [
+            {
+              "code": "<video controls width='400'>\n  <source src='video.mp4' type='video/mp4'>\n  Your browser does not support the video tag.\n</video>",
+              "description": "Embedding a video file in HTML"
+            }
+          ],
+          "quiz": [
+            {
+              "question": "Which attribute adds play/pause controls to a video?",
+              "options": ["autoplay", "controls", "loop", "show"],
+              "answer": "controls",
+              "hint": "It gives user control over playback.",
+              "explanation": "The controls attribute displays play, pause, and volume controls for videos."
+            }
+          ],
+          "challenge": "Add a video to your webpage with controls and a fallback message.",
+          "tips": [
+            "Use MP4 format for broad compatibility.",
+            "Always include fallback text inside <video>.",
+            "Avoid autoplay for user experience."
+          ]
+        },
+        {
+          "id": 19,
+          "title": "Embedding Audio",
+          "content": "The <audio> tag lets you embed sound files like MP3 or OGG. You can use controls, autoplay, and loop attributes.",
+          "examples": [
+            {
+              "code": "<audio controls>\n  <source src='music.mp3' type='audio/mpeg'>\n  Your browser does not support the audio element.\n</audio>",
+              "description": "Embedding an audio player"
+            }
+          ],
+          "quiz": [
+            {
+              "question": "Which HTML tag is used to play sound on a webpage?",
+              "options": ["<music>", "<audio>", "<sound>", "<media>"],
+              "answer": "<audio>",
+              "hint": "Think of the word 'audio'.",
+              "explanation": "The <audio> tag embeds sound content such as music or podcasts."
+            }
+          ],
+          "challenge": "Add background music or a sound clip to your page with play/pause control.",
+          "tips": [
+            "Provide multiple formats (mp3, ogg) for compatibility.",
+            "Always give users playback control.",
+            "Add fallback text for unsupported browsers."
+          ]
+        },
+        {
+          "id": 20,
+          "title": "Embedding External Media (YouTube & iFrames)",
+          "content": "You can embed external media like YouTube videos or maps using the <iframe> tag. It allows embedding another page inside your webpage.",
+          "examples": [
+            {
+              "code": "<iframe width='560' height='315' src='https://www.youtube.com/embed/dQw4w9WgXcQ' frameborder='0' allowfullscreen></iframe>",
+              "description": "Embedding a YouTube video using iframe"
+            }
+          ],
+          "quiz": [
+            {
+              "question": "Which tag allows embedding external content?",
+              "options": ["<embed>", "<media>", "<iframe>", "<video>"],
+              "answer": "<iframe>",
+              "hint": "It literally creates an inline frame.",
+              "explanation": "The <iframe> tag embeds another webpage or media source inside the current page."
+            }
+          ],
+          "challenge": "Embed a YouTube video and a Google Map on your webpage.",
+          "tips": [
+            "Set width and height for iframes.",
+            "Use allowfullscreen for videos.",
+            "Avoid using too many iframes to keep pages fast."
+          ]
+        }
+      ]
+    },
+
+    {
+      "section": 5,
+      "title": "Forms and User Input",
+      "lessons": [
+        {
+          "id": 21,
+          "title": "Introduction to HTML Forms",
+          "content": "HTML forms collect user input and send it to a server. The <form> element wraps input fields, buttons, and other elements. Forms typically use action and method attributes.",
+          "examples": [
+            {
+              "code": "<form action='/submit' method='post'>\n  <input type='text' name='username'>\n  <button type='submit'>Submit</button>\n</form>",
+              "description": "Basic form structure with input and button"
+            }
+          ],
+          "quiz": [
+            {
+              "question": "Which tag defines a form in HTML?",
+              "options": ["<input>", "<form>", "<button>", "<fieldset>"],
+              "answer": "<form>",
+              "hint": "It wraps all input fields together.",
+              "explanation": "The <form> element defines a form that can contain multiple inputs and controls for submitting data."
+            }
+          ],
+          "challenge": "Create a basic form with text and password fields and a submit button.",
+          "tips": [
+            "Use method='post' for secure data submission.",
+            "Group related fields inside one form element.",
+            "Give every input a unique name."
+          ]
+        },
+        {
+          "id": 22,
+          "title": "Text Fields and Labels",
+          "content": "Labels improve accessibility by describing form fields. The <label> tag links to an input via the for attribute.",
+          "examples": [
+            {
+              "code": "<label for='name'>Name:</label>\n<input type='text' id='name' name='name'>",
+              "description": "Using label with input field"
+            }
+          ],
+          "quiz": [
+            {
+              "question": "How do you associate a label with an input field?",
+              "options": [
+                "Use class",
+                "Use id and for attributes",
+                "Place inside a div",
+                "Use placeholder"
+              ],
+              "answer": "Use id and for attributes",
+              "hint": "They should share the same value.",
+              "explanation": "The label’s for attribute must match the input’s id for proper association."
+            }
+          ],
+          "challenge": "Create a labeled input form asking for name and email.",
+          "tips": [
+            "Always use labels for accessibility.",
+            "Match label 'for' and input 'id'.",
+            "Use placeholders for hints, not as labels."
+          ]
+        },
+        {
+          "id": 23,
+          "title": "Input Types",
+          "content": "HTML supports various input types such as text, email, number, date, and password. These types help browsers provide the right input controls.",
+          "examples": [
+            {
+              "code": "<input type='email' placeholder='Enter your email'>\n<input type='password' placeholder='Enter password'>\n<input type='date'>",
+              "description": "Examples of different input types"
+            }
+          ],
+          "quiz": [
+            {
+              "question": "Which input type is used for email addresses?",
+              "options": ["text", "mail", "email", "address"],
+              "answer": "email",
+              "hint": "It includes built-in validation for email format.",
+              "explanation": "The input type='email' ensures users enter valid email addresses."
+            }
+          ],
+          "challenge": "Create a signup form using text, email, and password input types.",
+          "tips": [
+            "Choose the correct input type for better UX.",
+            "Browsers validate some types automatically.",
+            "Use placeholder to show expected format."
+          ]
+        },
+        {
+          "id": 24,
+          "title": "Checkboxes and Radio Buttons",
+          "content": "Checkboxes allow multiple selections, while radio buttons let users select only one option in a group.",
+          "examples": [
+            {
+              "code": "<label><input type='checkbox' name='skills' value='HTML'> HTML</label>\n<label><input type='checkbox' name='skills' value='CSS'> CSS</label>\n<label><input type='radio' name='gender' value='male'> Male</label>\n<label><input type='radio' name='gender' value='female'> Female</label>",
+              "description": "Using checkboxes and radio buttons"
+            }
+          ],
+          "quiz": [
+            {
+              "question": "Which input type allows selecting only one option at a time?",
+              "options": ["checkbox", "text", "radio", "button"],
+              "answer": "radio",
+              "hint": "Used for exclusive choices.",
+              "explanation": "Radio buttons with the same name allow only one selection at a time."
+            }
+          ],
+          "challenge": "Create a survey form with checkboxes for skills and radio buttons for gender.",
+          "tips": [
+            "Group related radio buttons with the same name.",
+            "Use labels for clarity.",
+            "Check boxes can be used independently."
+          ]
+        },
+        {
+          "id": 25,
+          "title": "Select Menus and Textareas",
+          "content": "Select menus provide dropdown lists. The <textarea> tag is used for multi-line text input.",
+          "examples": [
+            {
+              "code": "<select name='country'>\n  <option value='pk'>Pakistan</option>\n  <option value='in'>India</option>\n</select>\n<textarea rows='4' cols='30'>Enter your message here...</textarea>",
+              "description": "Dropdown and textarea example"
+            }
+          ],
+          "quiz": [
+            {
+              "question": "Which tag creates a dropdown menu?",
+              "options": ["<option>", "<dropdown>", "<select>", "<list>"],
+              "answer": "<select>",
+              "hint": "It wraps all <option> elements.",
+              "explanation": "The <select> element defines a dropdown, with <option> tags inside for choices."
+            }
+          ],
+          "challenge": "Create a feedback form using a dropdown for country and textarea for comments.",
+          "tips": [
+            "Use <option> inside <select> for choices.",
+            "Set a default option using 'selected'.",
+            "Use textarea for long text input."
+          ]
+        }
+      ]
+    },
+
+    {
+      "section": 6,
+      "title": "Tables and Semantic HTML",
+      "lessons": [
+        {
+          "id": 26,
+          "title": "Creating Tables",
+          "content": "HTML tables organize data into rows and columns using <table>, <tr>, <th>, and <td> tags.",
+          "examples": [
+            {
+              "code": "<table border='1'>\n  <tr>\n    <th>Name</th>\n    <th>Age</th>\n  </tr>\n  <tr>\n    <td>Ali</td>\n    <td>22</td>\n  </tr>\n</table>",
+              "description": "Simple table with headers and rows"
+            }
+          ],
+          "quiz": [
+            {
+              "question": "Which tag defines a table row?",
+              "options": ["<td>", "<tr>", "<th>", "<row>"],
+              "answer": "<tr>",
+              "hint": "Used to group table cells horizontally.",
+              "explanation": "The <tr> tag defines a single row of table cells."
+            }
+          ],
+          "challenge": "Create a table showing three students with name, age, and grade columns.",
+          "tips": [
+            "Use <th> for headers and <td> for data cells.",
+            "Add borders using CSS instead of 'border' attribute.",
+            "Tables are best for structured data, not layout."
+          ]
+        },
+        {
+          "id": 27,
+          "title": "Table Head, Body, and Footer",
+          "content": "Use <thead>, <tbody>, and <tfoot> to structure table sections for readability and accessibility.",
+          "examples": [
+            {
+              "code": "<table>\n  <thead>\n    <tr><th>Product</th><th>Price</th></tr>\n  </thead>\n  <tbody>\n    <tr><td>Shoes</td><td>$50</td></tr>\n  </tbody>\n  <tfoot>\n    <tr><td>Total</td><td>$50</td></tr>\n  </tfoot>\n</table>",
+              "description": "Organized table with head, body, and footer"
+            }
+          ],
+          "quiz": [
+            {
+              "question": "Which tag defines the main data section of a table?",
+              "options": ["<thead>", "<tfoot>", "<tbody>", "<tr>"],
+              "answer": "<tbody>",
+              "hint": "It contains the data rows.",
+              "explanation": "The <tbody> element holds the primary data content in the table."
+            }
+          ],
+          "challenge": "Build a product list with <thead>, <tbody>, and <tfoot>.",
+          "tips": [
+            "Use <thead> for headers and <tfoot> for totals.",
+            "Improves accessibility and styling.",
+            "Helps screen readers navigate data."
+          ]
+        },
+        {
+          "id": 28,
+          "title": "Merging Table Cells",
+          "content": "Use colspan and rowspan attributes to merge cells horizontally or vertically.",
+          "examples": [
+            {
+              "code": "<table border='1'>\n  <tr><th colspan='2'>Student Info</th></tr>\n  <tr><td>Name</td><td>Ali</td></tr>\n</table>",
+              "description": "Using colspan to merge cells"
+            }
+          ],
+          "quiz": [
+            {
+              "question": "Which attribute merges cells horizontally?",
+              "options": ["rowspan", "colspan", "merge", "span"],
+              "answer": "colspan",
+              "hint": "Think 'columns'.",
+              "explanation": "colspan merges cells horizontally across columns."
+            }
+          ],
+          "challenge": "Create a timetable merging cells for multi-hour events.",
+          "tips": [
+            "Use colspan for columns and rowspan for rows.",
+            "Avoid excessive merging—it can confuse layout.",
+            "Keep table data readable."
+          ]
+        },
+        {
+          "id": 29,
+          "title": "Introduction to Semantic HTML",
+          "content": "Semantic HTML uses meaningful tags like <header>, <footer>, <article>, and <section> to describe content structure.",
+          "examples": [
+            {
+              "code": "<header><h1>My Blog</h1></header>\n<article><h2>Post Title</h2><p>Post content here...</p></article>\n<footer>© 2025 My Blog</footer>",
+              "description": "Example of semantic HTML layout"
+            }
+          ],
+          "quiz": [
+            {
+              "question": "Which tag represents a self-contained piece of content?",
+              "options": ["<section>", "<div>", "<article>", "<main>"],
+              "answer": "<article>",
+              "hint": "Used for blog posts or independent entries.",
+              "explanation": "The <article> tag defines a self-contained block of related content."
+            }
+          ],
+          "challenge": "Structure a blog layout using header, article, and footer.",
+          "tips": [
+            "Use semantic tags instead of <div> when possible.",
+            "Improves SEO and accessibility.",
+            "Browsers and assistive tools recognize semantic meaning."
+          ]
+        },
+        {
+          "id": 30,
+          "title": "HTML5 Structural Elements",
+          "content": "HTML5 introduced structural tags like <main>, <aside>, <nav>, and <section> to organize layouts clearly.",
+          "examples": [
+            {
+              "code": "<main>\n  <nav>Navigation Links</nav>\n  <section>Main Content</section>\n  <aside>Sidebar Info</aside>\n</main>",
+              "description": "Using structural HTML5 elements"
+            }
+          ],
+          "quiz": [
+            {
+              "question": "Which tag defines navigation links in HTML5?",
+              "options": ["<aside>", "<main>", "<nav>", "<menu>"],
+              "answer": "<nav>",
+              "hint": "Used for site menus and links.",
+              "explanation": "The <nav> element defines navigation links for site structure."
+            }
+          ],
+          "challenge": "Design a webpage using <header>, <nav>, <section>, <aside>, and <footer>.",
+          "tips": [
+            "Use <main> for central content.",
+            "Use <aside> for side info or ads.",
+            "Keep each section focused on one purpose."
+          ]
+        }
+      ]
+    },
+    {
+      "section": 7,
+      "title": "Form Validation and Accessibility",
+      "lessons": [
+        {
+          "id": 31,
+          "title": "Introduction to Form Validation",
+          "content": "HTML5 provides built-in validation attributes to ensure users enter correct data before submitting forms. Common attributes include required, minlength, maxlength, and pattern.",
+          "examples": [
+            {
+              "code": "<form>\n  <input type='text' name='username' required minlength='3'>\n  <input type='email' name='email' required>\n  <button type='submit'>Submit</button>\n</form>",
+              "description": "Form using required and minlength validation"
+            }
+          ],
+          "quiz": [
+            {
+              "question": "Which attribute makes an input field mandatory?",
+              "options": ["min", "validate", "required", "checked"],
+              "answer": "required",
+              "hint": "It ensures the field cannot be left empty.",
+              "explanation": "The 'required' attribute forces users to fill the input before submitting the form."
+            }
+          ],
+          "challenge": "Create a registration form that requires username and email validation.",
+          "tips": [
+            "Use built-in attributes before adding JavaScript validation.",
+            "Test validation with both valid and invalid inputs.",
+            "Keep error messages clear and helpful."
+          ]
+        },
+        {
+          "id": 32,
+          "title": "Pattern and Input Restrictions",
+          "content": "The pattern attribute defines a regular expression that input data must match. It's useful for formats like phone numbers or passwords.",
+          "examples": [
+            {
+              "code": "<input type='text' pattern='[0-9]{4}' title='Enter 4 digits'>",
+              "description": "Restrict input to 4 digits using pattern attribute"
+            }
+          ],
+          "quiz": [
+            {
+              "question": "What does the pattern attribute use to define input rules?",
+              "options": ["JavaScript", "Regular Expressions", "CSS", "PHP"],
+              "answer": "Regular Expressions",
+              "hint": "It checks patterns like email or numbers.",
+              "explanation": "Pattern uses regex to match specific text formats."
+            }
+          ],
+          "challenge": "Create a phone number input that only accepts 10 digits.",
+          "tips": [
+            "Always include a 'title' attribute for user guidance.",
+            "Use regex carefully—complex patterns can confuse users.",
+            "Combine pattern with required for stronger validation."
+          ]
+        },
+        {
+          "id": 33,
+          "title": "Custom Validation Messages",
+          "content": "Custom validation messages can be displayed using JavaScript’s setCustomValidity() method to give better feedback.",
+          "examples": [
+            {
+              "code": "<input id='email' type='email' required>\n<script>\nconst email = document.getElementById('email');\nemail.oninvalid = () => email.setCustomValidity('Please enter a valid email address.');\nemail.oninput = () => email.setCustomValidity('');\n</script>",
+              "description": "Setting custom validation messages with JavaScript"
+            }
+          ],
+          "quiz": [
+            {
+              "question": "Which method is used to set a custom validation message?",
+              "options": [
+                "setError()",
+                "customMessage()",
+                "setCustomValidity()",
+                "showAlert()"
+              ],
+              "answer": "setCustomValidity()",
+              "hint": "It’s part of the constraint validation API.",
+              "explanation": "setCustomValidity() allows you to define your own error message for an input."
+            }
+          ],
+          "challenge": "Add custom messages for invalid email and password inputs.",
+          "tips": [
+            "Use clear and friendly messages.",
+            "Clear validation messages when input changes.",
+            "Avoid overly technical wording."
+          ]
+        },
+        {
+          "id": 34,
+          "title": "ARIA and Accessibility Basics",
+          "content": "ARIA (Accessible Rich Internet Applications) attributes make web apps accessible to users with disabilities. Common attributes: aria-label, aria-hidden, role.",
+          "examples": [
+            {
+              "code": "<button aria-label='Close'>✖</button>\n<p aria-hidden='true'>Hidden text</p>",
+              "description": "Using aria-label and aria-hidden for accessibility"
+            }
+          ],
+          "quiz": [
+            {
+              "question": "Which ARIA attribute hides content from screen readers?",
+              "options": ["aria-label", "aria-hidden", "role", "alt"],
+              "answer": "aria-hidden",
+              "hint": "It means assistive tech will ignore the element.",
+              "explanation": "aria-hidden='true' makes the element invisible to screen readers."
+            }
+          ],
+          "challenge": "Add ARIA labels to buttons and navigation links for accessibility.",
+          "tips": [
+            "Use ARIA only when standard HTML isn't enough.",
+            "Avoid overusing aria-hidden.",
+            "Always test with screen readers."
+          ]
+        },
+        {
+          "id": 35,
+          "title": "Accessible Forms and Labels",
+          "content": "Accessible forms help users navigate easily using screen readers. Use <label>, fieldsets, and clear error messages.",
+          "examples": [
+            {
+              "code": "<fieldset>\n  <legend>Contact Info</legend>\n  <label for='email'>Email:</label>\n  <input id='email' type='email' required>\n</fieldset>",
+              "description": "Accessible form with fieldset and legend"
+            }
+          ],
+          "quiz": [
+            {
+              "question": "Which tag groups related inputs for accessibility?",
+              "options": ["<group>", "<fieldset>", "<legend>", "<div>"],
+              "answer": "<fieldset>",
+              "hint": "It works together with <legend>.",
+              "explanation": "fieldset groups form controls and legend provides a title for that group."
+            }
+          ],
+          "challenge": "Create an accessible survey form using fieldsets and legends.",
+          "tips": [
+            "Always include legends in fieldsets.",
+            "Avoid using placeholders as labels.",
+            "Provide text alternatives for visual cues."
+          ]
+        }
+      ]
+    },
+    {
+      "section": 8,
+      "title": "HTML5 Multimedia and APIs",
+      "lessons": [
+        {
+          "id": 36,
+          "title": "Embedding Audio in HTML",
+          "content": "The <audio> tag is used to play sound files like MP3 or OGG directly in the browser.",
+          "examples": [
+            {
+              "code": "<audio controls>\n  <source src='sound.mp3' type='audio/mpeg'>\n  Your browser does not support the audio tag.\n</audio>",
+              "description": "Embedding an audio file with controls"
+            }
+          ],
+          "quiz": [
+            {
+              "question": "Which attribute displays playback controls?",
+              "options": ["autoplay", "loop", "controls", "muted"],
+              "answer": "controls",
+              "hint": "It shows play and pause buttons.",
+              "explanation": "The controls attribute makes the browser display audio controls for user interaction."
+            }
+          ],
+          "challenge": "Embed an audio player that automatically plays background music.",
+          "tips": [
+            "Use controls for user accessibility.",
+            "Avoid autoplay unless necessary.",
+            "Include fallback text for unsupported browsers."
+          ]
+        },
+        {
+          "id": 37,
+          "title": "Embedding Video in HTML",
+          "content": "The <video> tag plays video files like MP4, OGG, or WebM directly in the browser.",
+          "examples": [
+            {
+              "code": "<video width='400' controls>\n  <source src='video.mp4' type='video/mp4'>\n  Your browser does not support the video tag.\n</video>",
+              "description": "Embedding video with controls"
+            }
+          ],
+          "quiz": [
+            {
+              "question": "Which tag is used to display videos?",
+              "options": ["<embed>", "<video>", "<media>", "<movie>"],
+              "answer": "<video>",
+              "hint": "It’s part of HTML5 media features.",
+              "explanation": "The <video> element allows embedding video files directly in webpages."
+            }
+          ],
+          "challenge": "Create a video player with autoplay and loop features.",
+          "tips": [
+            "Provide multiple formats for compatibility.",
+            "Use controls to improve usability.",
+            "Always include fallback text."
+          ]
+        },
+        {
+          "id": 38,
+          "title": "Using the Canvas API",
+          "content": "The <canvas> tag allows you to draw graphics using JavaScript. It’s often used for games, charts, and animations.",
+          "examples": [
+            {
+              "code": "<canvas id='myCanvas' width='200' height='100'></canvas>\n<script>\nconst ctx = document.getElementById('myCanvas').getContext('2d');\nctx.fillStyle = 'blue';\nctx.fillRect(20, 20, 150, 50);\n</script>",
+              "description": "Drawing a blue rectangle with Canvas API"
+            }
+          ],
+          "quiz": [
+            {
+              "question": "Which method draws a filled rectangle on canvas?",
+              "options": ["drawRect()", "fillRect()", "rect()", "shape()"],
+              "answer": "fillRect()",
+              "hint": "It fills a rectangular area.",
+              "explanation": "The fillRect(x, y, width, height) method fills a rectangle with color."
+            }
+          ],
+          "challenge": "Draw a smiley face using the Canvas API.",
+          "tips": [
+            "Always define canvas width and height attributes.",
+            "Use getContext('2d') to access drawing functions.",
+            "Clear canvas using clearRect()."
+          ]
+        },
+        {
+          "id": 39,
+          "title": "HTML5 Local Storage",
+          "content": "Local Storage allows web apps to store data in the browser. It uses key-value pairs and persists even after page reloads.",
+          "examples": [
+            {
+              "code": "localStorage.setItem('username', 'Ali');\nconst user = localStorage.getItem('username');",
+              "description": "Storing and retrieving data in Local Storage"
+            }
+          ],
+          "quiz": [
+            {
+              "question": "Which method saves data in localStorage?",
+              "options": ["save()", "store()", "setItem()", "write()"],
+              "answer": "setItem()",
+              "hint": "It stores data using a key and a value.",
+              "explanation": "localStorage.setItem(key, value) stores data that persists after page reload."
+            }
+          ],
+          "challenge": "Create a form that saves username in localStorage and displays it on reload.",
+          "tips": [
+            "Use getItem() to retrieve data.",
+            "Use removeItem() to delete a specific key.",
+            "Clear all data with clear()."
+          ]
+        },
+        {
+          "id": 40,
+          "title": "HTML5 Geolocation API",
+          "content": "The Geolocation API retrieves the user’s location (latitude and longitude) with permission.",
+          "examples": [
+            {
+              "code": "navigator.geolocation.getCurrentPosition(position => {\n  console.log(position.coords.latitude, position.coords.longitude);\n});",
+              "description": "Using Geolocation API to get current position"
+            }
+          ],
+          "quiz": [
+            {
+              "question": "Which object is used to access the user's location?",
+              "options": [
+                "window.location",
+                "navigator.geo",
+                "navigator.geolocation",
+                "geoAPI"
+              ],
+              "answer": "navigator.geolocation",
+              "hint": "It’s a property of the navigator object.",
+              "explanation": "navigator.geolocation provides methods to get the user’s current location."
+            }
+          ],
+          "challenge": "Create a button that shows the user’s current latitude and longitude on click.",
+          "tips": [
+            "Always request permission before accessing location.",
+            "Handle errors using an error callback.",
+            "Never store location data without user consent."
+          ]
+        }
+      ]
+    },
+    {
+      "section": 9,
+      "title": "Responsive Design and Layout Techniques",
+      "lessons": [
+        {
+          "id": 41,
+          "title": "Introduction to Responsive Design",
+          "content": "Responsive design ensures web pages look good on all devices by adjusting layout, images, and typography automatically. It’s achieved through flexible grids, images, and CSS media queries.",
+          "examples": [
+            {
+              "code": "<meta name='viewport' content='width=device-width, initial-scale=1.0'>",
+              "description": "Viewport meta tag for responsive design"
+            }
+          ],
+          "quiz": [
+            {
+              "question": "Which meta tag is essential for responsive design?",
+              "options": [
+                "<meta responsive>",
+                "<meta device>",
+                "<meta viewport>",
+                "<meta layout>"
+              ],
+              "answer": "<meta viewport>",
+              "hint": "It controls the page’s scaling on different devices.",
+              "explanation": "The viewport meta tag ensures that the page scales properly on mobile and tablet devices."
+            }
+          ],
+          "challenge": "Add a viewport meta tag and create a layout that adjusts on smaller screens.",
+          "tips": [
+            "Always include the viewport meta tag.",
+            "Test your layout on mobile and tablet devices.",
+            "Use percentages or rem units for flexible design."
+          ]
+        },
+        {
+          "id": 42,
+          "title": "Using CSS Media Queries",
+          "content": "Media queries let you apply different CSS styles depending on screen size, orientation, or device type. They’re key to responsive layouts.",
+          "examples": [
+            {
+              "code": "@media (max-width: 600px) {\n  body { background-color: lightblue; }\n}",
+              "description": "Changing background color for smaller screens"
+            }
+          ],
+          "quiz": [
+            {
+              "question": "Which CSS rule enables responsive styling based on screen width?",
+              "options": ["@screen", "@responsive", "@media", "@layout"],
+              "answer": "@media",
+              "hint": "It checks device properties before applying styles.",
+              "explanation": "Media queries begin with @media and let you define conditional CSS rules for specific screen sizes."
+            }
+          ],
+          "challenge": "Create a page that changes font size and color for mobile devices.",
+          "tips": [
+            "Use min-width for mobile-first design.",
+            "Group related queries together for readability.",
+            "Avoid excessive breakpoints."
+          ]
+        },
+        {
+          "id": 43,
+          "title": "Flexible Images and Units",
+          "content": "Flexible images scale automatically to fit their containers using CSS properties like max-width: 100%. Relative units like %, em, and rem adapt layouts better.",
+          "examples": [
+            {
+              "code": "img { max-width: 100%; height: auto; }",
+              "description": "Making images responsive using CSS"
+            }
+          ],
+          "quiz": [
+            {
+              "question": "Which CSS property ensures images don’t overflow their container?",
+              "options": [
+                "width: auto",
+                "max-width: 100%",
+                "scale: fit",
+                "responsive: true"
+              ],
+              "answer": "max-width: 100%",
+              "hint": "It prevents images from exceeding container width.",
+              "explanation": "max-width: 100% makes images scale down responsively while maintaining aspect ratio."
+            }
+          ],
+          "challenge": "Make all images on your page resize dynamically with screen width.",
+          "tips": [
+            "Always set height to auto for proportional scaling.",
+            "Use SVGs for better scalability.",
+            "Avoid fixed-width images in responsive layouts."
+          ]
+        },
+        {
+          "id": 44,
+          "title": "Responsive Navigation Menus",
+          "content": "Responsive navigation menus adapt to different screen sizes using toggles, icons, or dropdowns for mobile views.",
+          "examples": [
+            {
+              "code": "<nav>\n  <ul class='menu'>\n    <li><a href='#'>Home</a></li>\n    <li><a href='#'>About</a></li>\n    <li><a href='#'>Contact</a></li>\n  </ul>\n</nav>",
+              "description": "Basic responsive navigation list"
+            }
+          ],
+          "quiz": [
+            {
+              "question": "What’s a common design for mobile menus?",
+              "options": ["Sidebar", "Hamburger Menu", "Popup", "Carousel"],
+              "answer": "Hamburger Menu",
+              "hint": "It’s a 3-line icon representing menu options.",
+              "explanation": "A hamburger menu collapses navigation links into an icon for small screens."
+            }
+          ],
+          "challenge": "Create a navigation bar that collapses into a hamburger icon on mobile.",
+          "tips": [
+            "Use CSS transitions for smooth animations.",
+            "Keep menus short and clear.",
+            "Test tap accessibility on mobile devices."
+          ]
+        },
+        {
+          "id": 45,
+          "title": "Responsive Grids and Layouts",
+          "content": "CSS Grid and Flexbox make responsive layouts easier by defining flexible rows and columns that adapt to screen sizes.",
+          "examples": [
+            {
+              "code": "div.container {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));\n  gap: 20px;\n}",
+              "description": "Using CSS Grid for a responsive layout"
+            }
+          ],
+          "quiz": [
+            {
+              "question": "Which CSS property defines flexible columns in a grid layout?",
+              "options": [
+                "grid-template",
+                "grid-template-columns",
+                "flex-columns",
+                "auto-columns"
+              ],
+              "answer": "grid-template-columns",
+              "hint": "It controls how many columns appear in the grid.",
+              "explanation": "grid-template-columns defines how columns are sized and repeated in CSS Grid layouts."
+            }
+          ],
+          "challenge": "Design a responsive three-column grid that adjusts to two or one column on smaller screens.",
+          "tips": [
+            "Use auto-fit for flexible resizing.",
+            "Combine Grid and Flexbox for complex layouts.",
+            "Always test grid behavior on different devices."
+          ]
+        }
+      ]
+    },
+    {
+      "section": 10,
+      "title": "SEO and HTML Best Practices",
+      "lessons": [
+        {
+          "id": 46,
+          "title": "Understanding SEO Basics in HTML",
+          "content": "SEO (Search Engine Optimization) helps web pages rank higher in search results. Proper HTML structure and meta tags are key for SEO.",
+          "examples": [
+            {
+              "code": "<meta name='description' content='Learn HTML step by step with interactive lessons.'>",
+              "description": "Adding a meta description for SEO"
+            }
+          ],
+          "quiz": [
+            {
+              "question": "Which HTML tag provides a brief summary of a page for search engines?",
+              "options": [
+                "<title>",
+                "<meta name='description'>",
+                "<summary>",
+                "<header>"
+              ],
+              "answer": "<meta name='description'>",
+              "hint": "It appears in search engine results under the title.",
+              "explanation": "The meta description tag summarizes a page's content for SEO purposes."
+            }
+          ],
+          "challenge": "Add title and description meta tags to improve your web page SEO.",
+          "tips": [
+            "Keep meta descriptions under 160 characters.",
+            "Include keywords naturally.",
+            "Avoid duplicate descriptions across pages."
+          ]
+        },
+        {
+          "id": 47,
+          "title": "Using Headings and Semantic Structure for SEO",
+          "content": "Headings (<h1>–<h6>) organize content and help search engines understand page structure. Use only one <h1> per page for the main topic.",
+          "examples": [
+            {
+              "code": "<h1>HTML Tutorial</h1>\n<h2>Introduction</h2>\n<h3>Why Learn HTML?</h3>",
+              "description": "Properly structured heading hierarchy"
+            }
+          ],
+          "quiz": [
+            {
+              "question": "Which tag represents the most important heading?",
+              "options": ["<h6>", "<h4>", "<h1>", "<header>"],
+              "answer": "<h1>",
+              "hint": "Each page should have exactly one of these.",
+              "explanation": "<h1> is the top-level heading that defines the main topic of the page."
+            }
+          ],
+          "challenge": "Structure your page using one <h1> and multiple <h2>/<h3> tags appropriately.",
+          "tips": [
+            "Use headings logically to outline content.",
+            "Avoid skipping heading levels.",
+            "Use descriptive keywords in headings."
+          ]
+        },
+        {
+          "id": 48,
+          "title": "Meta Tags and Open Graph",
+          "content": "Meta and Open Graph tags define how your content appears in search results and social media previews.",
+          "examples": [
+            {
+              "code": "<meta property='og:title' content='HTML Course'>\n<meta property='og:image' content='thumbnail.jpg'>",
+              "description": "Adding Open Graph tags for social sharing"
+            }
+          ],
+          "quiz": [
+            {
+              "question": "Which protocol is used for enhancing social media previews?",
+              "options": [
+                "Open Graph",
+                "Twitter Cards",
+                "Schema.org",
+                "Meta SEO"
+              ],
+              "answer": "Open Graph",
+              "hint": "It starts with 'og:' attributes.",
+              "explanation": "Open Graph tags control how your page is previewed when shared on platforms like Facebook or LinkedIn."
+            }
+          ],
+          "challenge": "Add Open Graph meta tags to your HTML page for better sharing on social platforms.",
+          "tips": [
+            "Include og:title, og:description, and og:image.",
+            "Use absolute URLs for images.",
+            "Validate tags with Facebook’s Sharing Debugger."
+          ]
+        },
+        {
+          "id": 49,
+          "title": "Performance Optimization in HTML",
+          "content": "Optimized HTML loads faster and improves user experience. Techniques include minifying code, using async scripts, and lazy-loading images.",
+          "examples": [
+            {
+              "code": "<script src='app.js' async></script>\n<img src='photo.jpg' loading='lazy'>",
+              "description": "Using async and lazy loading for performance"
+            }
+          ],
+          "quiz": [
+            {
+              "question": "Which attribute delays image loading until it’s visible?",
+              "options": ["defer", "async", "loading='lazy'", "lazyload"],
+              "answer": "loading='lazy'",
+              "hint": "It helps speed up page load times.",
+              "explanation": "The loading='lazy' attribute defers offscreen image loading to improve performance."
+            }
+          ],
+          "challenge": "Optimize a page with async scripts and lazy-loaded images.",
+          "tips": [
+            "Minimize inline CSS and JS.",
+            "Compress images for faster loading.",
+            "Test speed using Google Lighthouse."
+          ]
+        },
+
+        {
+          "id": 50,
+          "title": "HTML Best Practices and Accessibility Review",
+          "content": "Following HTML best practices ensures clean, accessible, and maintainable code. Always write semantic, validated HTML with accessibility in mind.",
+          "examples": [
+            {
+              "code": "<main>\n  <article>\n    <h1>Learn HTML</h1>\n    <p>Start your web development journey today!</p>\n  </article>\n</main>",
+              "description": "Using semantic elements for structured HTML"
+            }
+          ],
+          "quiz": [
+            {
+              "question": "Which element defines the main content area of a web page?",
+              "options": ["<main>", "<section>", "<content>", "<body>"],
+              "answer": "<main>",
+              "hint": "It holds the central page content.",
+              "explanation": "The <main> element identifies the dominant content of a web page."
+            }
+          ],
+          "challenge": "Refactor a messy HTML page into clean, semantic, and accessible code.",
+          "tips": [
+            "Always validate HTML using the W3C Validator.",
+            "Use semantic tags instead of <div> for structure.",
+            "Ensure accessibility with ARIA and alt text."
+          ]
+        }
+      ]
+    },
+
+    {
+      "section": 11,
+
+      "title": "Advanced HTML Concepts",
+
+      "lessons": [
+        {
+          "id": 51,
+          "title": "Meta Tags and SEO Basics",
+          "content": "Meta tags provide metadata about your webpage like description, keywords, and author. These help with SEO and browser behavior.",
+          "examples": [
+            {
+              "code": "<meta name='description' content='Learn HTML basics and advanced topics.'>",
+              "description": "Defines a short description of your webpage for search engines."
+            },
+            {
+              "code": "<meta name='keywords' content='HTML, Web Development, SEO'>",
+              "description": "Specifies relevant keywords for SEO."
+            }
+          ],
+          "quiz": {
+            "question": "Which meta tag helps improve a page’s SEO ranking?",
+            "options": [
+              "<meta charset>",
+              "<meta description>",
+              "<meta viewport>",
+              "<meta author>"
+            ],
+            "answer": "<meta description>"
+          },
+          "challenge": "Add meta tags for description, author, and viewport in your webpage.",
+          "tips": [
+            "Keep meta descriptions under 160 characters.",
+            "Use unique meta titles for each page."
+          ]
+        },
+        {
+          "id": 52,
+          "title": "Open Graph and Social Media Tags",
+          "content": "Open Graph tags control how your webpage looks when shared on social platforms like Facebook or Twitter.",
+          "examples": [
+            {
+              "code": "<meta property='og:title' content='Learn HTML Fast'>",
+              "description": "Sets the title for social sharing."
+            },
+            {
+              "code": "<meta property='og:image' content='thumbnail.jpg'>",
+              "description": "Defines a thumbnail image for shared links."
+            }
+          ],
+          "quiz": {
+            "question": "Which property defines the image used when sharing a link on social media?",
+            "options": ["og:image", "og:photo", "og:link", "og:banner"],
+            "answer": "og:image"
+          },
+          "challenge": "Add Open Graph tags to your HTML for title, image, and description.",
+          "tips": [
+            "Use 1200x630px images for best social previews.",
+            "Include og:description for better engagement."
+          ]
+        },
+        {
+          "id": 53,
+          "title": "Favicons and Web App Icons",
+          "content": "Favicons are small icons displayed in the browser tab. Web app icons enhance branding for mobile and desktop users.",
+          "examples": [
+            {
+              "code": "<link rel='icon' href='favicon.ico' type='image/x-icon'>",
+              "description": "Defines the small icon shown in the browser tab."
+            },
+            {
+              "code": "<link rel='apple-touch-icon' href='icon.png'>",
+              "description": "Adds a touch icon for mobile devices."
+            }
+          ],
+          "quiz": {
+            "question": "Which tag defines the small icon shown in the browser tab?",
+            "options": ["<meta>", "<link>", "<icon>", "<img>"],
+            "answer": "<link>"
+          },
+          "challenge": "Add a favicon and an apple-touch icon to your project.",
+          "tips": [
+            "Provide multiple icon sizes for different devices.",
+            "Use PNG format for better quality."
+          ]
+        },
+        {
+          "id": 54,
+          "title": "Accessibility (ARIA and Semantic Roles)",
+          "content": "ARIA roles and attributes help assistive technologies understand your page structure better, improving accessibility for all users.",
+          "examples": [
+            {
+              "code": "<button aria-label='Close menu'>×</button>",
+              "description": "Adds a screen reader label to a button."
+            },
+            {
+              "code": "<nav role='navigation'>Main Menu</nav>",
+              "description": "Defines the navigation role for screen readers."
+            }
+          ],
+          "quiz": {
+            "question": "Which attribute provides accessibility hints to screen readers?",
+            "options": ["alt", "role", "aria-label", "title"],
+            "answer": "aria-label"
+          },
+          "challenge": "Add ARIA roles to your header, nav, and footer for better accessibility.",
+          "tips": [
+            "Use ARIA only when native elements don't provide enough context.",
+            "Test your site with screen readers."
+          ]
+        },
+        {
+          "id": 55,
+          "title": "Performance Optimization",
+          "content": "Optimizing HTML performance includes minimizing file size, deferring scripts, and reducing image load times.",
+          "examples": [
+            {
+              "code": "<script src='script.js' defer></script>",
+              "description": "Defers script execution until after HTML parsing."
+            },
+            {
+              "code": "<img src='photo.jpg' loading='lazy'>",
+              "description": "Delays image loading until it’s visible on screen."
+            }
+          ],
+          "quiz": {
+            "question": "Which attribute delays script execution until HTML is parsed?",
+            "options": ["async", "lazy", "defer", "delay"],
+            "answer": "defer"
+          },
+          "challenge": "Implement lazy loading and deferred scripts on your webpage.",
+          "tips": [
+            "Minify your CSS and JS files.",
+            "Use CDN-hosted libraries for better performance."
+          ]
+        }
+      ]
+    },
+    {
+      "section": 12,
+      "title": "Modern HTML Features & Best Practices",
+      "lessons": [
+        {
+          "id": 56,
+          "title": "HTML5 APIs Overview",
+          "content": "HTML5 introduced APIs like Geolocation, Drag and Drop, and Web Storage for richer web experiences.",
+          "examples": [
+            {
+              "code": "navigator.geolocation.getCurrentPosition(position => console.log(position));",
+              "description": "Fetches the user's current location."
+            }
+          ],
+          "quiz": {
+            "question": "Which HTML5 API is used to get the user's location?",
+            "options": [
+              "Storage API",
+              "Geo API",
+              "Geolocation API",
+              "Fetch API"
+            ],
+            "answer": "Geolocation API"
+          },
+          "challenge": "Create a simple page that displays the user's current location.",
+          "tips": [
+            "Always request user permission for location data.",
+            "Handle errors if the user denies access."
+          ]
+        },
+        {
+          "id": 57,
+          "title": "Data Attributes",
+          "content": "Data attributes allow you to store custom information on HTML elements using data-* syntax, accessible via JavaScript.",
+          "examples": [
+            {
+              "code": "<div data-user='admin'>Welcome!</div>",
+              "description": "Stores custom data in an element."
+            }
+          ],
+          "quiz": {
+            "question": "How can you access a data attribute using JavaScript?",
+            "options": [
+              "element.value",
+              "element.dataset",
+              "element.getAttribute('data')",
+              "element.data"
+            ],
+            "answer": "element.dataset"
+          },
+          "challenge": "Create a button with a data attribute that changes text when clicked using JavaScript.",
+          "tips": [
+            "Use data-* attributes for dynamic interactions.",
+            "Keep attribute names short and meaningful."
+          ]
+        },
+        {
+          "id": 58,
+          "title": "Web Storage: Local and Session",
+          "content": "The Web Storage API provides localStorage and sessionStorage for saving data in the browser without a server.",
+          "examples": [
+            {
+              "code": "localStorage.setItem('username', 'John');",
+              "description": "Stores data permanently in the browser."
+            },
+            {
+              "code": "const user = localStorage.getItem('username');",
+              "description": "Retrieves stored data."
+            }
+          ],
+          "quiz": {
+            "question": "Which storage method clears data when the browser is closed?",
+            "options": [
+              "localStorage",
+              "sessionStorage",
+              "cookieStorage",
+              "cacheStorage"
+            ],
+            "answer": "sessionStorage"
+          },
+          "challenge": "Build a form that saves the user’s name to localStorage and displays it when reloaded.",
+          "tips": [
+            "Use sessionStorage for temporary data.",
+            "Always validate data before saving."
+          ]
+        },
+        {
+          "id": 59,
+          "title": "Embedding External Content (iframes & Widgets)",
+          "content": "You can embed videos, maps, or widgets using the <iframe> tag to display other content inside your page.",
+          "examples": [
+            {
+              "code": "<iframe src='https://www.youtube.com/embed/xyz' width='560' height='315' allowfullscreen></iframe>",
+              "description": "Embeds a YouTube video into your webpage."
+            }
+          ],
+          "quiz": {
+            "question": "Which tag allows embedding another webpage inside your page?",
+            "options": ["<embed>", "<frame>", "<iframe>", "<object>"],
+            "answer": "<iframe>"
+          },
+          "challenge": "Embed a YouTube video or Google Map inside your webpage.",
+          "tips": [
+            "Use allowfullscreen for video embeds.",
+            "Limit iframe usage to trusted sources."
+          ]
+        },
+        {
+          "id": 60,
+          "title": "Final Project: Complete HTML Page",
+          "content": "Combine everything you’ve learned by creating a complete webpage with navigation, forms, media, and metadata.",
+          "examples": [
+            {
+              "code": "<!DOCTYPE html>\n<html>\n  <head>\n    <meta charset='UTF-8'>\n    <meta name='description' content='My HTML Project'>\n    <title>My Portfolio</title>\n  </head>\n  <body>\n    <header><h1>Welcome to My Portfolio</h1></header>\n    <nav><a href='#about'>About</a> | <a href='#contact'>Contact</a></nav>\n    <section id='about'><p>About me section...</p></section>\n    <footer><p>&copy; 2025 My Website</p></footer>\n  </body>\n</html>",
+              "description": "A full example of a modern, accessible HTML webpage."
+            }
+          ],
+          "quiz": {
+            "question": "Which tag should always be the first in an HTML document?",
+            "options": ["<html>", "<head>", "<!DOCTYPE html>", "<body>"],
+            "answer": "<!DOCTYPE html>"
+          },
+          "challenge": "Build a complete portfolio webpage using all HTML concepts.",
+          "tips": [
+            "Validate your HTML with W3C Validator.",
+            "Use semantic elements for better SEO and readability."
+          ]
+        }
+      ]
+    }
+  ]
+}
