@@ -14,13 +14,11 @@ import {
 import { Svg, Path } from "react-native-svg";
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import LinearGradient from "react-native-linear-gradient";
-import { useNavigation, useRoute, useFocusEffect } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import { useCoursesStore } from "../../utils/store";
-import { getJSON, setJSON } from '../../utils/Storage';
-const { width } = Dimensions.get('window');
+import { getJSON, setJSON, removeKey } from '../../utils/Storage';
 
-const isSmallDevice = width < 375;
+const { width } = Dimensions.get('window');
 
 // Storage Keys
 const STORAGE_KEYS = {
@@ -30,7 +28,7 @@ const STORAGE_KEYS = {
 };
 
 export default function UserProfileScreen() {
-  const navigation=useNavigation();
+  const navigation = useNavigation();
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(30)).current;
   const scaleAnim = useRef(new Animated.Value(0.95)).current;
@@ -40,7 +38,6 @@ export default function UserProfileScreen() {
   const [signingIn, setSigningIn] = useState(false);
 
   useEffect(() => {
-    initializeGoogleSignIn();
     loadUserData();
     
     Animated.parallel([
@@ -64,8 +61,6 @@ export default function UserProfileScreen() {
     ]).start();
   }, []);
 
- 
-
   // Check if user is already signed in
   const checkSignInStatus = async () => {
     try {
@@ -84,7 +79,8 @@ export default function UserProfileScreen() {
     try {
       console.log('📱 Loading user data...');
       
-      const userData = getJSON(STORAGE_KEYS.USER_DATA);
+      const userData = 
+       getJSON(STORAGE_KEYS.USER_DATA);
       
       if (userData) {
         console.log('✅ User data loaded:', userData.name);
@@ -96,16 +92,17 @@ export default function UserProfileScreen() {
       }
     } catch (error) {
       console.error('❌ Error loading user data:', error);
+      // Don't crash, just continue without user data
     } finally {
       setLoading(false);
     }
   };
 
   // Save user data to storage
-  const saveUserData = (userData) => {
+  const saveUserData = async (userData) => {
     try {
       console.log('💾 Saving user data...');
-      setJSON(STORAGE_KEYS.USER_DATA, userData);
+       setJSON(STORAGE_KEYS.USER_DATA, userData);
       setJSON(STORAGE_KEYS.LAST_LOGIN, new Date().toISOString());
       console.log('✅ User data saved');
     } catch (error) {
@@ -120,7 +117,7 @@ export default function UserProfileScreen() {
       name: userInfo.user.name || userInfo.user.givenName || "User",
       email: userInfo.user.email,
       imageUrl: userInfo.user.photo,
-      createdAt: new Date().toISOString(), // You might want to store this separately
+      createdAt: new Date().toISOString(),
     };
     
     console.log('✅ User info processed:', userData.name);
@@ -164,9 +161,9 @@ export default function UserProfileScreen() {
       await GoogleSignin.signOut();
 
       // Clear all user-related data
-      removeKey(STORAGE_KEYS.USER_DATA);
-      removeKey(STORAGE_KEYS.LAST_LOGIN);
-      removeKey(STORAGE_KEYS.HAS_COMPLETED_ONBOARDING);
+       removeKey(STORAGE_KEYS.USER_DATA);
+       removeKey(STORAGE_KEYS.LAST_LOGIN);
+       removeKey(STORAGE_KEYS.HAS_COMPLETED_ONBOARDING);
 
       console.log('✅ User data cleared');
       setUser(null);
@@ -261,7 +258,7 @@ export default function UserProfileScreen() {
                   <ActivityIndicator size="small" color="#FFFFFF" />
                 ) : (
                   <>
-                    <Svg width="18" height="18" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <Svg width="18" height="18" viewBox="0 0 20 20" fill="none">
                       <Path d="M19.6 10.227c0-.709-.064-1.39-.182-2.045H10v3.868h5.382a4.6 4.6 0 01-1.996 3.018v2.51h3.232c1.891-1.742 2.982-4.305 2.982-7.35z" fill="#FFFFFF"/>
                       <Path d="M10 20c2.7 0 4.964-.895 6.618-2.423l-3.232-2.509c-.895.6-2.04.955-3.386.955-2.605 0-4.81-1.76-5.595-4.123H1.064v2.59A9.996 9.996 0 0010 20z" fill="#FFFFFF"/>
                       <Path d="M4.405 11.9c-.2-.6-.314-1.24-.314-1.9 0-.66.114-1.3.314-1.9V5.51H1.064A9.996 9.996 0 000 10c0 1.614.386 3.14 1.064 4.49l3.34-2.59z" fill="#FFFFFF"/>
@@ -278,7 +275,7 @@ export default function UserProfileScreen() {
     );
   }
 
-  // Logged in view - User data is available!
+  // Logged in view
   return (
     <View style={styles.container}>
       <StatusBar barStyle="light-content" />
