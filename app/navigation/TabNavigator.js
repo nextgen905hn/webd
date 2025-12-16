@@ -35,7 +35,7 @@ export default function TabNavigator() {
           backgroundColor: '#0F172A', // Dark background
           borderTopColor: '#1E293B',
           borderTopWidth: 1,
-          height: Platform.OS === 'ios' ? 88 : 65,
+          height: Platform.OS === 'ios' ? 88 : 74,
           paddingBottom: Platform.OS === 'ios' ? 28 : 10,
           paddingTop: 10,
           elevation: 0,

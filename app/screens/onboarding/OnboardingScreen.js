@@ -13,9 +13,12 @@ import {
 import LinearGradient from "react-native-linear-gradient";
 import { useNavigation } from "@react-navigation/native";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import Svg, { Path, Circle, Defs, RadialGradient, Stop } from "react-native-svg";
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
-import { removeKey, getJSON, setJSON, getString, setString, clearAll,getBoolean, setBoolean } from '../../utils/Storage';
+import { getAuth, signInWithCredential, GoogleAuthProvider } from 'firebase/auth';
+import { auth } from '../../utils/firebase';
+
+import Svg, { Path, Circle, Defs, RadialGradient, Stop } from "react-native-svg";
+import { removeKey, getJSON, setJSON, getString, setString, clearAll, getBoolean, setBoolean } from '../../utils/Storage';
 
 const { width, height } = Dimensions.get("window");
 const isSmallDevice = width < 375;
@@ -26,6 +29,8 @@ const STORAGE_KEYS = {
   LAST_LOGIN: '@last_login',
   USERNAME: 'username',
 };
+
+
 
 // Optimized: Memoized particle component
 const AnimatedParticle = memo(({ index }) => {
@@ -237,35 +242,34 @@ export default function OnboardingScreen() {
   }, []);
 
   // Check onboarding status on mount (synchronous)
- useEffect(() => {
-  const checkOnboarding = async () => {
-    try {
-      const hasCompleted = await getBoolean(STORAGE_KEYS.HAS_COMPLETED_ONBOARDING);
-      if (hasCompleted === true) {
-        navigation.reset({
-          index: 0,
-          routes: [
-            {
-              name: "Tabnavigator",
-              state: {
-                index: 0,
-                routes: [{ name: "Home" }],
+  useEffect(() => {
+    const checkOnboarding = async () => {
+      try {
+        const hasCompleted = await getBoolean(STORAGE_KEYS.HAS_COMPLETED_ONBOARDING);
+        if (hasCompleted === true) {
+          navigation.reset({
+            index: 0,
+            routes: [
+              {
+                name: "Tabnavigator",
+                state: {
+                  index: 0,
+                  routes: [{ name: "Home" }],
+                },
               },
-            },
-          ],
-        });
-      } else {
-        loadUserData();
+            ],
+          });
+        } else {
+          loadUserData();
+        }
+      } catch (error) {
+        console.error("Error checking onboarding status:", error);
+        setLoading(false);
       }
-    } catch (error) {
-      console.error("Error checking onboarding status:", error);
-      setLoading(false);
-    }
-  };
+    };
 
-  checkOnboarding();
-}, [navigation, loadUserData]);
-
+    checkOnboarding();
+  }, [navigation, loadUserData]);
 
   useEffect(() => {
     fadeAnim.setValue(0);
@@ -325,34 +329,93 @@ export default function OnboardingScreen() {
     ).start();
   }, [glowAnim, pulseAnim]);
 
-  const handleGoogleSignIn = useCallback(async () => {
+
+const handleGoogleSignIn =  async () => {
+  try {
+    await GoogleSignin.hasPlayServices({
+      showPlayServicesUpdateDialog: true,
+    });
+
+    await GoogleSignin.signOut(); // force picker
+
+    const userInfo = await GoogleSignin.signIn();
+
+    console.log('Google userInfo:', userInfo);
+
+    const idToken = userInfo?.data?.idToken;
+
+    if (!idToken) {
+      throw new Error('No idToken received');
+    }
+
+const googleCredential = GoogleAuthProvider.credential(idToken);
+
+await signInWithCredential(auth, googleCredential);
+
+    console.log('Firebase user:', result.user.email);
+  } catch (error) {
+    console.log('Google Sign-In Error:', error);
+  }
+};
+  // Firebase Google Sign-In Handler
+  /*const handleGoogleSignIn = useCallback(async () => {
     try {
       setIsLoading(true);
 
+      // Check if Google Play Services are available
       await GoogleSignin.hasPlayServices();
-      const userInfoGoogle = await GoogleSignin.signIn();
+      
+      // Get the user's ID token
+      const { idToken } = await GoogleSignin.signIn();
 
+      // Create a Firebase credential with the token
+      const googleCredential = auth.GoogleAuthProvider.credential(idToken);
+
+      // Sign in the user with the credential
+      const userCredential = await auth().signInWithCredential(googleCredential);
+      
+      console.log('Firebase User:', userCredential.user);
+
+      // Prepare user data to save
       const userDataToSave = {
-        id: userInfoGoogle.user.id,
-        name: userInfoGoogle.user.name,
-        email: userInfoGoogle.user.email,
-        imageUrl: userInfoGoogle.user.photo,
+        uid: userCredential.user.uid,
+        name: userCredential.user.displayName,
+        email: userCredential.user.email,
+        imageUrl: userCredential.user.photoURL,
         createdAt: new Date().toISOString(),
       };
 
+      // Save to local storage
       saveUserData(userDataToSave);
       setUserInfo(userDataToSave);
 
+      // Mark onboarding as complete
       markOnboardingComplete();
+      
+      // Navigate to next screen
       navigation.replace("Reminder");
 
     } catch (error) {
-      console.log("Google SignIn Error: ", error);
-      Alert.alert("Sign-In Failed", "Please try again.");
+      console.log("Google Sign-In Error: ", error);
+      
+      // Handle specific error cases
+      if (error.code === 'auth/account-exists-with-different-credential') {
+        Alert.alert(
+          "Account Exists",
+          "An account already exists with the same email address but different sign-in credentials."
+        );
+      } else if (error.code === 'auth/invalid-credential') {
+        Alert.alert(
+          "Invalid Credential",
+          "The credential is malformed or has expired."
+        );
+      } else {
+        Alert.alert("Sign-In Failed", "Please try again.");
+      }
     } finally {
       setIsLoading(false);
     }
-  }, [saveUserData, markOnboardingComplete, navigation]);
+  }, [saveUserData, markOnboardingComplete, navigation]);*/
 
   const handleNext = useCallback(() => {
     if (currentSlide < SLIDES.length - 1) {
@@ -388,7 +451,7 @@ export default function OnboardingScreen() {
     index,
   }), []);
 
-  // Optimized: Memoized render item - MUST be defined before conditional return
+  // Optimized: Memoized render item
   const renderItem = useCallback(({ item }) => (
     <View style={[styles.slide, { width }]}>
       <Animated.View
@@ -475,7 +538,7 @@ export default function OnboardingScreen() {
                   disabled={isLoading}
                 >
                   {isLoading ? (
-                    <Text style={styles.googleText}>Connecting...</Text>
+                    <Text style={styles.googleText}>Signing in...</Text>
                   ) : (
                     <>
                       <GoogleLogo />

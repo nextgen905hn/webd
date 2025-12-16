@@ -45,7 +45,11 @@ export default function ProgressScreen() {
       setLoading(false);
     }
   }, []);
+useEffect(()=>{
+  
+  clearAll()
 
+},[])
   useEffect(() => {
     fetchProgress();
     Animated.parallel([

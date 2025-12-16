@@ -14,7 +14,12 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import LinearGradient from "react-native-linear-gradient";
 import { useNavigation } from "@react-navigation/native";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import notifee, { TimestampTrigger, TriggerType, RepeatFrequency } from '@notifee/react-native';
+import notifee, { 
+  TimestampTrigger, 
+  TriggerType, 
+  RepeatFrequency,
+  AndroidNotificationSetting 
+} from '@notifee/react-native';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -39,6 +44,7 @@ export default function ReminderScreen() {
   });
   const [showPicker, setShowPicker] = useState(false);
   const [notificationPermission, setNotificationPermission] = useState(false);
+  const [alarmPermission, setAlarmPermission] = useState(true); // Track alarm permission separately
   const [isLoading, setIsLoading] = useState(false);
 
   // Animations
@@ -87,20 +93,34 @@ export default function ReminderScreen() {
       const settings = await notifee.requestPermission();
 
       if (settings.authorizationStatus >= 1) {
-        console.log('Permission granted');
+        console.log('Notification permission granted');
         setNotificationPermission(true);
+        
+        // Check alarm permission for Android 12+ (API 31+)
+        if (Platform.OS === 'android' && Platform.Version >= 31) {
+          if (settings.android.alarm === AndroidNotificationSetting.DISABLED) {
+            console.log('Alarm permission NOT granted');
+            setAlarmPermission(false);
+          } else if (settings.android.alarm === AndroidNotificationSetting.ENABLED) {
+            console.log('Alarm permission granted');
+            setAlarmPermission(true);
+          }
+        }
       } else {
+        console.log('Notification permission denied');
         setNotificationPermission(false);
       }
 
-      // Android channel
+      // Create Android notification channel
       if (Platform.OS === 'android') {
         await notifee.createChannel({
           id: 'daily-reminder',
           name: 'Daily Reminder',
           sound: 'default',
-          importance: 4, // HIGH
+          importance: 4, // HIGH importance
+          vibration: true,
         });
+        console.log('Android channel created');
       }
     } catch (err) {
       console.log('Permission error:', err);
@@ -116,37 +136,113 @@ export default function ReminderScreen() {
 
   async function scheduleDailyNotification() {
     try {
-      if (!notificationPermission) {
+      // Step 1: Check notification permission
+      const settings = await notifee.getNotificationSettings();
+      
+      if (settings.authorizationStatus < 1) {
         Alert.alert(
           'Enable Notifications',
-          'Please allow notifications from settings.',
+          'Please allow notifications to set reminders.',
+          [
+            { text: 'Cancel', style: 'cancel' },
+            {
+              text: 'Open Settings',
+              onPress: () => notifee.openNotificationSettings()
+            }
+          ]
         );
         return;
       }
 
+      // Step 2: Check alarm permission for Android 12+ (API 31+)
+      if (Platform.OS === 'android' && Platform.Version >= 31) {
+        if (settings.android.alarm === AndroidNotificationSetting.DISABLED) {
+          Alert.alert(
+            'Alarm Permission Required',
+            'To schedule exact daily reminders, you need to allow "Alarms & reminders" permission. This ensures notifications arrive at the exact time you set.\n\nWithout this permission, notifications may be delayed.',
+            [
+              { text: 'Cancel', style: 'cancel' },
+              {
+                text: 'Open Settings',
+                onPress: async () => {
+                  await notifee.openAlarmPermissionSettings();
+                  // Re-check permission after user returns
+                  setTimeout(async () => {
+                    const updatedSettings = await notifee.getNotificationSettings();
+                    if (updatedSettings.android.alarm === AndroidNotificationSetting.ENABLED) {
+                      setAlarmPermission(true);
+                      scheduleDailyNotification(); // Retry scheduling
+                    }
+                  }, 1000);
+                },
+              },
+            ]
+          );
+          return;
+        }
+      }
+
       setIsLoading(true);
 
-      // Cancel previous
+      // Cancel previous notifications and triggers
       await notifee.cancelAllNotifications();
+      await notifee.cancelTriggerNotifications();
+      console.log('Previous notifications cancelled');
 
-      // Convert selected time to timestamp for next trigger
+      // Ensure channel exists (redundant but safe)
+      if (Platform.OS === 'android') {
+        await notifee.createChannel({
+          id: 'daily-reminder',
+          name: 'Daily Reminder',
+          sound: 'default',
+          importance: 4,
+          vibration: true,
+        });
+      }
+
+      // Calculate next trigger time
       const now = new Date();
       const selected = new Date(date);
       selected.setSeconds(0);
+      selected.setMilliseconds(0);
 
-      // If passed today → schedule tomorrow
+      // If time has passed today, schedule for tomorrow
       if (selected <= now) {
         selected.setDate(selected.getDate() + 1);
       }
 
+      console.log('Scheduling notification for:', selected.toLocaleString());
+
+      // Create trigger configuration
       const trigger = {
         type: TriggerType.TIMESTAMP,
         timestamp: selected.getTime(),
         repeatFrequency: RepeatFrequency.DAILY,
-        alarmManager: true,
       };
 
-      await notifee.createTriggerNotification(
+      // Add alarmManager only if we have permission (Android 12+)
+      let usingAlarmManager = false;
+      if (Platform.OS === 'android') {
+        if (Platform.Version >= 31) {
+          // Android 12+: Only use alarmManager if permission granted
+          const currentSettings = await notifee.getNotificationSettings();
+          if (currentSettings.android.alarm === AndroidNotificationSetting.ENABLED) {
+            trigger.alarmManager = true;
+            usingAlarmManager = true;
+            console.log('Using AlarmManager (Android 12+)');
+          } else {
+            console.log('AlarmManager not available, using standard trigger');
+          }
+        } else {
+          // Android < 12: alarmManager doesn't require permission
+          trigger.alarmManager = true;
+          usingAlarmManager = true;
+          console.log('Using AlarmManager (Android < 12)');
+        }
+      }
+
+      // Schedule the notification
+      const notificationId = await notifee.createTriggerNotification(
         {
           id: 'daily-learning-reminder',
           title: '📚 Time to Learn!',
@@ -154,75 +250,100 @@ export default function ReminderScreen() {
           android: {
             channelId: 'daily-reminder',
             pressAction: { id: 'default' },
+            importance: 4,
+            sound: 'default',
+            vibrationPattern: [300, 500],
+            smallIcon: 'ic_notification', // Make sure you have this icon
+            color: '#8B5CF6',
+          },
+          ios: {
+            sound: 'default',
+            critical: false,
+            foregroundPresentationOptions: {
+              badge: true,
+              sound: true,
+              banner: true,
+              list: true,
+            },
           },
         },
         trigger
       );
 
+      console.log('Notification scheduled successfully:', notificationId);
+
       setIsLoading(false);
 
-  Alert.alert(
-  'Reminder Set!',
-  `Daily reminder scheduled at ${selected.toLocaleTimeString()}`,
-  [
-    {
-      text: 'OK',
-     onPress: () =>
-  navigation.reset({
-   index: 0,
-          routes: [
-            {
-              name: "Tabnavigator",
-              state: {
+      // Show success message
+      const timeString = selected.toLocaleTimeString([], {
+        hour: '2-digit',
+        minute: '2-digit',
+      });
+
+      let message = `Daily reminder scheduled for ${timeString}`;
+      if (Platform.OS === 'android' && Platform.Version >= 31 && !usingAlarmManager) {
+        message += '\n\n⚠️ Note: For exact timing, enable "Alarms & reminders" in settings.';
+      }
+
+      Alert.alert(
+        'Reminder Set! ✅',
+        message,
+        [
+          {
+            text: 'OK',
+            onPress: () =>
+              navigation.reset({
                 index: 0,
-                routes: [{ name: "Home" }],
-              },
-            },
-          ],
-  }),
-
-    },
-  ]
-);
-
+                routes: [
+                  {
+                    name: "Tabnavigator",
+                    state: {
+                      index: 0,
+                      routes: [{ name: "Home" }],
+                    },
+                  },
+                ],
+              }),
+          },
+        ]
+      );
 
     } catch (error) {
       console.log('Schedule error:', error);
       setIsLoading(false);
-      Alert.alert('Error', 'Could not schedule reminder');
+      Alert.alert('Error', `Could not schedule reminder: ${error.message}`);
     }
   }
-const handleSkip = () => {
-  Alert.alert(
-    "Skip Reminder?",
-    "You can always set up reminders later from the settings.",
-    [
-      { text: "Go Back", style: "cancel" },
-      {
-        text: "Skip",
-        style: "destructive",
-        onPress: () => {
-          // Wrap navigation.reset in a function to ensure it executes properly
-          setTimeout(() => {
-            navigation.reset({
-              index: 0,
-              routes: [
-                {
-                  name: "Tabnavigator",
-                  state: {
-                    index: 0,
-                    routes: [{ name: "Home" }],
-                  },
-                },
-              ],
-            });
-          }, 100); // Small delay helps avoid conflicts with Alert
-        },
-      },
-    ]
-  );
-};
 
+  const handleSkip = () => {
+    Alert.alert(
+      "Skip Reminder?",
+      "You can always set up reminders later from the settings.",
+      [
+        { text: "Go Back", style: "cancel" },
+        {
+          text: "Skip",
+          style: "destructive",
+          onPress: () => {
+            setTimeout(() => {
+              navigation.reset({
+                index: 0,
+                routes: [
+                  {
+                    name: "Tabnavigator",
+                    state: {
+                      index: 0,
+                      routes: [{ name: "Home" }],
+                    },
+                  },
+                ],
+              });
+            }, 100);
+          },
+        },
+      ]
+    );
+  };
 
   const containerStyle = useAnimatedStyle(() => ({
     opacity: fadeAnim.value,
@@ -245,6 +366,20 @@ const handleSkip = () => {
     minute: "2-digit",
     hour12: true,
   });
+
+  // Determine permission status text
+  const getPermissionStatus = () => {
+    if (!notificationPermission) {
+      return "⚠️ Notification Permission Required";
+    }
+    if (Platform.OS === 'android' && Platform.Version >= 31 && !alarmPermission) {
+      return "⚠️ Alarm Permission Recommended";
+    }
+    return "✓ Notifications Enabled";
+  };
+
+  const isPermissionIssue = !notificationPermission || 
+    (Platform.OS === 'android' && Platform.Version >= 31 && !alarmPermission);
 
   return (
     <View style={styles.container}>
@@ -288,7 +423,6 @@ const handleSkip = () => {
                     style={styles.iconBackground}
                   >
                     <Ionicons name="notifications-outline" size={56} color="#FFFFFF" />
-                    {/* Notification badge */}
                     <View style={styles.notificationBadge}>
                       <View style={styles.badgePulse} />
                     </View>
@@ -356,13 +490,11 @@ const handleSkip = () => {
                     <View
                       style={[
                         styles.statusDot,
-                        notificationPermission && styles.statusDotActive,
+                        !isPermissionIssue && styles.statusDotActive,
                       ]}
                     />
                     <Text style={styles.statusText}>
-                      {notificationPermission
-                        ? "✓ Notifications Enabled"
-                        : "⚠ Permission Required"}
+                      {getPermissionStatus()}
                     </Text>
                   </View>
                 </View>

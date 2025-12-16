@@ -225,63 +225,70 @@ export default function CertificateScreen() {
     }
   };
 
-  const requestStoragePermission = async () => {
-    try {
-      let permission = 
-        Platform.OS === "android"
-          ? PERMISSIONS.ANDROID.READ_MEDIA_IMAGES
-          : PERMISSIONS.IOS.PHOTO_LIBRARY;
-
-      const result = await request(permission);
-      return result === RESULTS.GRANTED;
-    } catch (err) {
-      console.log("Permission Error:", err);
-      return false;
-    }
-  };
-
-  const handleDownload = async () => {
-    try {
-      const hasPermission = await requestStoragePermission();
-      if (!hasPermission) {
-        Alert.alert("Permission Denied", "Cannot save to gallery");
-        return;
+ const requestStoragePermission = async () => {
+  try {
+    let permission;
+    if (Platform.OS === 'android') {
+      if (Platform.Version >= 33) {
+        permission = PERMISSIONS.ANDROID.READ_MEDIA_IMAGES;
+      } else {
+        permission = PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE;
       }
-
-      setIsDownloading(true);
-      setDownloadProgress(30);
-
-      const cert = await getCertificate();
-      const imageUrl = cert?.cloudUrl;
-      const fileName = `certificate_${Date.now()}.png`;
-
-      const downloadPath = `${RNFS.CachesDirectoryPath}/${fileName}`;
-
-      setDownloadProgress(60);
-
-      const downloadResult = await RNFS.downloadFile({
-        fromUrl: imageUrl,
-        toFile: downloadPath,
-      }).promise;
-
-      if (!downloadResult || downloadResult.statusCode !== 200) {
-        throw new Error("File download failed");
-      }
-
-      setDownloadProgress(90);
-
-      await CameraRoll.save(downloadPath, { type: 'photo' });
-
-      setDownloadProgress(100);
-      setIsDownloading(false);
-
-      Alert.alert("Saved!", "Certificate saved to your gallery.");
-    } catch (error) {
-      console.log("Download error:", error);
-      Alert.alert("Download Failed", error.message);
-      setIsDownloading(false);
+    } else {
+      permission = PERMISSIONS.IOS.PHOTO_LIBRARY_ADD_ONLY; // iOS 14+
     }
-  };
+
+    const result = await request(permission);
+    return result === RESULTS.GRANTED;
+  } catch (err) {
+    console.error('Permission Error:', err);
+    return false;
+  }
+};
+
+const handleDownload = async () => {
+  try {
+    const hasPermission = await requestStoragePermission();
+    if (!hasPermission) {
+      Alert.alert('Permission Denied', 'Cannot save to gallery');
+      return;
+    }
+
+    setIsDownloading(true);
+    setDownloadProgress(30);
+
+    const cert = await getCertificate();
+    const imageUrl = cert?.cloudUrl;
+    const fileName = `certificate_${Date.now()}.png`;
+    const downloadPath = `${RNFS.DocumentDirectoryPath}/${fileName}`; // safer than Caches
+
+    setDownloadProgress(60);
+
+    const downloadResult = await RNFS.downloadFile({
+      fromUrl: imageUrl,
+      toFile: downloadPath,
+    }).promise;
+
+    if (!downloadResult || downloadResult.statusCode !== 200) {
+      throw new Error('File download failed');
+    }
+
+    setDownloadProgress(90);
+
+    // Save to gallery
+    await CameraRoll.save(downloadPath, { type: 'photo', album: 'Certificates' });
+
+    setDownloadProgress(100);
+    setIsDownloading(false);
+
+    Alert.alert('Saved!', 'Certificate saved to your gallery.');
+  } catch (error) {
+    console.error('Download error:', error);
+    Alert.alert('Download Failed', error.message);
+    setIsDownloading(false);
+  }
+};
+
 
   const handleView = async () => {
     try {
