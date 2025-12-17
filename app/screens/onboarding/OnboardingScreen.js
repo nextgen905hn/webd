@@ -331,69 +331,66 @@ export default function OnboardingScreen() {
 
   // Firebase Google Sign-In Handler
   const handleGoogleSignIn = useCallback(async () => {
-     try {
+  try {
     setIsLoading(true);
-
-    await GoogleSignin.hasPlayServices({
+    
+    console.log('🔍 Starting Google Sign-In...');
+    
+    const hasPlayServices = await GoogleSignin.hasPlayServices({
       showPlayServicesUpdateDialog: true,
     });
+    console.log('✅ Play Services available:', hasPlayServices);
 
-    // Optional: force account picker
     await GoogleSignin.signOut();
+    console.log('✅ Signed out previous session');
 
     const userInfo = await GoogleSignin.signIn();
-    console.log('Google userInfo:', userInfo);
+    console.log('✅ Google userInfo received:', JSON.stringify(userInfo, null, 2));
 
     const idToken = userInfo?.data?.idToken;
+    console.log('✅ ID Token exists:', !!idToken);
+    
     if (!idToken) {
       throw new Error('No idToken received');
     }
 
-    // ✅ Modular Firebase credential
     const googleCredential = GoogleAuthProvider.credential(idToken);
+    console.log('✅ Google credential created');
 
-    // ✅ Modular sign-in
-    const userCredential = await signInWithCredential(
-      auth,
-      googleCredential
-    );
+    const userCredential = await signInWithCredential(auth, googleCredential);
+    console.log('✅ Firebase sign-in successful:', userCredential.user.email);
 
-    const user = userCredential.user;
-    console.log('Firebase User:', user.email);
-
-    const userDataToSave = {
-      uid: user.uid,
-      name: user.displayName,
-      email: user.email,
-      imageUrl: user.photoURL,
-      createdAt: new Date().toISOString(),
-    };
-
-    saveUserData(userDataToSave);
-    setUserInfo(userDataToSave);
-    markOnboardingComplete();
-
-    navigation.replace('Reminder');
+    // ... rest of your code
   } catch (error) {
-    console.log('Google Sign-In Error:', error);
-
-    if (error.code === 'auth/account-exists-with-different-credential') {
+    console.error('❌ Sign-in error:', {
+      code: error.code,
+      message: error.message,
+      details: JSON.stringify(error, null, 2)
+    });
+    
+    // More detailed error handling
+    if (error.code === 'auth/invalid-credential') {
       Alert.alert(
-        'Account Exists',
-        'An account already exists with the same email but different credentials.'
+        'Configuration Error',
+        'Check SHA certificates in Firebase Console and ensure google-services.json is up to date.'
       );
-    } else if (error.code === 'auth/invalid-credential') {
+    } else if (error.code === '12501') {
       Alert.alert(
-        'Invalid Credential',
-        'The credential is malformed or expired.'
+        'Sign-In Cancelled',
+        'The sign-in process was cancelled.'
+      );
+    } else if (error.code === '10') {
+      Alert.alert(
+        'Configuration Error',
+        'SHA certificate fingerprint not added to Firebase. Please add your release keystore SHA-1 and SHA-256.'
       );
     } else {
-      Alert.alert('Sign-In Failed', 'Please try again.');
+      Alert.alert('Sign-In Failed', error.message || 'Please try again.');
     }
   } finally {
     setIsLoading(false);
   }
-  }, [saveUserData, markOnboardingComplete, navigation]);
+}, [saveUserData, markOnboardingComplete, navigation]);
 
   const handleNext = useCallback(() => {
     if (currentSlide < SLIDES.length - 1) {
