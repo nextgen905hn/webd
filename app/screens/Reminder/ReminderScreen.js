@@ -44,7 +44,7 @@ export default function ReminderScreen() {
   });
   const [showPicker, setShowPicker] = useState(false);
   const [notificationPermission, setNotificationPermission] = useState(false);
-  const [alarmPermission, setAlarmPermission] = useState(true); // Track alarm permission separately
+  const [alarmPermission, setAlarmPermission] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
 
   // Animations
@@ -93,21 +93,21 @@ export default function ReminderScreen() {
       const settings = await notifee.requestPermission();
 
       if (settings.authorizationStatus >= 1) {
-        console.log('Notification permission granted');
+        console.log('✅ Notification permission granted');
         setNotificationPermission(true);
         
         // Check alarm permission for Android 12+ (API 31+)
         if (Platform.OS === 'android' && Platform.Version >= 31) {
           if (settings.android.alarm === AndroidNotificationSetting.DISABLED) {
-            console.log('Alarm permission NOT granted');
+            console.log('⚠️ Alarm permission NOT granted');
             setAlarmPermission(false);
           } else if (settings.android.alarm === AndroidNotificationSetting.ENABLED) {
-            console.log('Alarm permission granted');
+            console.log('✅ Alarm permission granted');
             setAlarmPermission(true);
           }
         }
       } else {
-        console.log('Notification permission denied');
+        console.log('❌ Notification permission denied');
         setNotificationPermission(false);
       }
 
@@ -119,11 +119,12 @@ export default function ReminderScreen() {
           sound: 'default',
           importance: 4, // HIGH importance
           vibration: true,
+          vibrationPattern: [300, 500],
         });
-        console.log('Android channel created');
+        console.log('✅ Android channel created');
       }
     } catch (err) {
-      console.log('Permission error:', err);
+      console.log('❌ Permission error:', err);
     }
   }
 
@@ -134,8 +135,102 @@ export default function ReminderScreen() {
     }
   };
 
+  // Test notification function for debugging
+  async function testNotification() {
+    try {
+      console.log('🧪 Testing immediate notification...');
+      
+      const channelId = await notifee.createChannel({
+        id: 'test-channel',
+        name: 'Test Channel',
+        importance: 4,
+        sound: 'default',
+        vibration: true,
+      });
+
+      await notifee.displayNotification({
+        title: '🔔 Test Notification',
+        body: 'If you see this, notifications are working!',
+        android: {
+          channelId,
+          smallIcon: 'ic_launcher', // Using default launcher icon
+          pressAction: { id: 'default' },
+          color: '#8B5CF6',
+          importance: 4,
+        },
+        ios: {
+          sound: 'default',
+        },
+      });
+      
+      console.log('✅ Test notification displayed');
+      Alert.alert('Success! 🎉', 'Test notification sent! Check your notification shade.');
+    } catch (error) {
+      console.error('❌ Test failed:', error);
+      Alert.alert('Error', `Test failed: ${error.message}`);
+    }
+  }
+
+  // Check battery optimization
+  async function checkBatteryOptimization() {
+    if (Platform.OS !== 'android') return;
+    
+    try {
+      const batteryOptimizationEnabled = await notifee.isBatteryOptimizationEnabled();
+      console.log('Battery optimization enabled:', batteryOptimizationEnabled);
+      
+      if (batteryOptimizationEnabled) {
+        Alert.alert(
+          'Battery Optimization Detected',
+          'Your device may prevent notifications when the app is closed. Would you like to disable battery optimization for this app?\n\nThis ensures your daily reminders work reliably.',
+          [
+            { text: 'Not Now', style: 'cancel' },
+            {
+              text: 'Open Settings',
+              onPress: async () => {
+                await notifee.openBatteryOptimizationSettings();
+              },
+            },
+          ]
+        );
+      }
+    } catch (error) {
+      console.log('Battery optimization check error:', error);
+    }
+  }
+
+  // Verify scheduled notifications
+  async function verifyScheduledNotifications() {
+    try {
+      const scheduledIds = await notifee.getTriggerNotificationIds();
+      console.log('📋 Scheduled notification IDs:', scheduledIds);
+      
+      if (scheduledIds.length > 0) {
+        const triggers = await notifee.getTriggerNotifications();
+        console.log('📋 Scheduled notifications details:', triggers);
+        
+        triggers.forEach((trigger, index) => {
+          const date = new Date(trigger.trigger.timestamp);
+          console.log(`  ${index + 1}. ID: ${trigger.notification.id}`);
+          console.log(`     Time: ${date.toLocaleString()}`);
+          console.log(`     Repeat: ${trigger.trigger.repeatFrequency || 'none'}`);
+        });
+        
+        return true;
+      } else {
+        console.warn('⚠️ No notifications were scheduled!');
+        return false;
+      }
+    } catch (error) {
+      console.error('❌ Verify error:', error);
+      return false;
+    }
+  }
+
   async function scheduleDailyNotification() {
     try {
+      console.log('🚀 Starting notification scheduling...');
+      
       // Step 1: Check notification permission
       const settings = await notifee.getNotificationSettings();
       
@@ -187,9 +282,9 @@ export default function ReminderScreen() {
       // Cancel previous notifications and triggers
       await notifee.cancelAllNotifications();
       await notifee.cancelTriggerNotifications();
-      console.log('Previous notifications cancelled');
+      console.log('🗑️ Previous notifications cancelled');
 
-      // Ensure channel exists (redundant but safe)
+      // Ensure channel exists
       if (Platform.OS === 'android') {
         await notifee.createChannel({
           id: 'daily-reminder',
@@ -197,21 +292,29 @@ export default function ReminderScreen() {
           sound: 'default',
           importance: 4,
           vibration: true,
+          vibrationPattern: [300, 500],
         });
       }
 
-      // Calculate next trigger time
+      // FIXED: Calculate next trigger time correctly for DAILY repeat
       const now = new Date();
-      const selected = new Date(date);
+      const selected = new Date();
+      
+      // Set the selected time (hours and minutes from picker)
+      selected.setHours(date.getHours());
+      selected.setMinutes(date.getMinutes());
       selected.setSeconds(0);
       selected.setMilliseconds(0);
 
-      // If time has passed today, schedule for tomorrow
+      // If the time has already passed today, schedule for tomorrow
       if (selected <= now) {
         selected.setDate(selected.getDate() + 1);
+        console.log('⏰ Time has passed today, scheduling for tomorrow');
       }
 
-      console.log('Scheduling notification for:', selected.toLocaleString());
+      console.log('🕐 Current time:', now.toLocaleString());
+      console.log('🎯 Scheduling for:', selected.toLocaleString());
+      console.log('⏱️ Time until notification:', Math.round((selected.getTime() - now.getTime()) / 1000 / 60), 'minutes');
 
       // Create trigger configuration
       const trigger = {
@@ -227,17 +330,21 @@ export default function ReminderScreen() {
           // Android 12+: Only use alarmManager if permission granted
           const currentSettings = await notifee.getNotificationSettings();
           if (currentSettings.android.alarm === AndroidNotificationSetting.ENABLED) {
-            trigger.alarmManager = true;
+            trigger.alarmManager = {
+              allowWhileIdle: true,
+            };
             usingAlarmManager = true;
-            console.log('Using AlarmManager (Android 12+)');
+            console.log('✅ Using AlarmManager (Android 12+)');
           } else {
-            console.log('AlarmManager not available, using standard trigger');
+            console.log('⚠️ AlarmManager not available, using standard trigger');
           }
         } else {
           // Android < 12: alarmManager doesn't require permission
-          trigger.alarmManager = true;
+          trigger.alarmManager = {
+            allowWhileIdle: true,
+          };
           usingAlarmManager = true;
-          console.log('Using AlarmManager (Android < 12)');
+          console.log('✅ Using AlarmManager (Android < 12)');
         }
       }
 
@@ -253,8 +360,10 @@ export default function ReminderScreen() {
             importance: 4,
             sound: 'default',
             vibrationPattern: [300, 500],
-            smallIcon: 'ic_notification', // Make sure you have this icon
+            smallIcon: 'ic_launcher', // FIXED: Using default launcher icon
             color: '#8B5CF6',
+            showTimestamp: true,
+            autoCancel: true,
           },
           ios: {
             sound: 'default',
@@ -270,9 +379,21 @@ export default function ReminderScreen() {
         trigger
       );
 
-      console.log('Notification scheduled successfully:', notificationId);
+      console.log('✅ Notification scheduled successfully! ID:', notificationId);
 
+      // Verify it was actually scheduled
+      const verified = await verifyScheduledNotifications();
+      
       setIsLoading(false);
+
+      if (!verified) {
+        Alert.alert(
+          'Warning',
+          'Notification was created but could not be verified. Please try scheduling again.',
+          [{ text: 'OK' }]
+        );
+        return;
+      }
 
       // Show success message
       const timeString = selected.toLocaleTimeString([], {
@@ -280,7 +401,8 @@ export default function ReminderScreen() {
         minute: '2-digit',
       });
 
-      let message = `Daily reminder scheduled for ${timeString}`;
+      let message = `Daily reminder scheduled for ${timeString} every day! 🎉`;
+      
       if (Platform.OS === 'android' && Platform.Version >= 31 && !usingAlarmManager) {
         message += '\n\n⚠️ Note: For exact timing, enable "Alarms & reminders" in settings.';
       }
@@ -291,27 +413,34 @@ export default function ReminderScreen() {
         [
           {
             text: 'OK',
-            onPress: () =>
-              navigation.reset({
-                index: 0,
-                routes: [
-                  {
-                    name: "Tabnavigator",
-                    state: {
-                      index: 0,
-                      routes: [{ name: "Home" }],
+            onPress: async () => {
+              // Check battery optimization AFTER user confirms
+              await checkBatteryOptimization();
+              
+              // Navigate to home
+              setTimeout(() => {
+                navigation.reset({
+                  index: 0,
+                  routes: [
+                    {
+                      name: "Tabnavigator",
+                      state: {
+                        index: 0,
+                        routes: [{ name: "Home" }],
+                      },
                     },
-                  },
-                ],
-              }),
+                  ],
+                });
+              }, 500);
+            },
           },
         ]
       );
 
     } catch (error) {
-      console.log('Schedule error:', error);
+      console.error('❌ Schedule error:', error);
       setIsLoading(false);
-      Alert.alert('Error', `Could not schedule reminder: ${error.message}`);
+      Alert.alert('Error', `Could not schedule reminder: ${error.message}\n\nPlease try again or contact support if the issue persists.`);
     }
   }
 
@@ -518,6 +647,17 @@ export default function ReminderScreen() {
                 </View>
               ))}
             </View>
+
+            {/* Test Button (for debugging - remove in production) */}
+            {__DEV__ && (
+              <TouchableOpacity
+                style={styles.testButton}
+                onPress={testNotification}
+                activeOpacity={0.7}
+              >
+                <Text style={styles.testButtonText}>🧪 Test Notification</Text>
+              </TouchableOpacity>
+            )}
 
             {/* Action Button */}
             <AnimatedTouchable

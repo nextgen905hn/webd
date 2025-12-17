@@ -329,93 +329,71 @@ export default function OnboardingScreen() {
     ).start();
   }, [glowAnim, pulseAnim]);
 
+  // Firebase Google Sign-In Handler
+  const handleGoogleSignIn = useCallback(async () => {
+     try {
+    setIsLoading(true);
 
-const handleGoogleSignIn =  async () => {
-  try {
     await GoogleSignin.hasPlayServices({
       showPlayServicesUpdateDialog: true,
     });
 
-    await GoogleSignin.signOut(); // force picker
+    // Optional: force account picker
+    await GoogleSignin.signOut();
 
     const userInfo = await GoogleSignin.signIn();
-
     console.log('Google userInfo:', userInfo);
 
     const idToken = userInfo?.data?.idToken;
-
     if (!idToken) {
       throw new Error('No idToken received');
     }
 
-const googleCredential = GoogleAuthProvider.credential(idToken);
+    // ✅ Modular Firebase credential
+    const googleCredential = GoogleAuthProvider.credential(idToken);
 
-await signInWithCredential(auth, googleCredential);
+    // ✅ Modular sign-in
+    const userCredential = await signInWithCredential(
+      auth,
+      googleCredential
+    );
 
-    console.log('Firebase user:', result.user.email);
+    const user = userCredential.user;
+    console.log('Firebase User:', user.email);
+
+    const userDataToSave = {
+      uid: user.uid,
+      name: user.displayName,
+      email: user.email,
+      imageUrl: user.photoURL,
+      createdAt: new Date().toISOString(),
+    };
+
+    saveUserData(userDataToSave);
+    setUserInfo(userDataToSave);
+    markOnboardingComplete();
+
+    navigation.replace('Reminder');
   } catch (error) {
     console.log('Google Sign-In Error:', error);
-  }
-};
-  // Firebase Google Sign-In Handler
-  /*const handleGoogleSignIn = useCallback(async () => {
-    try {
-      setIsLoading(true);
 
-      // Check if Google Play Services are available
-      await GoogleSignin.hasPlayServices();
-      
-      // Get the user's ID token
-      const { idToken } = await GoogleSignin.signIn();
-
-      // Create a Firebase credential with the token
-      const googleCredential = auth.GoogleAuthProvider.credential(idToken);
-
-      // Sign in the user with the credential
-      const userCredential = await auth().signInWithCredential(googleCredential);
-      
-      console.log('Firebase User:', userCredential.user);
-
-      // Prepare user data to save
-      const userDataToSave = {
-        uid: userCredential.user.uid,
-        name: userCredential.user.displayName,
-        email: userCredential.user.email,
-        imageUrl: userCredential.user.photoURL,
-        createdAt: new Date().toISOString(),
-      };
-
-      // Save to local storage
-      saveUserData(userDataToSave);
-      setUserInfo(userDataToSave);
-
-      // Mark onboarding as complete
-      markOnboardingComplete();
-      
-      // Navigate to next screen
-      navigation.replace("Reminder");
-
-    } catch (error) {
-      console.log("Google Sign-In Error: ", error);
-      
-      // Handle specific error cases
-      if (error.code === 'auth/account-exists-with-different-credential') {
-        Alert.alert(
-          "Account Exists",
-          "An account already exists with the same email address but different sign-in credentials."
-        );
-      } else if (error.code === 'auth/invalid-credential') {
-        Alert.alert(
-          "Invalid Credential",
-          "The credential is malformed or has expired."
-        );
-      } else {
-        Alert.alert("Sign-In Failed", "Please try again.");
-      }
-    } finally {
-      setIsLoading(false);
+    if (error.code === 'auth/account-exists-with-different-credential') {
+      Alert.alert(
+        'Account Exists',
+        'An account already exists with the same email but different credentials.'
+      );
+    } else if (error.code === 'auth/invalid-credential') {
+      Alert.alert(
+        'Invalid Credential',
+        'The credential is malformed or expired.'
+      );
+    } else {
+      Alert.alert('Sign-In Failed', 'Please try again.');
     }
-  }, [saveUserData, markOnboardingComplete, navigation]);*/
+  } finally {
+    setIsLoading(false);
+  }
+  }, [saveUserData, markOnboardingComplete, navigation]);
 
   const handleNext = useCallback(() => {
     if (currentSlide < SLIDES.length - 1) {

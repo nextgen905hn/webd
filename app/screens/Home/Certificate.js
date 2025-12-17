@@ -10,6 +10,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   StatusBar,
+ PermissionsAndroid, 
   Platform,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -30,9 +31,9 @@ import Animated, {
   withRepeat,
   withSequence,
 } from "react-native-reanimated";
-import CameraRoll from "@react-native-camera-roll/camera-roll";
-import { PERMISSIONS, request, RESULTS } from "react-native-permissions";
+import { CameraRoll } from "@react-native-camera-roll/camera-roll";
 import RNFS from "react-native-fs";
+import { PERMISSIONS, request, RESULTS, check } from 'react-native-permissions';
 
 const courseMap = {
   html: "HTML Mastery",
@@ -245,7 +246,6 @@ export default function CertificateScreen() {
     return false;
   }
 };
-
 const handleDownload = async () => {
   try {
     const hasPermission = await requestStoragePermission();
@@ -259,8 +259,13 @@ const handleDownload = async () => {
 
     const cert = await getCertificate();
     const imageUrl = cert?.cloudUrl;
+    
+    if (!imageUrl) {
+      throw new Error('Certificate image URL not found');
+    }
+
     const fileName = `certificate_${Date.now()}.png`;
-    const downloadPath = `${RNFS.DocumentDirectoryPath}/${fileName}`; // safer than Caches
+    const downloadPath = `${RNFS.DocumentDirectoryPath}/${fileName}`;
 
     setDownloadProgress(60);
 
@@ -275,8 +280,7 @@ const handleDownload = async () => {
 
     setDownloadProgress(90);
 
-    // Save to gallery
-    await CameraRoll.save(downloadPath, { type: 'photo', album: 'Certificates' });
+    await CameraRoll.save(downloadPath, { type: 'photo' });
 
     setDownloadProgress(100);
     setIsDownloading(false);
@@ -284,11 +288,10 @@ const handleDownload = async () => {
     Alert.alert('Saved!', 'Certificate saved to your gallery.');
   } catch (error) {
     console.error('Download error:', error);
-    Alert.alert('Download Failed', error.message);
+    Alert.alert('Download Failed', error.message || 'An error occurred');
     setIsDownloading(false);
   }
 };
-
 
   const handleView = async () => {
     try {

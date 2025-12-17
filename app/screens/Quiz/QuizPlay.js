@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import {
   View,
   Text,
@@ -9,9 +9,8 @@ import {
   Dimensions,
   ActivityIndicator,
   Alert,
-  Animated as RNAnimated,
+  Platform,
 } from "react-native";
-
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -21,17 +20,29 @@ import Animated, {
   interpolate,
   withRepeat,
   Easing,
+  runOnJS,
 } from "react-native-reanimated";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../../utils/firebase";
 import LinearGradient from "react-native-linear-gradient";
 import { useNavigation, useRoute, useFocusEffect } from "@react-navigation/native";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import { useCoursesStore } from "../../utils/store";
+import NetInfo from "@react-native-community/netinfo";
 import { getJSON, setJSON } from '../../utils/Storage';
+
 const { width, height } = Dimensions.get("window");
 
-// Shuffle array utility function
+// Constants
+const TIMER_DURATION = 30;
+const BASE_POINTS = 10;
+const STREAK_BONUS = 5;
+const MIN_STREAK_FOR_BONUS = 2;
+const TIME_BONUS_DIVISOR = 3;
+const PASSING_PERCENTAGE = 70;
+const MAX_LIVES = 3;
+const CACHE_EXPIRY = 3600000; // 1 hour in milliseconds
+
+// Utility Functions
 const shuffleArray = (array) => {
   const shuffled = [...array];
   for (let i = shuffled.length - 1; i > 0; i--) {
@@ -41,52 +52,137 @@ const shuffleArray = (array) => {
   return shuffled;
 };
 
-// Fetch quiz questions from Firebase with mix support
-async function fetchQuizQuestions(category) {
+const calculatePoints = (streak, timeLeft) => {
+  const streakBonus = streak >= MIN_STREAK_FOR_BONUS ? STREAK_BONUS : 0;
+  const timeBonus = Math.floor(timeLeft / TIME_BONUS_DIVISOR);
+  return BASE_POINTS + streakBonus + timeBonus;
+};
+
+// Cache Management
+const CACHE_KEYS = {
+  QUESTIONS: (category) => `quiz_questions_${category}`,
+  TIMESTAMP: (category) => `quiz_timestamp_${category}`,
+};
+
+const getCachedQuestions = async (category) => {
   try {
-    // If category is "mix", fetch from all categories
+    const questions = await getJSON(CACHE_KEYS.QUESTIONS(category));
+    const timestamp = await getJSON(CACHE_KEYS.TIMESTAMP(category));
+    
+    if (questions && timestamp) {
+      const age = Date.now() - timestamp;
+      if (age < CACHE_EXPIRY) {
+        console.log(`📦 Using cached questions for ${category} (${Math.round(age / 60000)}m old)`);
+        return questions;
+      }
+    }
+    return null;
+  } catch (error) {
+    console.warn("Cache read error:", error);
+    return null;
+  }
+};
+
+const cacheQuestions = async (category, questions) => {
+  try {
+    await setJSON(CACHE_KEYS.QUESTIONS(category), questions);
+    await setJSON(CACHE_KEYS.TIMESTAMP(category), Date.now());
+    console.log(`💾 Cached ${questions.length} questions for ${category}`);
+  } catch (error) {
+    console.warn("Cache write error:", error);
+  }
+};
+
+// Network Status Hook
+const useNetworkStatus = () => {
+  const [isConnected, setIsConnected] = useState(true);
+  const [isInternetReachable, setIsInternetReachable] = useState(true);
+
+  useEffect(() => {
+    const unsubscribe = NetInfo.addEventListener(state => {
+      setIsConnected(state.isConnected ?? false);
+      setIsInternetReachable(state.isInternetReachable ?? false);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  return { isConnected, isInternetReachable };
+};
+
+// Quiz Questions Fetcher with Error Handling
+class QuizFetchError extends Error {
+  constructor(message, type) {
+    super(message);
+    this.type = type; // 'network', 'firebase', 'empty', 'unknown'
+    this.name = 'QuizFetchError';
+  }
+}
+
+const fetchQuizQuestions = async (category) => {
+  try {
+    // Check network first
+    const netInfo = await NetInfo.fetch();
+    if (!netInfo.isConnected) {
+      throw new QuizFetchError('No internet connection', 'network');
+    }
+
+    // Try cache first
+    const cached = await getCachedQuestions(category);
+    if (cached) {
+      return cached;
+    }
+
+    // Fetch from Firebase
     if (category.toLowerCase() === "mix") {
       return await fetchMixedQuestions();
     }
     
-    // Otherwise, fetch from specific category
     const questionsSnapshot = await getDocs(
       collection(db, `quizzes/${category}/questions`)
     );
     
+    if (questionsSnapshot.empty) {
+      throw new QuizFetchError('No questions available', 'empty');
+    }
+
     const questions = questionsSnapshot.docs.map((doc) => ({
       id: doc.id,
       category: category,
       ...doc.data(),
     }));
     
-    // Shuffle questions for variety
-    return shuffleArray(questions);
+    const shuffled = shuffleArray(questions);
+    
+    // Cache the questions
+    await cacheQuestions(category, shuffled);
+    
+    return shuffled;
   } catch (error) {
-    console.error("Error fetching quiz questions:", error);
-    return [];
+    if (error instanceof QuizFetchError) {
+      throw error;
+    }
+    
+    if (error.code === 'unavailable' || error.message.includes('network')) {
+      throw new QuizFetchError('Network error. Please check your connection.', 'network');
+    }
+    
+    console.error("Quiz fetch error:", error);
+    throw new QuizFetchError('Failed to load questions. Please try again.', 'firebase');
   }
-}
+};
 
-// Fetch mixed questions from all categories
-async function fetchMixedQuestions() {
-  try {
-    const categories = [
-      "html",
-      "css",
-      "js",
-      "react",
-      "nodejs",
-      "nextjs",
-      "mongodb",
-      "expressjs",
-      "redis"
-    ];
-    
-    const allQuestions = [];
-    
-    // Fetch questions from each category
-    for (const category of categories) {
+const fetchMixedQuestions = async () => {
+  const categories = [
+    "html", "css", "js", "react", "nodejs",
+    "nextjs", "mongodb", "expressjs", "redis"
+  ];
+  
+  const allQuestions = [];
+  const failedCategories = [];
+  
+  await Promise.allSettled(
+    categories.map(async (category) => {
       try {
         const questionsSnapshot = await getDocs(
           collection(db, `quizzes/${category}/questions`)
@@ -100,31 +196,26 @@ async function fetchMixedQuestions() {
         
         allQuestions.push(...categoryQuestions);
       } catch (error) {
-        console.warn(`Error fetching ${category} questions:`, error);
-        // Continue with other categories even if one fails
+        console.warn(`Failed to fetch ${category}:`, error);
+        failedCategories.push(category);
       }
-    }
-    
-    // Shuffle all collected questions
-    const shuffled = shuffleArray(allQuestions);
-    
-    // Return at least 20 questions, or all if less than 20
-    const minQuestions = 20;
-    const questionsToReturn = shuffled.length >= minQuestions 
-      ? shuffled.slice(0, Math.max(minQuestions, Math.min(50, shuffled.length)))
-      : shuffled;
-    
-    console.log(`Fetched ${questionsToReturn.length} mixed questions from ${categories.length} categories`);
-    
-    return questionsToReturn;
-  } catch (error) {
-    console.error("Error fetching mixed questions:", error);
-    return [];
+    })
+  );
+  
+  if (allQuestions.length === 0) {
+    throw new QuizFetchError('No questions available', 'empty');
   }
-}
+  
+  const shuffled = shuffleArray(allQuestions);
+  const questionsToReturn = shuffled.slice(0, Math.min(50, shuffled.length));
+  
+  console.log(`✅ Mixed quiz: ${questionsToReturn.length} questions from ${categories.length - failedCategories.length} categories`);
+  
+  return questionsToReturn;
+};
 
-// Floating Particle Component
-const FloatingParticle = ({ delay = 0 }) => {
+// Floating Particle Component (Memoized)
+const FloatingParticle = React.memo(({ delay = 0 }) => {
   const translateY = useSharedValue(0);
   const opacity = useSharedValue(0);
 
@@ -149,48 +240,43 @@ const FloatingParticle = ({ delay = 0 }) => {
     opacity: opacity.value,
   }));
 
-  return (
-    <Animated.View
-      style={[
-        {
-          position: 'absolute',
-          width: 4,
-          height: 4,
-          borderRadius: 2,
-          backgroundColor: '#8B5CF6',
-          left: Math.random() * width,
-          top: Math.random() * 100,
-        },
-        animatedStyle,
-      ]}
-    />
-  );
-};
+  const particleStyle = useMemo(() => ({
+    position: 'absolute',
+    width: 4,
+    height: 4,
+    borderRadius: 2,
+    backgroundColor: '#8B5CF6',
+    left: Math.random() * width,
+    top: Math.random() * 100,
+  }), []);
 
-// Timer Component
-const TimerBar = ({ timeLeft, maxTime = 30 }) => {
+  return <Animated.View style={[particleStyle, animatedStyle]} />;
+});
+
+// Timer Component (Optimized)
+const TimerBar = React.memo(({ timeLeft, maxTime = TIMER_DURATION }) => {
   const progress = useSharedValue(100);
 
   useEffect(() => {
     progress.value = withTiming((timeLeft / maxTime) * 100, { duration: 300 });
-  }, [timeLeft]);
+  }, [timeLeft, maxTime]);
 
   const animatedStyle = useAnimatedStyle(() => ({
     width: `${progress.value}%`,
   }));
 
-  const getTimerColor = () => {
+  const timerColors = useMemo(() => {
     if (timeLeft <= 5) return ['#EF4444', '#DC2626'];
     if (timeLeft <= 10) return ['#F59E0B', '#D97706'];
     return ['#10B981', '#059669'];
-  };
+  }, [timeLeft]);
 
   return (
     <View style={styles.timerContainer}>
       <View style={styles.timerTrack}>
         <Animated.View style={[styles.timerFill, animatedStyle]}>
           <LinearGradient
-            colors={getTimerColor()}
+            colors={timerColors}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 0 }}
             style={styles.timerGradient}
@@ -203,41 +289,33 @@ const TimerBar = ({ timeLeft, maxTime = 30 }) => {
       </View>
     </View>
   );
-};
+});
 
-// Lives Component
-const LivesDisplay = ({ lives }) => {
-  return (
-    <View style={styles.livesContainer}>
-      {[...Array(3)].map((_, i) => (
-        <Animated.View
-          key={i}
-          style={[
-            styles.heartContainer,
-            { opacity: i < lives ? 1 : 0.3 }
-          ]}
-        >
-          <Ionicons
-            name={i < lives ? "heart" : "heart-outline"}
-            size={24}
-            color={i < lives ? "#EF4444" : "#6B7280"}
-          />
-        </Animated.View>
-      ))}
-    </View>
-  );
-};
+// Lives Component (Optimized)
+const LivesDisplay = React.memo(({ lives }) => (
+  <View style={styles.livesContainer}>
+    {[...Array(MAX_LIVES)].map((_, i) => (
+      <View
+        key={i}
+        style={[styles.heartContainer, { opacity: i < lives ? 1 : 0.3 }]}
+      >
+        <Ionicons
+          name={i < lives ? "heart" : "heart-outline"}
+          size={24}
+          color={i < lives ? "#EF4444" : "#6B7280"}
+        />
+      </View>
+    ))}
+  </View>
+));
 
-// Streak Display Component
-const StreakDisplay = ({ streak }) => {
+// Streak Display Component (Optimized)
+const StreakDisplay = React.memo(({ streak }) => {
   const scale = useSharedValue(1);
 
   useEffect(() => {
     if (streak > 0) {
-      scale.value = withSequence(
-        withSpring(1.2),
-        withSpring(1)
-      );
+      scale.value = withSequence(withSpring(1.2), withSpring(1));
     }
   }, [streak]);
 
@@ -260,10 +338,10 @@ const StreakDisplay = ({ streak }) => {
       </LinearGradient>
     </Animated.View>
   );
-};
+});
 
-// Points Earned Animation
-const PointsEarned = ({ points, visible }) => {
+// Points Earned Animation (Optimized)
+const PointsEarned = React.memo(({ points, visible }) => {
   const translateY = useSharedValue(0);
   const opacity = useSharedValue(0);
 
@@ -285,18 +363,15 @@ const PointsEarned = ({ points, visible }) => {
 
   return (
     <Animated.View style={[styles.pointsEarnedContainer, animatedStyle]}>
-      <LinearGradient
-        colors={['#10B981', '#059669']}
-        style={styles.pointsEarnedBadge}
-      >
+      <LinearGradient colors={['#10B981', '#059669']} style={styles.pointsEarnedBadge}>
         <Text style={styles.pointsEarnedText}>+{points}</Text>
       </LinearGradient>
     </Animated.View>
   );
-};
+});
 
-// Progress Bar Component
-const ProgressBar = ({ current, total }) => {
+// Progress Bar Component (Optimized)
+const ProgressBar = React.memo(({ current, total }) => {
   const progress = useSharedValue(0);
 
   useEffect(() => {
@@ -320,67 +395,65 @@ const ProgressBar = ({ current, total }) => {
           style={styles.progressGradient}
         />
       </Animated.View>
-      <Text style={styles.progressText}>
-        {current} / {total}
-      </Text>
+      <Text style={styles.progressText}>{current} / {total}</Text>
     </View>
   );
-};
+});
 
-// Option Button Component
-const OptionButton = ({ option, index, isSelected, isCorrect, isWrong, onPress, disabled }) => {
+// Option Button Component (Optimized)
+const OptionButton = React.memo(({ 
+  option, 
+  index, 
+  isSelected, 
+  isCorrect, 
+  isWrong, 
+  onPress, 
+  disabled 
+}) => {
   const scale = useSharedValue(1);
   const backgroundColor = useSharedValue(0);
 
   useEffect(() => {
     if (isCorrect) {
       backgroundColor.value = withTiming(1, { duration: 300 });
-      scale.value = withSequence(
-        withSpring(1.05),
-        withSpring(1)
-      );
+      scale.value = withSequence(withSpring(1.05), withSpring(1));
     } else if (isWrong) {
       backgroundColor.value = withTiming(2, { duration: 300 });
-      scale.value = withSequence(
-        withSpring(0.95),
-        withSpring(1)
-      );
+      scale.value = withSequence(withSpring(0.95), withSpring(1));
     } else if (isSelected) {
       backgroundColor.value = withTiming(0, { duration: 200 });
     }
   }, [isCorrect, isWrong, isSelected]);
 
   const animatedStyle = useAnimatedStyle(() => {
-    const bgColor = interpolate(
-      backgroundColor.value,
-      [0, 1, 2],
-      [0, 1, 2]
-    );
-
+    const bgColor = backgroundColor.value;
     let color = "rgba(255, 255, 255, 0.08)";
-    if (bgColor > 1.5) color = "rgba(239, 68, 68, 0.2)";
-    else if (bgColor > 0.5) color = "rgba(16, 185, 129, 0.2)";
+    let borderColor = "rgba(255, 255, 255, 0.15)";
+
+    if (bgColor > 1.5) {
+      color = "rgba(239, 68, 68, 0.2)";
+      borderColor = "rgba(239, 68, 68, 0.5)";
+    } else if (bgColor > 0.5) {
+      color = "rgba(16, 185, 129, 0.2)";
+      borderColor = "rgba(16, 185, 129, 0.5)";
+    }
 
     return {
       transform: [{ scale: scale.value }],
       backgroundColor: color,
-      borderColor: bgColor > 1.5 
-        ? "rgba(239, 68, 68, 0.5)" 
-        : bgColor > 0.5 
-        ? "rgba(16, 185, 129, 0.5)" 
-        : "rgba(255, 255, 255, 0.15)",
+      borderColor,
     };
   });
 
-  const handlePressIn = () => {
+  const handlePressIn = useCallback(() => {
     if (!disabled) scale.value = withSpring(0.97);
-  };
+  }, [disabled]);
 
-  const handlePressOut = () => {
+  const handlePressOut = useCallback(() => {
     if (!disabled) scale.value = withSpring(1);
-  };
+  }, [disabled]);
 
-  const optionLabels = ["A", "B", "C", "D"];
+  const optionLabels = useMemo(() => ["A", "B", "C", "D"], []);
 
   return (
     <TouchableOpacity
@@ -410,36 +483,111 @@ const OptionButton = ({ option, index, isSelected, isCorrect, isWrong, onPress, 
         ]}>
           {option}
         </Text>
-        {isCorrect && (
-          <Ionicons name="checkmark-circle" size={24} color="#10B981" />
-        )}
-        {isWrong && (
-          <Ionicons name="close-circle" size={24} color="#EF4444" />
-        )}
+        {isCorrect && <Ionicons name="checkmark-circle" size={24} color="#10B981" />}
+        {isWrong && <Ionicons name="close-circle" size={24} color="#EF4444" />}
       </Animated.View>
     </TouchableOpacity>
+  );
+});
+
+// Error Display Component
+const ErrorDisplay = ({ error, onRetry, onGoBack }) => {
+  const getErrorInfo = () => {
+    switch (error.type) {
+      case 'network':
+        return {
+          icon: 'cloud-offline',
+          title: 'No Internet Connection',
+          message: 'Please check your internet connection and try again.',
+          actionText: 'Retry',
+        };
+      case 'empty':
+        return {
+          icon: 'document-outline',
+          title: 'No Questions Available',
+          message: 'There are no questions for this category yet.',
+          actionText: 'Go Back',
+        };
+      case 'firebase':
+        return {
+          icon: 'warning',
+          title: 'Server Error',
+          message: 'Unable to load questions. Please try again later.',
+          actionText: 'Retry',
+        };
+      default:
+        return {
+          icon: 'alert-circle',
+          title: 'Something Went Wrong',
+          message: 'An unexpected error occurred. Please try again.',
+          actionText: 'Retry',
+        };
+    }
+  };
+
+  const errorInfo = getErrorInfo();
+
+  return (
+    <View style={styles.errorContainer}>
+      <LinearGradient
+        colors={["#0F0420", "#1A0B2E", "#2D1B4E"]}
+        style={styles.errorGradient}
+      >
+        <View style={styles.errorContent}>
+          <View style={styles.errorIconCircle}>
+            <Ionicons name={errorInfo.icon} size={64} color="#EF4444" />
+          </View>
+          <Text style={styles.errorTitle}>{errorInfo.title}</Text>
+          <Text style={styles.errorMessage}>{errorInfo.message}</Text>
+          
+          <View style={styles.errorButtons}>
+            <TouchableOpacity
+              style={styles.errorButton}
+              onPress={error.type === 'empty' ? onGoBack : onRetry}
+            >
+              <LinearGradient
+                colors={["#38BDF8", "#8B5CF6"]}
+                style={styles.errorButtonGradient}
+              >
+                <Ionicons 
+                  name={error.type === 'empty' ? 'arrow-back' : 'refresh'} 
+                  size={20} 
+                  color="#FFFFFF" 
+                />
+                <Text style={styles.errorButtonText}>{errorInfo.actionText}</Text>
+              </LinearGradient>
+            </TouchableOpacity>
+            
+            {error.type !== 'empty' && (
+              <TouchableOpacity style={styles.errorButtonSecondary} onPress={onGoBack}>
+                <Text style={styles.errorButtonSecondaryText}>Go Back</Text>
+              </TouchableOpacity>
+            )}
+          </View>
+        </View>
+      </LinearGradient>
+    </View>
   );
 };
 
 // Main Quiz Screen Component
 export default function QuizDetailScreen() {
-  const navigation=useNavigation();
-  const route=useRoute();
- 
+  const navigation = useNavigation();
+  const route = useRoute();
   const { categoryId, categoryName, categoryColor } = route.params;
+  const { isConnected, isInternetReachable } = useNetworkStatus();
 
   const [questions, setQuestions] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [selectedOption, setSelectedOption] = useState(null);
   const [isAnswered, setIsAnswered] = useState(false);
   const [score, setScore] = useState(0);
   const [showResults, setShowResults] = useState(false);
-  
-  // New state for modern features
-  const [lives, setLives] = useState(3);
+  const [lives, setLives] = useState(MAX_LIVES);
   const [streak, setStreak] = useState(0);
-  const [timeLeft, setTimeLeft] = useState(30);
+  const [timeLeft, setTimeLeft] = useState(TIMER_DURATION);
   const [earnedPoints, setEarnedPoints] = useState(0);
   const [showPointsAnimation, setShowPointsAnimation] = useState(false);
   const [totalPoints, setTotalPoints] = useState(0);
@@ -448,52 +596,63 @@ export default function QuizDetailScreen() {
   const slideAnim = useSharedValue(0);
   const fadeAnim = useSharedValue(1);
 
+  // Load questions on mount
   useEffect(() => {
     loadQuestions();
   }, []);
 
+  // Reset animation and timer for new question
   useEffect(() => {
     slideAnim.value = 0;
     fadeAnim.value = 0;
     slideAnim.value = withSpring(1, { damping: 20, stiffness: 90 });
     fadeAnim.value = withTiming(1, { duration: 400 });
-    setTimeLeft(30); // Reset timer for new question
+    setTimeLeft(TIMER_DURATION);
   }, [currentQuestion]);
 
   // Timer countdown
   useEffect(() => {
     if (!isAnswered && !showResults && !loading && timeLeft > 0) {
-      const timer = setTimeout(() => {
-        setTimeLeft(timeLeft - 1);
-      }, 1000);
+      const timer = setTimeout(() => setTimeLeft(prev => prev - 1), 1000);
       return () => clearTimeout(timer);
     } else if (timeLeft === 0 && !isAnswered) {
       handleTimeOut();
     }
   }, [timeLeft, isAnswered, showResults, loading]);
 
+  // Network status monitoring
+  useEffect(() => {
+    if (!isConnected && !loading) {
+      Alert.alert(
+        "Connection Lost",
+        "Your internet connection was lost. Some features may not work properly.",
+        [{ text: "OK" }]
+      );
+    }
+  }, [isConnected]);
+
   const loadQuestions = async () => {
     setLoading(true);
+    setError(null);
+    
     try {
       const fetchedQuestions = await fetchQuizQuestions(categoryName.toLowerCase());
       
       if (fetchedQuestions.length === 0) {
-        Alert.alert("No Questions", "No questions found for this category.");
-        navigation.goBack();
-        return;
+        throw new QuizFetchError('No questions available', 'empty');
       }
 
-      console.log(`Loaded ${fetchedQuestions.length} questions for ${categoryName}`);
+      console.log(`✅ Loaded ${fetchedQuestions.length} questions for ${categoryName}`);
       setQuestions(fetchedQuestions);
-    } catch (error) {
-      Alert.alert("Error", "Failed to load quiz questions.");
-      console.error(error);
+    } catch (err) {
+      console.error("Load questions error:", err);
+      setError(err);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleTimeOut = () => {
+  const handleTimeOut = useCallback(() => {
     setLives(prev => Math.max(0, prev - 1));
     setStreak(0);
     setIsAnswered(true);
@@ -505,9 +664,9 @@ export default function QuizDetailScreen() {
         setShowResults(true);
       }
     }, 2000);
-  };
+  }, [lives]);
 
-  const handleOptionSelect = (index) => {
+  const handleOptionSelect = useCallback((index) => {
     if (isAnswered) return;
 
     setSelectedOption(index);
@@ -518,18 +677,15 @@ export default function QuizDetailScreen() {
     const isCorrect = selectedOptionText === currentQ.answer;
 
     if (isCorrect) {
-      // Calculate points: base (10) + streak bonus + time bonus
-      const basePoints = 10;
-      const streakBonus = streak >= 2 ? 5 : 0;
-      const timeBonus = Math.floor(timeLeft / 3);
-      const points = basePoints + streakBonus + timeBonus;
+      const points = calculatePoints(streak, timeLeft);
       
-      setScore(score + 1);
-      setTotalPoints(totalPoints + points);
+      setScore(prev => prev + 1);
+      setTotalPoints(prev => prev + points);
       setEarnedPoints(points);
+      
       const newStreak = streak + 1;
       setStreak(newStreak);
-      setMaxStreak(Math.max(maxStreak, newStreak));
+      setMaxStreak(prev => Math.max(prev, newStreak));
       setShowPointsAnimation(true);
       
       setTimeout(() => setShowPointsAnimation(false), 1000);
@@ -546,46 +702,48 @@ export default function QuizDetailScreen() {
         setShowResults(true);
       }
     }, 2500);
-  };
+  }, [isAnswered, questions, currentQuestion, streak, timeLeft, lives]);
 
-  const handleNext = () => {
+  const handleNext = useCallback(() => {
     if (currentQuestion < questions.length - 1) {
-      setCurrentQuestion(currentQuestion + 1);
+      setCurrentQuestion(prev => prev + 1);
       setSelectedOption(null);
       setIsAnswered(false);
     } else {
       setShowResults(true);
     }
-  };
+  }, [currentQuestion, questions.length]);
 
-  const handleRestart = () => {
-    // Shuffle questions again on restart
-    setQuestions(shuffleArray(questions));
+  const handleRestart = useCallback(() => {
+    setQuestions(prev => shuffleArray(prev));
     setCurrentQuestion(0);
     setSelectedOption(null);
     setIsAnswered(false);
     setScore(0);
     setShowResults(false);
-    setLives(3);
+    setLives(MAX_LIVES);
     setStreak(0);
     setMaxStreak(0);
-    setTimeLeft(30);
+    setTimeLeft(TIMER_DURATION);
     setTotalPoints(0);
-  };
+  }, []);
+
+  const handleRetry = useCallback(() => {
+    loadQuestions();
+  }, []);
+
+  const handleGoBack = useCallback(() => {
+    navigation.goBack();
+  }, [navigation]);
 
   const questionAnimStyle = useAnimatedStyle(() => ({
-    transform: [
-      {
-        translateX: interpolate(
-          slideAnim.value,
-          [0, 1],
-          [width, 0]
-        ),
-      },
-    ],
+    transform: [{
+      translateX: interpolate(slideAnim.value, [0, 1], [width, 0]),
+    }],
     opacity: fadeAnim.value,
   }));
 
+  // Render Loading State
   if (loading) {
     return (
       <View style={styles.container}>
@@ -611,10 +769,22 @@ export default function QuizDetailScreen() {
     );
   }
 
+  // Render Error State
+  if (error) {
+    return (
+      <ErrorDisplay 
+        error={error} 
+        onRetry={handleRetry}
+        onGoBack={handleGoBack}
+      />
+    );
+  }
+
+  // Render Results Screen
   if (showResults) {
     const percentage = ((score / questions.length) * 100).toFixed(0);
     const isPerfect = percentage == 100;
-    const isPassed = percentage >= 70;
+    const isPassed = percentage >= PASSING_PERCENTAGE;
 
     return (
       <View style={styles.container}>
@@ -625,7 +795,6 @@ export default function QuizDetailScreen() {
         >
           <ScrollView contentContainerStyle={styles.resultsScrollContainer}>
             <View style={styles.resultsContainer}>
-              {/* Floating particles for perfect score */}
               {isPerfect && [...Array(10)].map((_, i) => (
                 <FloatingParticle key={i} delay={i * 200} />
               ))}
@@ -667,7 +836,6 @@ export default function QuizDetailScreen() {
                 </View>
               )}
 
-              {/* Stats Grid */}
               <View style={styles.statsGrid}>
                 <View style={styles.statCard}>
                   <LinearGradient
@@ -713,7 +881,6 @@ export default function QuizDetailScreen() {
                 </View>
               </View>
 
-              {/* Score Card */}
               <View style={styles.scoreCard}>
                 <Text style={styles.scorePercentage}>{percentage}%</Text>
                 <Text style={styles.scoreText}>
@@ -725,10 +892,7 @@ export default function QuizDetailScreen() {
               </View>
 
               <View style={styles.resultButtons}>
-                <TouchableOpacity
-                  style={styles.resultButton}
-                  onPress={handleRestart}
-                >
+                <TouchableOpacity style={styles.resultButton} onPress={handleRestart}>
                   <LinearGradient
                     colors={["#38BDF8", "#8B5CF6"]}
                     start={{ x: 0, y: 0 }}
@@ -740,10 +904,7 @@ export default function QuizDetailScreen() {
                   </LinearGradient>
                 </TouchableOpacity>
 
-                <TouchableOpacity
-                  style={styles.resultButtonSecondary}
-                  onPress={() => navigation.goBack()}
-                >
+                <TouchableOpacity style={styles.resultButtonSecondary} onPress={handleGoBack}>
                   <Text style={styles.resultButtonSecondaryText}>Back to Categories</Text>
                 </TouchableOpacity>
               </View>
@@ -763,12 +924,10 @@ export default function QuizDetailScreen() {
         colors={["#0F0420", "#1A0B2E", "#2D1B4E"]}
         style={styles.background}
       >
-        {/* Points Earned Animation */}
         <PointsEarned points={earnedPoints} visible={showPointsAnimation} />
 
-        {/* Header */}
         <View style={styles.header}>
-          <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+          <TouchableOpacity style={styles.backButton} onPress={handleGoBack}>
             <Ionicons name="arrow-back" size={24} color="#FFFFFF" />
           </TouchableOpacity>
 
@@ -790,23 +949,19 @@ export default function QuizDetailScreen() {
           </View>
         </View>
 
-        {/* Lives and Streak */}
         <View style={styles.statsRow}>
           <LivesDisplay lives={lives} />
           <StreakDisplay streak={streak} />
         </View>
 
-        {/* Timer */}
-        <TimerBar timeLeft={timeLeft} maxTime={30} />
+        <TimerBar timeLeft={timeLeft} maxTime={TIMER_DURATION} />
 
-        {/* Progress Bar */}
         <ProgressBar current={currentQuestion + 1} total={questions.length} />
 
         <ScrollView
           showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.scrollContent}
         >
-          {/* Question Card */}
           <Animated.View style={[styles.questionCard, questionAnimStyle]}>
             <View style={styles.questionHeader}>
               <View style={styles.questionNumberBadge}>
@@ -818,7 +973,6 @@ export default function QuizDetailScreen() {
 
             <Text style={styles.questionText}>{currentQ.question}</Text>
 
-            {/* Options */}
             <View style={styles.optionsContainer}>
               {currentQ.options.map((option, index) => {
                 const isCorrect = isAnswered && currentQ.options[index] === currentQ.answer;
@@ -840,7 +994,6 @@ export default function QuizDetailScreen() {
               })}
             </View>
 
-            {/* Explanation */}
             {isAnswered && currentQ.explanation && (
               <View style={styles.explanationCard}>
                 <View style={styles.explanationHeader}>
@@ -853,13 +1006,9 @@ export default function QuizDetailScreen() {
           </Animated.View>
         </ScrollView>
 
-        {/* Next Button */}
         {isAnswered && (
           <View style={styles.nextButtonContainer}>
-            <TouchableOpacity
-              style={styles.nextButton}
-              onPress={handleNext}
-            >
+            <TouchableOpacity style={styles.nextButton} onPress={handleNext}>
               <LinearGradient
                 colors={["#38BDF8", "#8B5CF6"]}
                 start={{ x: 0, y: 0 }}
@@ -906,11 +1055,79 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "500",
   },
+  errorContainer: {
+    flex: 1,
+  },
+  errorGradient: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  errorContent: {
+    alignItems: 'center',
+    paddingHorizontal: 32,
+    maxWidth: 400,
+  },
+  errorIconCircle: {
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    backgroundColor: 'rgba(239, 68, 68, 0.1)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 24,
+    borderWidth: 2,
+    borderColor: 'rgba(239, 68, 68, 0.3)',
+  },
+  errorTitle: {
+    fontSize: 24,
+    fontWeight: '900',
+    color: '#FFFFFF',
+    textAlign: 'center',
+    marginBottom: 12,
+  },
+  errorMessage: {
+    fontSize: 16,
+    color: '#C7D2FE',
+    textAlign: 'center',
+    lineHeight: 24,
+    marginBottom: 32,
+  },
+  errorButtons: {
+    width: '100%',
+    gap: 16,
+  },
+  errorButton: {
+    borderRadius: 50,
+    overflow: 'hidden',
+  },
+  errorButtonGradient: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 16,
+    gap: 8,
+  },
+  errorButtonText: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#FFFFFF',
+  },
+  errorButtonSecondary: {
+    paddingVertical: 16,
+    alignItems: 'center',
+  },
+  errorButtonSecondaryText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#8B5CF6',
+    textDecorationLine: 'underline',
+  },
   header: {
     flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: 16,
-    paddingTop: 60,
+    paddingTop: Platform.OS === 'ios' ? 60 : 16,
     paddingBottom: 16,
   },
   backButton: {

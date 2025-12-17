@@ -21,13 +21,8 @@ export default function SettingsScreen() {
   const [notifications, setNotifications] = useState(true);
   const [autoPlay, setAutoPlay] = useState(false);
   const [downloadQuality, setDownloadQuality] = useState("High");
-  const { theme, themeName, toggleTheme } = useTheme();
-  const [isDarkMode, setIsDarkMode] = useState(themeName === "dark");
   const [rateUsVisible, setRateUsVisible] = useState(false);
 
-  useEffect(() => {
-    setIsDarkMode(themeName === "dark");
-  }, [themeName]);
 
   const settingsSections = [
     {
@@ -211,12 +206,8 @@ export default function SettingsScreen() {
          
 
             <Switch
-              value={isDarkMode}
-              onValueChange={() => {
-                toggleTheme();
-                setIsDarkMode((prev) => !prev); // instantly move UI
-              }}
-              thumbColor={isDarkMode ? theme.primary : "#ccc"}
+             
+              thumbColor= "#ccc"
               trackColor={{ false: "#767577", true: "#81b0ff" }}
             />
           </View>

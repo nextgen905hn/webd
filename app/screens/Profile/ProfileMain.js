@@ -10,13 +10,17 @@ import {
   ScrollView,
   Image,
   ActivityIndicator,
+  Alert,
+  Platform,
 } from "react-native";
 import { Svg, Path } from "react-native-svg";
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import { GoogleAuthProvider, signInWithCredential } from 'firebase/auth';
 import LinearGradient from "react-native-linear-gradient";
 import { useNavigation } from "@react-navigation/native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { getJSON, setJSON, removeKey } from '../../utils/Storage';
+import { auth } from "../../utils/firebase";
 
 const { width } = Dimensions.get('window');
 
@@ -26,6 +30,8 @@ const STORAGE_KEYS = {
   HAS_COMPLETED_ONBOARDING: '@has_completed_onboarding',
   LAST_LOGIN: '@last_login',
 };
+
+
 
 export default function UserProfileScreen() {
   const navigation = useNavigation();
@@ -67,7 +73,17 @@ export default function UserProfileScreen() {
       const isSignedIn = await GoogleSignin.isSignedIn();
       if (isSignedIn) {
         const userInfo = await GoogleSignin.signInSilently();
-        handleUserInfo(userInfo);
+        if (userInfo?.user) {
+          const userData = {
+            uid: userInfo.user.id,
+            name: userInfo.user.name,
+            email: userInfo.user.email,
+            imageUrl: userInfo.user.photo,
+            createdAt: new Date().toISOString(),
+          };
+          setUser(userData);
+          await saveUserData(userData);
+        }
       }
     } catch (error) {
       console.log('Not signed in:', error);
@@ -79,20 +95,17 @@ export default function UserProfileScreen() {
     try {
       console.log('📱 Loading user data...');
       
-      const userData = 
-       getJSON(STORAGE_KEYS.USER_DATA);
+      const userData = await getJSON(STORAGE_KEYS.USER_DATA);
       
       if (userData) {
         console.log('✅ User data loaded:', userData.name);
         setUser(userData);
       } else {
         console.log('⚠️ No user data found');
-        // Check if user is signed in with Google
         await checkSignInStatus();
       }
     } catch (error) {
       console.error('❌ Error loading user data:', error);
-      // Don't crash, just continue without user data
     } finally {
       setLoading(false);
     }
@@ -102,50 +115,106 @@ export default function UserProfileScreen() {
   const saveUserData = async (userData) => {
     try {
       console.log('💾 Saving user data...');
-       setJSON(STORAGE_KEYS.USER_DATA, userData);
-      setJSON(STORAGE_KEYS.LAST_LOGIN, new Date().toISOString());
+      await setJSON(STORAGE_KEYS.USER_DATA, userData);
+      await setJSON(STORAGE_KEYS.LAST_LOGIN, new Date().toISOString());
       console.log('✅ User data saved');
     } catch (error) {
       console.error('❌ Error saving user data:', error);
     }
   };
 
-  // Handle user info from Google Sign-In
-  const handleUserInfo = (userInfo) => {
-    const userData = {
-      id: userInfo.user.id,
-      name: userInfo.user.name || userInfo.user.givenName || "User",
-      email: userInfo.user.email,
-      imageUrl: userInfo.user.photo,
-      createdAt: new Date().toISOString(),
-    };
-    
-    console.log('✅ User info processed:', userData.name);
-    setUser(userData);
-    saveUserData(userData);
-  };
-
   // Handle Google Sign-In
   const handleGoogleSignIn = async () => {
+    if (signingIn) return;
+    
+    setSigningIn(true);
+    
     try {
-      setSigningIn(true);
       console.log('🔐 Starting Google Sign-In...');
-      
-      await GoogleSignin.hasPlayServices();
-      const userInfo = await GoogleSignin.signIn();
-      
-      console.log('✅ Sign-in successful');
-      handleUserInfo(userInfo);
-      
+
+      // Check Play Services (Android only)
+      if (Platform.OS === 'android') {
+        await GoogleSignin.hasPlayServices({
+          showPlayServicesUpdateDialog: true,
+        });
+      }
+
+      // Sign out first to force account picker
+      try {
+        await GoogleSignin.signOut();
+      } catch (e) {
+        // Ignore if not signed in
+      }
+
+      console.log('📱 Opening sign-in prompt...');
+      const response = await GoogleSignin.signIn();
+      console.log('✅ Sign-in response:', response);
+
+      // Handle different response structures
+      const userInfo = response.data || response;
+      const idToken = userInfo.idToken;
+
+      if (!idToken) {
+        throw new Error('No ID token received from Google Sign-In');
+      }
+
+      console.log('🔑 ID Token received, authenticating with Firebase...');
+
+      // Create Firebase credential
+      const googleCredential = GoogleAuthProvider.credential(idToken);
+
+      // Sign in with Firebase
+      const userCredential = await signInWithCredential(auth, googleCredential);
+      const firebaseUser = userCredential.user;
+
+      console.log('✅ Firebase authentication successful');
+
+      // Create user data object
+      const userData = {
+        uid: firebaseUser.uid,
+        id: firebaseUser.uid,
+        name: firebaseUser.displayName || userInfo.user?.name || 'User',
+        email: firebaseUser.email || userInfo.user?.email,
+        imageUrl: firebaseUser.photoURL || userInfo.user?.photo,
+        createdAt: new Date().toISOString(),
+      };
+
+      console.log('👤 User data:', userData);
+
+      // Save and set user
+      setUser(userData);
+      await saveUserData(userData);
+
+      Alert.alert(
+        'Welcome! 🎉',
+        `Signed in as ${userData.name}`,
+        [{ text: 'OK' }]
+      );
+
     } catch (error) {
       console.error('❌ Sign-in error:', error);
       
-      if (error.code === 'SIGN_IN_CANCELLED') {
+      let errorMessage = 'Failed to sign in. Please try again.';
+
+      if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+        errorMessage = 'Sign-in was cancelled';
         console.log('User cancelled sign-in');
-      } else if (error.code === 'IN_PROGRESS') {
+      } else if (error.code === statusCodes.IN_PROGRESS) {
+        errorMessage = 'Sign-in already in progress';
         console.log('Sign-in already in progress');
-      } else if (error.code === 'PLAY_SERVICES_NOT_AVAILABLE') {
+      } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+        errorMessage = 'Play Services not available or outdated';
         console.log('Play services not available');
+      } else if (error.message?.includes('DEVELOPER_ERROR')) {
+        errorMessage = 'Configuration error. Please check SHA-1 certificate and Firebase setup.';
+        console.error('DEVELOPER_ERROR: Check SHA-1 fingerprint in Firebase Console');
+      } else if (error.message?.includes('network')) {
+        errorMessage = 'Network error. Please check your internet connection.';
+      }
+
+      // Only show alert for actual errors (not cancellations)
+      if (error.code !== statusCodes.SIGN_IN_CANCELLED) {
+        Alert.alert('Sign-In Error', errorMessage, [{ text: 'OK' }]);
       }
     } finally {
       setSigningIn(false);
@@ -154,23 +223,46 @@ export default function UserProfileScreen() {
 
   // Handle logout
   const handleLogout = async () => {
-    try {
-      console.log('🚪 Logging out...');
+    Alert.alert(
+      'Logout',
+      'Are you sure you want to logout?',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Logout',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              console.log('🚪 Logging out...');
 
-      // Sign out from Google
-      await GoogleSignin.signOut();
+              // Sign out from Google
+              await GoogleSignin.signOut();
 
-      // Clear all user-related data
-       removeKey(STORAGE_KEYS.USER_DATA);
-       removeKey(STORAGE_KEYS.LAST_LOGIN);
-       removeKey(STORAGE_KEYS.HAS_COMPLETED_ONBOARDING);
+              // Sign out from Firebase
+              await auth.signOut();
 
-      console.log('✅ User data cleared');
-      setUser(null);
-      navigation.navigate("Onboarding");
-    } catch (error) {
-      console.error('❌ Error logging out:', error);
-    }
+              // Clear all user-related data
+              await removeKey(STORAGE_KEYS.USER_DATA);
+              await removeKey(STORAGE_KEYS.LAST_LOGIN);
+              await removeKey(STORAGE_KEYS.HAS_COMPLETED_ONBOARDING);
+
+              console.log('✅ User data cleared');
+              setUser(null);
+              
+              Alert.alert('Logged Out', 'You have been successfully logged out.', [
+                { 
+                  text: 'OK',
+                  onPress: () => navigation.navigate("Onboarding")
+                }
+              ]);
+            } catch (error) {
+              console.error('❌ Error logging out:', error);
+              Alert.alert('Error', 'Failed to logout. Please try again.');
+            }
+          },
+        },
+      ]
+    );
   };
 
   const menuItems = [
@@ -255,7 +347,10 @@ export default function UserProfileScreen() {
                 style={styles.signInGradient}
               >
                 {signingIn ? (
-                  <ActivityIndicator size="small" color="#FFFFFF" />
+                  <>
+                    <ActivityIndicator size="small" color="#FFFFFF" />
+                    <Text style={styles.signInText}>Signing in...</Text>
+                  </>
                 ) : (
                   <>
                     <Svg width="18" height="18" viewBox="0 0 20 20" fill="none">
@@ -314,7 +409,7 @@ export default function UserProfileScreen() {
               <View style={styles.avatarContainer}>
                 <Image
                   source={{ 
-                    uri: user?.imageUrl || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(user?.name || 'User') + '&background=38BDF8&color=fff&size=200'
+                    uri: user?.imageUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || 'User')}&background=38BDF8&color=fff&size=200`
                   }}
                   style={styles.avatar}
                 />
@@ -325,10 +420,12 @@ export default function UserProfileScreen() {
               <Text style={styles.userEmail}>{user?.email || 'No email'}</Text>
 
               {/* User ID Badge */}
-              <View style={styles.idBadge}>
-                <Ionicons name="finger-print" size={14} color="#8B5CF6" />
-                <Text style={styles.idText}>ID: {user?.id?.slice(0, 8)}...</Text>
-              </View>
+              {user?.uid && (
+                <View style={styles.idBadge}>
+                  <Ionicons name="finger-print" size={14} color="#8B5CF6" />
+                  <Text style={styles.idText}>ID: {user.uid.slice(0, 8)}...</Text>
+                </View>
+              )}
 
               {/* Quick Stats */}
               <View style={styles.quickStats}>
@@ -387,6 +484,13 @@ export default function UserProfileScreen() {
   );
 }
 
+// Import status codes
+const statusCodes = GoogleSignin.statusCodes || {
+  SIGN_IN_CANCELLED: '0',
+  IN_PROGRESS: '1',
+  PLAY_SERVICES_NOT_AVAILABLE: '2',
+};
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -410,7 +514,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     paddingHorizontal: 20,
-    paddingTop: 50,
+    paddingTop: Platform.OS === 'ios' ? 50 : 16,
     paddingBottom: 16,
   },
   backButton: {
