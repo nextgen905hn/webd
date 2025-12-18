@@ -10,7 +10,7 @@ const Stack = createNativeStackNavigator();
 export default function AuthStack() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-      // In your navigator
+      
       <Stack.Screen
         name="Loading"
         component={LoadingScreen}
