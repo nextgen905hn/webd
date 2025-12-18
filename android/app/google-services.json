@@ -22,6 +22,14 @@
           }
         },
         {
+          "client_id": "308191456185-qniu7udj2ogsnqo40asef4nvo6egdtd6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.webd",
+            "certificate_hash": "2f51ac00a41fcf7bd18ce90ebdc61bf4a0f833f0"
+          }
+        },
+        {
           "client_id": "308191456185-me7jubljcn53q2g40gqqf3scbmm06r2h.apps.googleusercontent.com",
           "client_type": 3
         }
