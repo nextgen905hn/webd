@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback, useMemo } from "react";
+import React, { useEffect, useState, useCallback, useMemo, useRef } from "react";
 import {
   View,
   Text,
@@ -13,6 +13,15 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import LinearGradient from "react-native-linear-gradient";
 import { useNavigation } from "@react-navigation/native";
 import Ionicons from "react-native-vector-icons/Ionicons";
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withSpring,
+  withTiming,
+  interpolate,
+  Extrapolation,
+  useAnimatedScrollHandler,
+} from "react-native-reanimated";
 import { getJSON } from "../../utils/Storage";
 
 const { width, height } = Dimensions.get("window");
@@ -23,7 +32,6 @@ const CARDS_PER_ROW = 2;
 const CARD_WIDTH = (width - HORIZONTAL_PADDING * 2 - CARD_GAP * (CARDS_PER_ROW - 1)) / CARDS_PER_ROW;
 const FEATURED_HEIGHT = height * 0.35;
 
-// Static data moved outside component
 const FEATURED_COURSES = [
   {
     id: 1,
@@ -63,169 +71,289 @@ const FEATURED_COURSES = [
 ];
 
 const CATEGORIES = [
-  { id: 1, title: "HTML", icon: "logo-html5", gradient: ["#FF3C38", "#FF8A5B"], lessons: 12 },
-  { id: 2, title: "CSS", icon: "logo-css3", gradient: ["#4C6EF5", "#5AD8FF"], lessons: 15 },
-  { id: 3, title: "JS", icon: "logo-javascript", gradient: ["#FF9C4D", "#FCDC4D"], lessons: 18 },
-  { id: 4, title: "React", icon: "logo-react", gradient: ["#0ABAB5", "#61DAFB"], lessons: 20 },
-  { id: 5, title: "Nextjs", icon: "rocket-outline", gradient: ["#2D3436", "#6C5CE7"], lessons: 14 },
-  { id: 6, title: "Nodejs", icon: "leaf-outline", gradient: ["#00FF9D", "#00B894"], lessons: 16 },
+  { id: 1, title: "HTML", icon: "logo-html5", gradient: ["#FF3C38", "#FF8A5B"], lessons: 60 },
+  { id: 2, title: "CSS", icon: "logo-css3", gradient: ["#4C6EF5", "#5AD8FF"], lessons: 60 },
+  { id: 3, title: "JS", icon: "logo-javascript", gradient: ["#FF9C4D", "#FCDC4D"], lessons: 54 },
+  { id: 4, title: "React", icon: "logo-react", gradient: ["#0ABAB5", "#61DAFB"], lessons: 51 },
+  { id: 5, title: "Nextjs", icon: "rocket-outline", gradient: ["#2D3436", "#6C5CE7"], lessons: 22 },
+  { id: 6, title: "Nodejs", icon: "leaf-outline", gradient: ["#00FF9D", "#00B894"], lessons: 15 },
   { id: 7, title: "Expressjs", icon: "code-slash-outline", gradient: ["#303030", "#000000"], lessons: 16 },
-  { id: 8, title: "MongoDB", icon: "server-outline", gradient: ["#00B894", "#13EAC9"], lessons: 10 },
-  { id: 9, title: "Redis", icon: "cloud-outline", gradient: ["#FF4E50", "#FFAA00"], lessons: 8 },
+  { id: 8, title: "MongoDB", icon: "server-outline", gradient: ["#00B894", "#13EAC9"], lessons: 16 },
+  { id: 9, title: "Redis", icon: "cloud-outline", gradient: ["#FF4E50", "#FFAA00"], lessons: 12 },
   { id: 10, title: "Projects", icon: "sparkles-outline", gradient: ["#8E2DE2", "#4A00E0"], lessons: 5, route: "Projects" },
 ];
 
 const getBadgeInfo = (progressRatio) => {
   const progress = progressRatio * 100;
-  if (progress === 0) return { emoji: "🎯", color: "#94A3B8" };
-  if (progress < 30) return { emoji: "🌱", color: "#22C55E" };
-  if (progress < 70) return { emoji: "🏅", color: "#FACC15" };
   if (progress < 100) return { emoji: "🔥", color: "#F87171" };
   return { emoji: "🏆", color: "#8B5CF6" };
 };
 
-// Memoized Featured Card
-const FeaturedCard = React.memo(({ course }) => (
-  <View style={styles.featuredWrapper}>
-    <LinearGradient
-      colors={course.gradient}
-      start={{ x: 0, y: 0 }}
-      end={{ x: 1, y: 1 }}
-      style={styles.featuredCard}
-    >
-      <View style={styles.featuredContent}>
-        <View style={styles.featuredBadge}>
-          <Text style={styles.badgeText}>{course.badge}</Text>
+// Animated Featured Card
+const FeaturedCard = React.memo(({ course, index, scrollX }) => {
+  const inputRange = [(index - 1) * width, index * width, (index + 1) * width];
+
+  const animatedStyle = useAnimatedStyle(() => {
+    const scale = interpolate(
+      scrollX.value,
+      inputRange,
+      [0.9, 1, 0.9],
+      Extrapolation.CLAMP
+    );
+
+    const opacity = interpolate(
+      scrollX.value,
+      inputRange,
+      [0.5, 1, 0.5],
+      Extrapolation.CLAMP
+    );
+
+    return {
+      transform: [{ scale }],
+      opacity,
+    };
+  });
+
+  return (
+    <Animated.View style={[styles.featuredWrapper, animatedStyle]}>
+      <LinearGradient
+        colors={course.gradient}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={styles.featuredCard}
+      >
+        <View style={styles.featuredContent}>
+          <View style={styles.featuredBadge}>
+            <Text style={styles.badgeText}>{course.badge}</Text>
+          </View>
+          <Text style={styles.featuredTitle}>{course.title}</Text>
+          <Text style={styles.featuredSubtitle}>{course.subtitle}</Text>
         </View>
-        <Text style={styles.featuredTitle}>{course.title}</Text>
-        <Text style={styles.featuredSubtitle}>{course.subtitle}</Text>
-      </View>
-      <View style={styles.decorativeCircle1} />
-      <View style={styles.decorativeCircle2} />
-      <View style={styles.decorativeCircle3} />
-    </LinearGradient>
-  </View>
-));
+        <View style={styles.decorativeCircle1} />
+        <View style={styles.decorativeCircle2} />
+        <View style={styles.decorativeCircle3} />
+      </LinearGradient>
+    </Animated.View>
+  );
+});
 
-// Simplified Featured Carousel
-const FeaturedCarousel = React.memo(({ onPress }) => {
+// Auto-scrolling Carousel with Reanimated
+const FeaturedCarousel = React.memo(() => {
   const [activeIndex, setActiveIndex] = useState(0);
+  const scrollX = useSharedValue(0);
+  const flatListRef = useRef(null);
+  const autoScrollTimer = useRef(null);
 
-  const onMomentumScrollEnd = useCallback((event) => {
-    const index = Math.round(event.nativeEvent.contentOffset.x / width);
-    setActiveIndex(index);
+  const scrollHandler = useAnimatedScrollHandler({
+    onScroll: (event) => {
+      scrollX.value = event.contentOffset.x;
+    },
+    onEndDrag: (event) => {
+      const index = Math.round(event.contentOffset.x / width);
+      scrollX.value = index * width;
+    },
+  });
+
+  // Update active index on scroll
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const index = Math.round(scrollX.value / width);
+      if (index !== activeIndex) {
+        setActiveIndex(index);
+      }
+    }, 100);
+    
+    return () => clearInterval(interval);
+  }, [scrollX.value, activeIndex]);
+
+  const scrollToNext = useCallback(() => {
+    if (!flatListRef.current) return;
+
+    const nextIndex = (activeIndex + 1) % FEATURED_COURSES.length;
+    flatListRef.current.scrollToOffset({
+      offset: nextIndex * width,
+      animated: true,
+    });
+  }, [activeIndex]);
+
+  // Auto-scroll effect
+  useEffect(() => {
+    autoScrollTimer.current = setInterval(() => {
+      scrollToNext();
+    }, 3000); // Auto-scroll every 3 seconds
+
+    return () => {
+      if (autoScrollTimer.current) {
+        clearInterval(autoScrollTimer.current);
+      }
+    };
+  }, [scrollToNext]);
+
+  // Reset timer on manual scroll
+  const onScrollBeginDrag = useCallback(() => {
+    if (autoScrollTimer.current) {
+      clearInterval(autoScrollTimer.current);
+    }
   }, []);
 
+  const onScrollEndDrag = useCallback(() => {
+    autoScrollTimer.current = setInterval(() => {
+      scrollToNext();
+    }, 3000);
+  }, [scrollToNext]);
+
   const keyExtractor = useCallback((item) => item.id.toString(), []);
-  const renderItem = useCallback(({ item }) => <FeaturedCard course={item} />, []);
+  
+  const renderItem = useCallback(
+    ({ item, index }) => (
+      <FeaturedCard course={item} index={index} scrollX={scrollX} />
+    ),
+    [scrollX]
+  );
 
   return (
     <View style={styles.carouselContainer}>
-      <FlatList
+      <Animated.FlatList
+        ref={flatListRef}
         data={FEATURED_COURSES}
         renderItem={renderItem}
         keyExtractor={keyExtractor}
         horizontal
         pagingEnabled
         showsHorizontalScrollIndicator={false}
-        onMomentumScrollEnd={onMomentumScrollEnd}
+        onScroll={scrollHandler}
+        scrollEventThrottle={16}
         decelerationRate="fast"
         snapToInterval={width}
         snapToAlignment="center"
+        onScrollBeginDrag={onScrollBeginDrag}
+        onScrollEndDrag={onScrollEndDrag}
         removeClippedSubviews
         maxToRenderPerBatch={2}
         windowSize={3}
         initialNumToRender={1}
       />
       <View style={styles.paginationContainer}>
-        {FEATURED_COURSES.map((_, index) => (
-          <View
-            key={index}
-            style={[
-              styles.paginationDot,
-              {
-                width: activeIndex === index ? 20 : 6,
-                backgroundColor: activeIndex === index ? "#FFFFFF" : "rgba(255,255,255,0.4)",
-              },
-            ]}
-          />
-        ))}
+        {FEATURED_COURSES.map((_, index) => {
+          const dotStyle = useAnimatedStyle(() => {
+            const isActive = activeIndex === index;
+            return {
+              width: withSpring(isActive ? 20 : 6, { damping: 15 }),
+              backgroundColor: withTiming(
+                isActive ? "#FFFFFF" : "rgba(255,255,255,0.4)",
+                { duration: 300 }
+              ),
+            };
+          });
+
+          return (
+            <Animated.View
+              key={index}
+              style={[styles.paginationDot, dotStyle]}
+            />
+          );
+        })}
       </View>
     </View>
   );
 });
 
-// Optimized Category Card
-const CategoryCard = React.memo(({ item, progress, route, onPress }) => {
+// Animated Category Card
+const CategoryCard = React.memo(({ item, progress, route, onPress, index }) => {
   const progressRatio = progress?.total ? progress.completed / progress.total : 0;
   const isCompleted = progressRatio >= 1;
   const badgeInfo = getBadgeInfo(progressRatio);
 
-  return (
-    <TouchableOpacity
-      style={styles.categoryCard}
-      activeOpacity={0.7}
-      onPress={onPress}
-    >
-      <LinearGradient
-        colors={item.gradient}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={styles.cardGradient}
-      >
-        <View style={styles.cardContent}>
-          <View style={styles.iconContainer}>
-            <View style={styles.iconCircle}>
-              <Ionicons name={item.icon} size={isSmallDevice ? 26 : 30} color="#FFFFFF" />
-            </View>
-          </View>
+  const scale = useSharedValue(1);
+  const opacity = useSharedValue(0);
 
-          <View style={styles.cardInfo}>
-            <View style={styles.titleRow}>
-              <Text style={styles.cardTitle} numberOfLines={1}>
-                {item.title}
-              </Text>
+  useEffect(() => {
+    opacity.value = withTiming(1, { duration: 600, delay: index * 100 });
+  }, [index]);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    opacity: opacity.value,
+    transform: [{ scale: scale.value }],
+  }));
+
+  const handlePressIn = () => {
+    scale.value = withSpring(0.95, { damping: 15 });
+  };
+
+  const handlePressOut = () => {
+    scale.value = withSpring(1, { damping: 15 });
+  };
+
+  return (
+    <Animated.View style={animatedStyle}>
+      <TouchableOpacity
+        style={styles.categoryCard}
+        activeOpacity={0.7}
+        onPress={onPress}
+        onPressIn={handlePressIn}
+        onPressOut={handlePressOut}
+      >
+        <LinearGradient
+          colors={item.gradient}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.cardGradient}
+        >
+          <View style={styles.cardContent}>
+            <View style={styles.iconContainer}>
+              <View style={styles.iconCircle}>
+                <Ionicons name={item.icon} size={isSmallDevice ? 26 : 30} color="#FFFFFF" />
+              </View>
+            </View>
+
+            <View style={styles.cardInfo}>
+              <View style={styles.titleRow}>
+                <Text style={styles.cardTitle} numberOfLines={1}>
+                  {item.title}
+                </Text>
+                {progressRatio > 0 && (
+                  <View style={[styles.badgeContainer, { backgroundColor: badgeInfo.color }]}>
+                    <Text style={styles.badgeEmoji}>{badgeInfo.emoji}</Text>
+                  </View>
+                )}
+              </View>
+
+              <View style={styles.cardFooter}>
+                <View style={styles.lessonBadge}>
+                  <Ionicons name="play-circle" size={12} color="#FFFFFF" style={{ marginRight: 4 }} />
+                  <Text style={styles.lessonText}>
+                    {progress?.total || item.lessons} {route ? "Projects" : "Lessons"}
+                  </Text>
+                </View>
+                <View style={styles.arrowCircle}>
+                  <Ionicons
+                    name={isCompleted ? "checkmark-circle" : "arrow-forward"}
+                    size={14}
+                    color="#FFFFFF"
+                  />
+                </View>
+              </View>
+
               {progressRatio > 0 && (
-                <View style={[styles.badgeContainer, { backgroundColor: badgeInfo.color }]}>
-                  <Text style={styles.badgeEmoji}>{badgeInfo.emoji}</Text>
+                <View style={styles.progressContainer}>
+                  <View style={styles.progressBarBackground}>
+                    <View style={[styles.progressBarFill, { width: `${progressRatio * 100}%` }]} />
+                  </View>
+                  <Text style={styles.progressText}>{Math.round(progressRatio * 100)}%</Text>
                 </View>
               )}
             </View>
-
-            <View style={styles.cardFooter}>
-              <View style={styles.lessonBadge}>
-                <Ionicons name="play-circle" size={12} color="#FFFFFF" style={{ marginRight: 4 }} />
-                <Text style={styles.lessonText}>
-                  {progress?.total || item.lessons} {route ? "Projects" : "Lessons"}
-                </Text>
-              </View>
-              <View style={styles.arrowCircle}>
-                <Ionicons
-                  name={isCompleted ? "checkmark-circle" : "arrow-forward"}
-                  size={14}
-                  color="#FFFFFF"
-                />
-              </View>
-            </View>
-
-            {progressRatio > 0 && (
-              <View style={styles.progressContainer}>
-                <View style={styles.progressBarBackground}>
-                  <View style={[styles.progressBarFill, { width: `${progressRatio * 100}%` }]} />
-                </View>
-                <Text style={styles.progressText}>{Math.round(progressRatio * 100)}%</Text>
-              </View>
-            )}
           </View>
-        </View>
-      </LinearGradient>
-    </TouchableOpacity>
+        </LinearGradient>
+      </TouchableOpacity>
+    </Animated.View>
   );
 });
 
 export default function HomeScreen() {
   const navigation = useNavigation();
   const [courseProgress, setCourseProgress] = useState({});
+  const headerOpacity = useSharedValue(1);
 
   const loadProgress = useCallback(() => {
     try {
@@ -254,7 +382,7 @@ export default function HomeScreen() {
     }
   }, [navigation]);
 
-  const renderCategory = useCallback(({ item }) => {
+  const renderCategory = useCallback(({ item, index }) => {
     const progressKey = item.title.toLowerCase();
     return (
       <CategoryCard
@@ -262,29 +390,36 @@ export default function HomeScreen() {
         progress={courseProgress[progressKey]}
         route={!!item.route}
         onPress={() => handleCategoryPress(item)}
+        index={index}
       />
     );
   }, [courseProgress, handleCategoryPress]);
 
   const keyExtractor = useCallback((item) => item.id.toString(), []);
 
+  const headerAnimatedStyle = useAnimatedStyle(() => ({
+    opacity: headerOpacity.value,
+  }));
+
   return (
     <View style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="transparent" translucent />
       
-      <FeaturedCarousel onPress={() => navigation.navigate("Home")} />
+      <FeaturedCarousel />
 
-      <SafeAreaView style={styles.headerOverlay} edges={["top"]}>
-        <View style={styles.header}>
-          <TouchableOpacity
-            style={styles.profileButton}
-            activeOpacity={0.8}
-            onPress={() => navigation.navigate("Profile")}
-          >
-            <Ionicons name="person-circle-outline" size={32} color="#FFFFFF" />
-          </TouchableOpacity>
-        </View>
-      </SafeAreaView>
+      <Animated.View style={[styles.headerOverlay, headerAnimatedStyle]}>
+        <SafeAreaView edges={["top"]}>
+          <View style={styles.header}>
+            <TouchableOpacity
+              style={styles.profileButton}
+              activeOpacity={0.8}
+              onPress={() => navigation.navigate("Profile")}
+            >
+              <Ionicons name="person-circle-outline" size={32} color="#FFFFFF" />
+            </TouchableOpacity>
+          </View>
+        </SafeAreaView>
+      </Animated.View>
 
       <ScrollView
         contentContainerStyle={styles.scrollContent}

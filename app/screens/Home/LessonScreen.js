@@ -1,6 +1,6 @@
 import React, { memo, useMemo, useCallback, useEffect } from "react";
 import {
-  ScrollView,
+  FlatList,
   Text,
   TouchableOpacity,
   View,
@@ -15,11 +15,9 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import { useState } from "react";
 import { useCoursesStore } from "../../utils/store";
 import { getJSON, setJSON } from '../../utils/Storage';
-import { clearAll } from '../../utils/Storage';
 
 const { width } = Dimensions.get("window");
 
-// Memoized Config Object - compute once
 const COURSE_CONFIG = {
   html: {
     gradient: ["#E44D26", "#FF6B4A"],
@@ -77,7 +75,60 @@ const COURSE_CONFIG = {
   },
 };
 
-// Memoized Components
+// Header Component
+const CourseHeader = memo(({ onBack, config }) => (
+  <View style={s.header}>
+    <TouchableOpacity onPress={onBack} style={s.backButton}>
+      <Ionicons name="arrow-back" size={24} color="#1A1D2E" />
+    </TouchableOpacity>
+    <TouchableOpacity style={s.menuButton}>
+      <Ionicons name="ellipsis-horizontal" size={24} color="#1A1D2E" />
+    </TouchableOpacity>
+  </View>
+));
+
+// Hero Section Component
+const HeroSection = memo(({ course, config, totalLessons, completedLessons, progress }) => (
+  <View style={s.heroSection}>
+    <LinearGradient colors={config.gradient} style={s.iconContainer}>
+      <Ionicons name={config.icon} size={48} color="#fff" />
+    </LinearGradient>
+    <Text style={s.courseTitle}>{course.course}</Text>
+    <Text style={s.lessonCount}>
+      {totalLessons} Lessons • {Math.ceil(totalLessons * 15)} min
+    </Text>
+
+    <View style={s.progressCard}>
+      <View style={s.progressHeader}>
+        <Text style={s.progressTitle}>Your Progress</Text>
+        <Text style={s.progressPercent}>{Math.round(progress)}%</Text>
+      </View>
+      <View style={s.progressBarBg}>
+        <LinearGradient
+          colors={config.gradient}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 0 }}
+          style={[s.progressBarFill, { width: `${progress}%` }]}
+        />
+      </View>
+      <Text style={s.progressSubtext}>
+        {completedLessons} of {totalLessons} lessons completed
+      </Text>
+    </View>
+  </View>
+));
+
+// Section Title Component
+const SectionTitleHeader = memo(({ sectionsCount }) => (
+  <View style={s.courseTitleContainer}>
+    <Text style={s.sectionTitle}>Course Content</Text>
+    <View style={s.sectionBadge}>
+      <Text style={s.sectionBadgeText}>{sectionsCount} Sections</Text>
+    </View>
+  </View>
+));
+
+// Section Header Component
 const SectionHeader = memo(
   ({ section, sectionIndex, config, completedInSection, sectionLessons }) => (
     <View style={s.sectionHeader}>
@@ -127,6 +178,7 @@ const SectionHeader = memo(
   )
 );
 
+// Lesson Card Component
 const LessonCard = memo(
   ({ lesson, isCompleted, isActive, config, onPress, isDark }) => (
     <TouchableOpacity
@@ -187,12 +239,64 @@ const LessonCard = memo(
   )
 );
 
+// Test Card Component
+const TestCard = memo(({ 
+  isUnlocked, 
+  onPress, 
+  title, 
+  subtitle, 
+  badge, 
+  icon, 
+  colors 
+}) => (
+  <TouchableOpacity
+    activeOpacity={isUnlocked ? 0.7 : 1}
+    disabled={!isUnlocked}
+    onPress={onPress}
+    style={[s.testCard, !isUnlocked && s.testCardDisabled]}
+  >
+    <LinearGradient colors={colors} style={s.testCardGradient}>
+      <View style={s.testCardContent}>
+        <View style={s.testIconContainer}>
+          <Ionicons name={icon} size={32} color="#FFFFFF" />
+        </View>
+        <View style={s.testInfo}>
+          <Text style={s.testTitle}>{title}</Text>
+          <Text style={s.testSubtitle}>{subtitle}</Text>
+          {isUnlocked && badge && (
+            <View style={s.testBadge}>
+              <Ionicons
+                name={badge.icon}
+                size={14}
+                color="#FCD34D"
+                style={{ marginRight: 4 }}
+              />
+              <Text style={s.testBadgeText}>{badge.text}</Text>
+            </View>
+          )}
+        </View>
+        <View
+          style={[
+            s.testArrow,
+            !isUnlocked && s.testArrowDisabled,
+          ]}
+        >
+          <Ionicons
+            name="arrow-forward"
+            size={24}
+            color={isUnlocked ? "#FFFFFF" : "#64748B"}
+          />
+        </View>
+      </View>
+    </LinearGradient>
+  </TouchableOpacity>
+));
+
 export default function CourseDetail() {
   const navigation = useNavigation();
   const route = useRoute();
   const { id } = route.params || {};
 
-  // Show loading state while id is undefined
   if (!id) {
     return (
       <SafeAreaView style={s.safeArea}>
@@ -201,9 +305,7 @@ export default function CourseDetail() {
     );
   }
 
-  // Now id is safe
   const config = COURSE_CONFIG[id] || COURSE_CONFIG["html"];
-
   const [completedLessons, setcompletedLessons] = useState(0);
   const [lessons, setlessons] = useState({});
   const [testScore, setTestScore] = useState(0);
@@ -232,79 +334,97 @@ export default function CourseDetail() {
     () => (completedLessons / totalLessons) * 100,
     [completedLessons, totalLessons]
   );
+
   const isAllLessonsCompleted = completedLessons === totalLessons;
   const isCertificateUnlocked = testScore >= 50;
   const isDark = id === "js";
-// Add this AFTER your useEffect/useFocusEffect hooks for debugging
 
-// Temporary debugging - remove after fixing
-useEffect(() => {
-  const timer = setTimeout(() => {
-    const progress = getJSON("courseProgress");
-    console.log("🔍 Current storage state:", JSON.stringify(progress, null, 2));
-  }, 2000);
-  
-  return () => clearTimeout(timer);
-}, []);
-  const safeParseJSON = (value) => {
-    if (typeof value === "string") {
-      try {
-        return JSON.parse(value);
-      } catch {
-        return {};
-      }
-    }
-    return value || {};
-  };
+  // Flatten data structure for FlatList
+  const flatListData = useMemo(() => {
+    if (!course) return [];
+    
+    const items = [];
+    
+    // Add header item
+    items.push({ type: 'header', key: 'header' });
+    
+    // Add hero section
+    items.push({ type: 'hero', key: 'hero' });
+    
+    // Add section title
+    items.push({ type: 'sectionTitle', key: 'sectionTitle' });
+    
+    // Add all sections and lessons
+    course.sections.forEach((section, sectionIndex) => {
+      items.push({
+        type: 'sectionHeader',
+        key: `section-${sectionIndex}`,
+        section,
+        sectionIndex,
+      });
+      
+      section.lessons.forEach((lesson, lessonIndex) => {
+        items.push({
+          type: 'lesson',
+          key: `lesson-${sectionIndex}-${lesson.id}`,
+          lesson,
+          sectionIndex,
+        });
+      });
+    });
+    
+    // Add test card
+    items.push({ type: 'test', key: 'test' });
+    
+    // Add certificate card
+    items.push({ type: 'certificate', key: 'certificate' });
+    
+    // Add footer spacer
+    items.push({ type: 'footer', key: 'footer' });
+    
+    return items;
+  }, [course]);
 
+  useFocusEffect(
+    useCallback(() => {
+      const initializeAndLoadProgress = () => {
+        if (!course) return;
 
-// Combined hook for better synchronization
-useFocusEffect(
-  useCallback(() => {
-    const initializeAndLoadProgress = () => {
-      if (!course) return;
-
-      try {
-        let progress = getJSON("courseProgress") || {};
-        
-        // Initialize course progress if it doesn't exist
-        if (!progress[id]) {
-          progress[id] = {
-            name: course.course,
-            completed: 0,
-            total: totalLessons,
-            lessonsDone: [],
-            lastVisit: -1,
-            TestScore: 0,
-            userAnswers: [],
-            certId: null,
-          };
+        try {
+          let progress = getJSON("courseProgress") || {};
           
-          setJSON("courseProgress", progress);
-          console.log(`✅ Initialized progress for course ${id}`);
+          if (!progress[id]) {
+            progress[id] = {
+              name: course.course,
+              completed: 0,
+              total: totalLessons,
+              lessonsDone: [],
+              lastVisit: -1,
+              TestScore: 0,
+              userAnswers: [],
+              certId: null,
+            };
+            
+            setJSON("courseProgress", progress);
+          }
+
+          const courseProgress = progress[id] || {};
+          
+          setcompletedLessons(courseProgress.completed || 0);
+          setlessons(courseProgress);
+          setTestScore(courseProgress.TestScore || 0);
+        } catch (error) {
+          console.error("Error with progress:", error);
+          setcompletedLessons(0);
+          setlessons({});
+          setTestScore(0);
         }
+      };
 
-        // Load current progress into state
-        const courseProgress = progress[id] || {};
-        
-        setcompletedLessons(courseProgress.completed || 0);
-        setlessons(courseProgress);
-        setTestScore(courseProgress.TestScore || 0);
-        
-        console.log(`📚 Loaded progress for ${id}:`, courseProgress);
-      } catch (error) {
-        console.error("❌ Error with progress:", error);
-        // Set safe defaults on error
-        setcompletedLessons(0);
-        setlessons({});
-        setTestScore(0);
-      }
-    };
+      initializeAndLoadProgress();
+    }, [course, id, totalLessons])
+  );
 
-    initializeAndLoadProgress();
-  }, [course, id, totalLessons])
-);
-  // Memoized callbacks
   const handleBack = useCallback(() => navigation.goBack(), [navigation]);
 
   const handleLessonPress = useCallback(
@@ -338,6 +458,134 @@ useFocusEffect(
     }
   }, [isCertificateUnlocked, navigation, id]);
 
+  const renderItem = useCallback(({ item }) => {
+    switch (item.type) {
+      case 'header':
+        return <CourseHeader onBack={handleBack} config={config} />;
+      
+      case 'hero':
+        return (
+          <HeroSection
+            course={course}
+            config={config}
+            totalLessons={totalLessons}
+            completedLessons={completedLessons}
+            progress={progress}
+          />
+        );
+      
+      case 'sectionTitle':
+        return <SectionTitleHeader sectionsCount={course.sections.length} />;
+      
+      case 'sectionHeader':
+        const sectionLessons = item.section.lessons.length;
+        const completedInSection = item.section.lessons.filter((l) =>
+          lessons?.lessonsDone?.includes(l.id)
+        ).length;
+        
+        return (
+          <SectionHeader
+            section={item.section}
+            sectionIndex={item.sectionIndex}
+            config={config}
+            completedInSection={completedInSection}
+            sectionLessons={sectionLessons}
+          />
+        );
+      
+      case 'lesson':
+        return (
+          <View style={s.lessonsContainer}>
+            <LessonCard
+              lesson={item.lesson}
+              isCompleted={lessons?.lessonsDone?.includes(item.lesson.id)}
+              isActive={lessons?.lastVisit === item.lesson.id}
+              config={config}
+              onPress={() => handleLessonPress(item.lesson.id)}
+              isDark={isDark}
+            />
+          </View>
+        );
+      
+      case 'test':
+        return (
+          <TestCard
+            isUnlocked={isAllLessonsCompleted}
+            onPress={handleTestPress}
+            title="Final Test"
+            subtitle={
+              isAllLessonsCompleted
+                ? "Test your knowledge and earn certificate"
+                : "Complete all lessons to unlock"
+            }
+            badge={
+              isAllLessonsCompleted
+                ? { icon: "flash", text: "Ready to take test" }
+                : null
+            }
+            icon={isAllLessonsCompleted ? "trophy-outline" : "lock-closed"}
+            colors={
+              isAllLessonsCompleted
+                ? ["#8B5CF6", "#A78BFA"]
+                : ["#98A3B9", "#CBD589"]
+            }
+          />
+        );
+      
+      case 'certificate':
+        return (
+          <TestCard
+            isUnlocked={isCertificateUnlocked}
+            onPress={handleCertificatePress}
+            title="Certificate"
+            subtitle={
+              isCertificateUnlocked
+                ? "Download your course completion certificate"
+                : `Score at least 50% on the final test (Current: ${testScore}%)`
+            }
+            badge={
+              isCertificateUnlocked
+                ? { icon: "checkmark-circle", text: "Certificate Unlocked" }
+                : null
+            }
+            icon={isCertificateUnlocked ? "ribbon-outline" : "lock-closed"}
+            colors={
+              isCertificateUnlocked
+                ? ["#10B981", "#34D399"]
+                : ["#98A3B9", "#CBD589"]
+            }
+          />
+        );
+      
+      case 'footer':
+        return <View style={{ height: 100 }} />;
+      
+      default:
+        return null;
+    }
+  }, [
+    course,
+    config,
+    totalLessons,
+    completedLessons,
+    progress,
+    lessons,
+    isAllLessonsCompleted,
+    isCertificateUnlocked,
+    testScore,
+    isDark,
+    handleBack,
+    handleLessonPress,
+    handleTestPress,
+    handleCertificatePress,
+  ]);
+
+  const getItemLayout = useCallback((data, index) => ({
+    length: 100, // Approximate height
+    offset: 100 * index,
+    index,
+  }), []);
+
   if (!course) {
     return (
       <SafeAreaView style={s.safeArea}>
@@ -356,214 +604,18 @@ useFocusEffect(
     <>
       <StatusBar barStyle="dark-content" />
       <SafeAreaView style={[s.safeArea, { backgroundColor: config.bgColor }]}>
-        <ScrollView
+        <FlatList
+          data={flatListData}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.key}
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={s.scrollContent}
-        >
-          <View style={s.header}>
-            <TouchableOpacity onPress={handleBack} style={s.backButton}>
-              <Ionicons name="arrow-back" size={24} color="#1A1D2E" />
-            </TouchableOpacity>
-            <TouchableOpacity style={s.menuButton}>
-              <Ionicons name="ellipsis-horizontal" size={24} color="#1A1D2E" />
-            </TouchableOpacity>
-          </View>
-
-          <View style={s.heroSection}>
-            <LinearGradient colors={config.gradient} style={s.iconContainer}>
-              <Ionicons name={config.icon} size={48} color="#fff" />
-            </LinearGradient>
-            <Text style={s.courseTitle}>{course.course}</Text>
-            <Text style={s.lessonCount}>
-              {totalLessons} Lessons • {Math.ceil(totalLessons * 15)} min
-            </Text>
-
-            <View style={s.progressCard}>
-              <View style={s.progressHeader}>
-                <Text style={s.progressTitle}>Your Progress</Text>
-                <Text style={s.progressPercent}>{Math.round(progress)}%</Text>
-              </View>
-              <View style={s.progressBarBg}>
-                <LinearGradient
-                  colors={config.gradient}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 1, y: 0 }}
-                  style={[s.progressBarFill, { width: `${progress}%` }]}
-                />
-              </View>
-              <Text style={s.progressSubtext}>
-                {completedLessons} of {totalLessons} lessons completed
-              </Text>
-            </View>
-          </View>
-
-          <View style={s.lessonsSection}>
-            <View style={s.courseTitleContainer}>
-              <Text style={s.sectionTitle}>Course Content</Text>
-              <View style={s.sectionBadge}>
-                <Text style={s.sectionBadgeText}>
-                  {course.sections.length} Sections
-                </Text>
-              </View>
-            </View>
-
-            {course.sections.map((section, sectionIndex) => {
-              const sectionLessons = section.lessons.length;
-              const completedInSection = section.lessons.filter((l) =>
-                lessons?.lessonsDone?.includes(l.id)
-              ).length;
-
-              return (
-                <View key={`${sectionIndex}-${section.section}`} style={s.sectionContainer}>
-
-                  <SectionHeader
-                    section={section}
-                    sectionIndex={sectionIndex}
-                    config={config}
-                    completedInSection={completedInSection}
-                    sectionLessons={sectionLessons}
-                  />
-                  <View style={s.lessonsContainer}>
-                    {section.lessons.map((lesson) => (
-                    <LessonCard
-    key={`${sectionIndex}-${lesson.id}`}  // <-- unique per section
-    lesson={lesson}
-    isCompleted={lessons?.lessonsDone?.includes(lesson.id)}
-    isActive={lessons?.lastVisit === lesson.id}
-    config={config}
-    onPress={() => handleLessonPress(lesson.id)}
-    isDark={isDark}
-  />
-                    ))}
-                  </View>
-                </View>
-              );
-            })}
-
-            {/* Final Test Card */}
-            <TouchableOpacity
-              activeOpacity={isAllLessonsCompleted ? 0.7 : 1}
-              disabled={!isAllLessonsCompleted}
-              onPress={handleTestPress}
-              style={[s.testCard, !isAllLessonsCompleted && s.testCardDisabled]}
-            >
-              <LinearGradient
-                colors={
-                  isAllLessonsCompleted
-                    ? ["#8B5CF6", "#A78BFA"]
-                    : ["#98A3B9", "#CBD589"]
-                }
-                style={s.testCardGradient}
-              >
-                <View style={s.testCardContent}>
-                  <View style={s.testIconContainer}>
-                    <Ionicons
-                      name={
-                        isAllLessonsCompleted ? "trophy-outline" : "lock-closed"
-                      }
-                      size={32}
-                      color="#FFFFFF"
-                    />
-                  </View>
-                  <View style={s.testInfo}>
-                    <Text style={s.testTitle}>Final Test</Text>
-                    <Text style={s.testSubtitle}>
-                      {isAllLessonsCompleted
-                        ? "Test your knowledge and earn certificate"
-                        : "Complete all lessons to unlock"}
-                    </Text>
-                    {isAllLessonsCompleted && (
-                      <View style={s.testBadge}>
-                        <Ionicons
-                          name="flash"
-                          size={14}
-                          color="#FCD34D"
-                          style={{ marginRight: 4 }}
-                        />
-                        <Text style={s.testBadgeText}>Ready to take test</Text>
-                      </View>
-                    )}
-                  </View>
-                  <View
-                    style={[
-                      s.testArrow,
-                      !isAllLessonsCompleted && s.testArrowDisabled,
-                    ]}
-                  >
-                    <Ionicons
-                      name="arrow-forward"
-                      size={24}
-                      color={isAllLessonsCompleted ? "#FFFFFF" : "#64748B"}
-                    />
-                  </View>
-                </View>
-              </LinearGradient>
-            </TouchableOpacity>
-
-            {/* Certificate Card */}
-            <TouchableOpacity
-              activeOpacity={isCertificateUnlocked ? 0.7 : 1}
-              disabled={!isCertificateUnlocked}
-              onPress={handleCertificatePress}
-              style={[s.testCard, !isCertificateUnlocked && s.testCardDisabled]}
-            >
-              <LinearGradient
-                colors={
-                  isCertificateUnlocked
-                    ? ["#10B981", "#34D399"]
-                    : ["#98A3B9", "#CBD589"]
-                }
-                style={s.testCardGradient}
-              >
-                <View style={s.testCardContent}>
-                  <View style={s.testIconContainer}>
-                    <Ionicons
-                      name={
-                        isCertificateUnlocked ? "ribbon-outline" : "lock-closed"
-                      }
-                      size={32}
-                      color="#FFFFFF"
-                    />
-                  </View>
-                  <View style={s.testInfo}>
-                    <Text style={s.testTitle}>Certificate</Text>
-                    <Text style={s.testSubtitle}>
-                      {isCertificateUnlocked
-                        ? "Download your course completion certificate"
-                        : `Score at least 50% on the final test (Current: ${testScore}%)`}
-                    </Text>
-                    {isCertificateUnlocked && (
-                      <View style={s.testBadge}>
-                        <Ionicons
-                          name="checkmark-circle"
-                          size={14}
-                          color="#FCD34D"
-                          style={{ marginRight: 4 }}
-                        />
-                        <Text style={s.testBadgeText}>
-                          Certificate Unlocked
-                        </Text>
-                      </View>
-                    )}
-                  </View>
-                  <View
-                    style={[
-                      s.testArrow,
-                      !isCertificateUnlocked && s.testArrowDisabled,
-                    ]}
-                  >
-                    <Ionicons
-                      name="arrow-forward"
-                      size={24}
-                      color={isCertificateUnlocked ? "#FFFFFF" : "#64748B"}
-                    />
-                  </View>
-                </View>
-              </LinearGradient>
-            </TouchableOpacity>
-          </View>
-          <View style={{ height: 40 }} />
-        </ScrollView>
+          removeClippedSubviews={true}
+          maxToRenderPerBatch={10}
+          updateCellsBatchingPeriod={50}
+          initialNumToRender={10}
+          windowSize={10}
+          contentContainerStyle={s.flatListContent}
+        />
 
         <View style={s.fabContainer}>
           <TouchableOpacity activeOpacity={0.9} onPress={handleContinue}>
@@ -586,7 +638,7 @@ useFocusEffect(
 
 const s = StyleSheet.create({
   safeArea: { flex: 1 },
-  scrollContent: { paddingBottom: 100 },
+  flatListContent: { paddingBottom: 20 },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -681,12 +733,12 @@ const s = StyleSheet.create({
   },
   progressBarFill: { height: "100%", borderRadius: 4 },
   progressSubtext: { fontSize: 13, color: "#8B90A0", fontWeight: "600" },
-  lessonsSection: { paddingHorizontal: 20 },
   courseTitleContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     marginBottom: 24,
+    paddingHorizontal: 20,
   },
   sectionTitle: { fontSize: 22, fontWeight: "800", color: "#1A1D2E" },
   sectionBadge: {
@@ -696,12 +748,12 @@ const s = StyleSheet.create({
     borderRadius: 12,
   },
   sectionBadgeText: { fontSize: 12, fontWeight: "700", color: "#5B6B7F" },
-  sectionContainer: { marginBottom: 28 },
   sectionHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     marginBottom: 16,
+    marginHorizontal: 20,
     paddingVertical: 16,
     paddingHorizontal: 16,
     backgroundColor: "#fff",
@@ -760,7 +812,7 @@ const s = StyleSheet.create({
     marginLeft: 12,
   },
   sectionProgressText: { fontSize: 13, fontWeight: "700", color: "#64748B" },
-  lessonsContainer: { paddingLeft: 8 },
+  lessonsContainer: { paddingHorizontal: 20, paddingLeft: 28 },
   lessonCard: {
     backgroundColor: "#fff",
     borderRadius: 16,
@@ -830,6 +882,7 @@ const s = StyleSheet.create({
   testCard: {
     marginTop: 12,
     marginBottom: 16,
+    marginHorizontal: 20,
     borderRadius: 20,
     overflow: "hidden",
     shadowColor: "#000",

@@ -9,11 +9,12 @@ import {
   Animated,
   StatusBar,
   Alert,
+  Platform,
 } from "react-native";
 import LinearGradient from "react-native-linear-gradient";
 import { useNavigation } from "@react-navigation/native";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-signin';
 import { getAuth, signInWithCredential, GoogleAuthProvider } from 'firebase/auth';
 import { auth } from '../../utils/firebase';
 
@@ -329,69 +330,135 @@ export default function OnboardingScreen() {
     ).start();
   }, [glowAnim, pulseAnim]);
 
-  // Firebase Google Sign-In Handler
-  const handleGoogleSignIn = useCallback(async () => {
+// Firebase Google Sign-In Handler
+const handleGoogleSignIn = useCallback(async () => {
+  if (isLoading) return; // Prevent multiple simultaneous calls
+  
   try {
     setIsLoading(true);
-    
     console.log('🔍 Starting Google Sign-In...');
-    
-    const hasPlayServices = await GoogleSignin.hasPlayServices({
-      showPlayServicesUpdateDialog: true,
-    });
-    console.log('✅ Play Services available:', hasPlayServices);
 
-    await GoogleSignin.signOut();
-    console.log('✅ Signed out previous session');
-
-    const userInfo = await GoogleSignin.signIn();
-    console.log('✅ Google userInfo received:', JSON.stringify(userInfo, null, 2));
-
-    const idToken = userInfo?.data?.idToken;
-    console.log('✅ ID Token exists:', !!idToken);
-    
-    if (!idToken) {
-      throw new Error('No idToken received');
+    // Check Play Services (Android only)
+    if (Platform.OS === 'android') {
+      try {
+        await GoogleSignin.hasPlayServices({
+          showPlayServicesUpdateDialog: true,
+        });
+        console.log('✅ Play Services available');
+      } catch (error) {
+        console.error('❌ Play Services error:', error);
+        Alert.alert(
+          'Google Play Services Required',
+          'Please update Google Play Services to use Google Sign-In.',
+          [{ text: 'OK' }]
+        );
+        return;
+      }
     }
 
+    // Sign out first to force account picker
+    try {
+      await GoogleSignin.signOut();
+      console.log('✅ Signed out previous session');
+    } catch (e) {
+      // Ignore if not signed in
+      console.log('ℹ️ No previous session to sign out');
+    }
+
+    // Attempt sign in
+    console.log('📱 Opening sign-in prompt...');
+    const response = await GoogleSignin.signIn();
+    console.log('✅ Sign-in response received');
+
+    // Handle different response structures (response.data or response directly)
+    const userInfo = response.data || response;
+    const idToken = userInfo.idToken;
+
+    if (!idToken) {
+      console.error('❌ No idToken in response:', JSON.stringify(response, null, 2));
+      throw new Error('No ID token received from Google Sign-In');
+    }
+    console.log('✅ ID Token received');
+
+    // Create Firebase credential
+    console.log('🔑 Creating Firebase credential...');
     const googleCredential = GoogleAuthProvider.credential(idToken);
-    console.log('✅ Google credential created');
 
+    // Sign in with Firebase
+    console.log('🔥 Authenticating with Firebase...');
     const userCredential = await signInWithCredential(auth, googleCredential);
-    console.log('✅ Firebase sign-in successful:', userCredential.user.email);
+    const firebaseUser = userCredential.user;
+    console.log('✅ Firebase sign-in successful:', firebaseUser.email);
 
-    // ... rest of your code
+    // Create user data object with fallbacks
+    const userDataToSave = {
+      uid: firebaseUser.uid,
+      name: firebaseUser.displayName || userInfo.user?.name || userInfo.name || 'User',
+      email: firebaseUser.email || userInfo.user?.email || userInfo.email,
+      imageUrl: firebaseUser.photoURL || userInfo.user?.photo || userInfo.photo,
+      createdAt: new Date().toISOString(),
+    };
+
+    console.log('💾 Saving user data...');
+    saveUserData(userDataToSave);
+    setUserInfo(userDataToSave);
+    markOnboardingComplete();
+
+    console.log('✅ Navigating to Reminder screen');
+    navigation.replace('Reminder');
+
   } catch (error) {
     console.error('❌ Sign-in error:', {
       code: error.code,
       message: error.message,
-      details: JSON.stringify(error, null, 2)
+      name: error.name,
     });
-    
-    // More detailed error handling
-    if (error.code === 'auth/invalid-credential') {
-      Alert.alert(
-        'Configuration Error',
-        'Check SHA certificates in Firebase Console and ensure google-services.json is up to date.'
-      );
-    } else if (error.code === '12501') {
-      Alert.alert(
-        'Sign-In Cancelled',
-        'The sign-in process was cancelled.'
-      );
-    } else if (error.code === '10') {
-      Alert.alert(
-        'Configuration Error',
-        'SHA certificate fingerprint not added to Firebase. Please add your release keystore SHA-1 and SHA-256.'
-      );
-    } else {
-      Alert.alert('Sign-In Failed', error.message || 'Please try again.');
+
+    // Handle user cancellation (don't show error)
+    if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+      console.log('ℹ️ User cancelled sign-in');
+      return;
     }
+
+    // Handle sign-in already in progress
+    if (error.code === statusCodes.IN_PROGRESS) {
+      console.log('ℹ️ Sign-in already in progress');
+      return;
+    }
+
+    // Determine error message
+    let errorTitle = 'Sign-In Failed';
+    let errorMessage = 'An error occurred. Please try again.';
+
+    if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+      errorTitle = 'Google Play Services Required';
+      errorMessage = 'Please update Google Play Services to use Google Sign-In.';
+    } else if (error.code === '12500') {
+      errorTitle = 'Configuration Error';
+      errorMessage = 
+        'The app is not properly configured for Google Sign-In.\n\n' +
+        'This usually means the SHA certificate is not registered in Firebase Console.';
+    } else if (error.code === 'auth/invalid-credential') {
+      errorTitle = 'Invalid Credential';
+      errorMessage = 'The sign-in credential is invalid or has expired. Please try again.';
+    } else if (error.code === 'auth/account-exists-with-different-credential') {
+      errorTitle = 'Account Exists';
+      errorMessage = 'An account already exists with this email using a different sign-in method.';
+    } else if (error.message?.includes('DEVELOPER_ERROR')) {
+      errorTitle = 'Configuration Error';
+      errorMessage = 'SHA certificate not registered. Please contact support.';
+    } else if (error.message?.includes('network') || error.message?.includes('Network')) {
+      errorTitle = 'Network Error';
+      errorMessage = 'Please check your internet connection and try again.';
+    } else if (error.message) {
+      errorMessage = error.message;
+    }
+
+    Alert.alert(errorTitle, errorMessage, [{ text: 'OK' }]);
   } finally {
     setIsLoading(false);
   }
-}, [saveUserData, markOnboardingComplete, navigation]);
-
+}, [isLoading, saveUserData, markOnboardingComplete, navigation]);
   const handleNext = useCallback(() => {
     if (currentSlide < SLIDES.length - 1) {
       flatListRef.current?.scrollToIndex({ index: currentSlide + 1, animated: true });
