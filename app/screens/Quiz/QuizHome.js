@@ -34,7 +34,7 @@ const CATEGORIES = [
     icon: "code-slash",
     color: "#E34F26",
     gradient: ["#E34F26", "#F06529"],
-    questions: 25,
+    questions: 10,
     difficulty: "Beginner",
   },
   {
@@ -44,7 +44,7 @@ const CATEGORIES = [
     icon: "color-palette",
     color: "#1572B6",
     gradient: ["#1572B6", "#33A9DC"],
-    questions: 30,
+    questions: 10,
     difficulty: "Beginner",
   },
   {
@@ -54,7 +54,7 @@ const CATEGORIES = [
     icon: "logo-javascript",
     color: "#F7DF1E",
     gradient: ["#F7DF1E", "#F0DB4F"],
-    questions: 40,
+    questions: 10,
     difficulty: "Intermediate",
   },
   {
@@ -64,7 +64,7 @@ const CATEGORIES = [
     icon: "logo-react",
     color: "#61DAFB",
     gradient: ["#61DAFB", "#00D8FF"],
-    questions: 35,
+    questions: 10,
     difficulty: "Intermediate",
   },
   {
@@ -74,7 +74,7 @@ const CATEGORIES = [
     icon: "logo-nodejs",
     color: "#339933",
     gradient: ["#339933", "#68A063"],
-    questions: 28,
+    questions: 10,
     difficulty: "Advanced",
   },
   {
@@ -84,7 +84,7 @@ const CATEGORIES = [
     icon: "layers",
     color: "#000000",
     gradient: ["#000000", "#1a1a1a"],
-    questions: 22,
+    questions: 10,
     difficulty: "Advanced",
   },
   {
@@ -94,7 +94,7 @@ const CATEGORIES = [
     icon: "leaf",
     color: "#47A248",
     gradient: ["#47A248", "#4DB33D"],
-    questions: 20,
+    questions: 10,
     difficulty: "Intermediate",
   },
   {
@@ -104,7 +104,7 @@ const CATEGORIES = [
     icon: "flash",
     color: "#000000",
     gradient: ["#404040", "#000000"],
-    questions: 18,
+    questions: 10,
     difficulty: "Intermediate",
   },
   {
