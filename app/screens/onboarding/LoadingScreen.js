@@ -42,7 +42,7 @@ export default function LoadingScreen(){
         // Wait for 2 seconds to show the loading animation
         setTimeout(() => {
           if (hasCompletedOnboarding) {
-            navigation.replace('Home');
+            navigation.navigate('Home');
           } else {
             navigation.replace('Onboarding');
           }
