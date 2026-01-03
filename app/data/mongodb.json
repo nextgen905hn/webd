@@ -1,0 +1,474 @@
+{
+  "course": "Mongodb for Beginners",
+  "sections": [
+  {
+    "section": 1,
+    "title": "Introduction to MongoDB",
+    "description": "Learn the fundamentals of MongoDB, a NoSQL document-oriented database. Understand the differences between SQL and NoSQL databases and why MongoDB is widely used for modern applications.",
+    "lessons": [
+      {
+        "id": 1,
+        "title": "What is MongoDB and Why Use It",
+        "content": "MongoDB is a NoSQL database that stores data in flexible, JSON-like documents. Unlike relational databases, it doesn’t require a fixed schema, making it ideal for modern, dynamic applications.",
+        "examples": [
+          {
+            "code": "// Example document in MongoDB\n{\n  _id: ObjectId(\"507f1f77bcf86cd799439011\"),\n  name: 'John Doe',\n  age: 30,\n  hobbies: ['reading', 'traveling']\n}",
+            "description": "A single document in a MongoDB collection representing a user."
+          }
+        ],
+        "quiz": [
+          {
+            "question": "What type of database is MongoDB?",
+            "options": ["NoSQL document-oriented", "Relational SQL", "Key-value store", "Graph database"],
+            "answer": "NoSQL document-oriented",
+            "hint": "Think JSON-like documents.",
+            "explanation": "MongoDB stores data as flexible JSON-like documents rather than tables with fixed schemas."
+          },
+          {
+            "question": "Why choose MongoDB over SQL?",
+            "options": ["Flexible schema", "Automatic joins", "Built-in transactions only", "Requires less RAM"],
+            "answer": "Flexible schema",
+            "hint": "Consider dynamic or evolving data structures.",
+            "explanation": "MongoDB allows storing documents with varying structures, ideal for applications where schema changes frequently."
+          }
+        ],
+        "challenge": "Create a sample document representing a product with fields like name, price, and categories.",
+        "tips": [
+          "Think in terms of collections and documents instead of tables and rows.",
+          "MongoDB works well with JSON data used in modern web apps."
+        ]
+      },
+      {
+        "id": 2,
+        "title": "Setting Up MongoDB",
+        "content": "Install MongoDB locally or use MongoDB Atlas for a cloud version. Learn basic commands to start the server, connect, and access the shell or GUI tools like Compass.",
+        "examples": [
+          {
+            "code": "// Starting local MongoDB server\nmongod --dbpath /data/db\n\n// Connecting using Mongo shell\nmongo\n\n// MongoDB Atlas connection string\nmongodb+srv://username:password@cluster0.mongodb.net/mydb",
+            "description": "Commands to start MongoDB locally or connect using Atlas."
+          }
+        ],
+        "quiz": [
+          {
+            "question": "Which command starts the MongoDB server locally?",
+            "options": ["mongod", "mongo", "npm start", "mongo start"],
+            "answer": "mongod",
+            "hint": "The daemon process starts the server.",
+            "explanation": "mongod launches the MongoDB server that listens for connections."
+          },
+          {
+            "question": "What is MongoDB Atlas?",
+            "options": ["Cloud-hosted MongoDB", "A GUI tool", "A query language", "A Node.js library"],
+            "answer": "Cloud-hosted MongoDB",
+            "hint": "Managed database service.",
+            "explanation": "MongoDB Atlas is a fully managed cloud database service for MongoDB."
+          }
+        ],
+        "challenge": "Install MongoDB locally or create a free Atlas cluster and connect using the Mongo shell.",
+        "tips": [
+          "Use MongoDB Compass for an easy GUI interface.",
+          "Always secure your Atlas credentials with environment variables in real projects."
+        ]
+      }
+    ]
+  },
+  {
+    "section": 2,
+    "title": "MongoDB Basics",
+    "description": "Learn MongoDB’s fundamental building blocks like databases, collections, documents, and data types. Understand how to perform basic CRUD operations in the Mongo shell.",
+    "lessons": [
+      {
+        "id": 3,
+        "title": "Databases, Collections, and Documents",
+        "content": "A MongoDB database contains collections, which store documents. Documents are JSON-like structures that hold data and can have different fields.",
+        "examples": [
+          {
+            "code": "// Creating a database and collection\nuse myDatabase\ndb.createCollection('users')\n\n// Inserting a document\ndb.users.insertOne({ name: 'Alice', age: 25 })",
+            "description": "Create a database, collection, and insert a document."
+          }
+        ],
+        "quiz": [
+          {
+            "question": "What is the smallest unit of data in MongoDB?",
+            "options": ["Document", "Collection", "Database", "Field"],
+            "answer": "Document",
+            "hint": "Think JSON-like object.",
+            "explanation": "Documents are the basic units of data in MongoDB, stored inside collections."
+          }
+        ],
+        "challenge": "Create a new collection called 'products' and insert three product documents.",
+        "tips": [
+          "Collections can store documents with varying fields.",
+          "Databases are logical containers and don't have fixed schemas."
+        ]
+      },
+      {
+        "id": 4,
+        "title": "Data Types in MongoDB",
+        "content": "MongoDB supports various data types like String, Number, Boolean, Array, Date, and ObjectId for unique identifiers.",
+        "examples": [
+          {
+            "code": "{\n  _id: ObjectId(),\n  name: 'Book',\n  price: 19.99,\n  inStock: true,\n  tags: ['fiction', 'bestseller'],\n  createdAt: new Date()\n}",
+            "description": "Document demonstrating common MongoDB data types."
+          }
+        ],
+        "quiz": [
+          {
+            "question": "Which type is used for unique IDs in MongoDB?",
+            "options": ["ObjectId", "String", "Number", "UUID"],
+            "answer": "ObjectId",
+            "hint": "Auto-generated by MongoDB.",
+            "explanation": "ObjectId is a 12-byte unique identifier automatically generated for documents."
+          }
+        ],
+        "challenge": "Insert a document with all the main MongoDB data types.",
+        "tips": [
+          "Use ObjectId for primary keys.",
+          "Arrays and nested objects allow flexible data modeling."
+        ]
+      },
+      {
+        "id": 5,
+        "title": "Basic CRUD with Mongo Shell",
+        "content": "Learn to perform Create, Read, Update, and Delete operations using Mongo shell commands.",
+        "examples": [
+          {
+            "code": "// Insert\n db.users.insertOne({ name: 'Bob', age: 30 })\n\n// Find\n db.users.find({ age: { $gt: 20 } })\n\n// Update\n db.users.updateOne({ name: 'Bob' }, { $set: { age: 31 } })\n\n// Delete\n db.users.deleteOne({ name: 'Bob' })",
+            "description": "CRUD operations in Mongo shell."
+          }
+        ],
+        "quiz": [
+          {
+            "question": "Which command updates a document in MongoDB?",
+            "options": ["updateOne", "insertOne", "find", "removeOne"],
+            "answer": "updateOne",
+            "hint": "Updates a single matching document.",
+            "explanation": "updateOne updates the first document matching the filter criteria."
+          }
+        ],
+        "challenge": "Insert 3 documents in a collection, update one, query all, and delete one document.",
+        "tips": [
+          "Use $set to update specific fields.",
+          "Always verify operations with find() after updates or deletions."
+        ]
+      }
+    ]
+  },
+   {
+    "section": 3,
+    "title": "Querying & Filtering Data",
+    "description": "Learn how to query MongoDB data efficiently using operators, sorting, projection, and limiting results to retrieve only the data you need.",
+    "lessons": [
+      {
+        "id": 6,
+        "title": "Query Operators",
+        "content": "MongoDB provides operators like $eq, $gt, $lt, $in, $and, $or to filter documents based on conditions.",
+        "examples": [
+          {
+            "code": "// Find users older than 25\n db.users.find({ age: { $gt: 25 } })\n\n// Find users named 'Alice' or 'Bob'\n db.users.find({ $or: [{ name: 'Alice' }, { name: 'Bob' }] })",
+            "description": "Examples using MongoDB query operators to filter documents."
+          }
+        ],
+        "quiz": [
+          {
+            "question": "Which operator finds documents where a field equals a value?",
+            "options": ["$eq", "$gt", "$lt", "$in"],
+            "answer": "$eq",
+            "hint": "Think equality check.",
+            "explanation": "$eq is used to match documents where the field equals the specified value."
+          }
+        ],
+        "challenge": "Write a query to find all products with price between 10 and 50.",
+        "tips": [
+          "Combine operators with $and and $or for complex queries.",
+          "Always test queries with find() to check results."
+        ]
+      },
+      {
+        "id": 7,
+        "title": "Sorting, Limiting, and Projection",
+        "content": "You can sort documents using sort(), limit the number of results, and select only required fields using projection.",
+        "examples": [
+          {
+            "code": "// Sort by age descending and limit 3\n db.users.find().sort({ age: -1 }).limit(3)\n\n// Only return name and age fields\n db.users.find({}, { name: 1, age: 1, _id: 0 })",
+            "description": "Sorting, limiting, and projecting fields in MongoDB queries."
+          }
+        ],
+        "quiz": [
+          {
+            "question": "Which method limits the number of returned documents?",
+            "options": ["limit()", "sort()", "project()", "find()"],
+            "answer": "limit()",
+            "hint": "Think about restricting results.",
+            "explanation": "The limit() method restricts the number of documents returned by a query."
+          }
+        ],
+        "challenge": "Find the top 5 oldest users and only display their names and ages.",
+        "tips": [
+          "Use -1 for descending and 1 for ascending in sort().",
+          "Projection is helpful to reduce data transfer in large collections."
+        ]
+      }
+    ]
+  },
+  {
+    "section": 4,
+    "title": "Working with Mongoose",
+    "description": "Mongoose is an ODM for MongoDB in Node.js that simplifies schema definition, validation, and CRUD operations.",
+    "lessons": [
+      {
+        "id": 8,
+        "title": "What is Mongoose and Why Use It",
+        "content": "Mongoose provides a schema-based solution to model your application data with built-in type casting, validation, and query building.",
+        "examples": [
+          {
+            "code": "const mongoose = require('mongoose');\n\nmongoose.connect('mongodb://localhost/mydb')\n  .then(() => console.log('MongoDB connected'))\n  .catch(err => console.error(err));",
+            "description": "Connecting a Node.js app to MongoDB using Mongoose."
+          }
+        ],
+        "quiz": [
+          {
+            "question": "What is the main purpose of Mongoose?",
+            "options": ["Schema-based modeling for MongoDB", "Hosting MongoDB", "Replacing Node.js", "Running queries faster"],
+            "answer": "Schema-based modeling for MongoDB",
+            "hint": "It helps structure and validate data.",
+            "explanation": "Mongoose allows defining schemas and models, providing structure to MongoDB documents."
+          }
+        ],
+        "challenge": "Install Mongoose and connect a Node.js app to a local MongoDB database.",
+        "tips": [
+          "Use models to interact with collections easily.",
+          "Always handle connection errors with .catch()."
+        ]
+      },
+      {
+        "id": 9,
+        "title": "Defining Schemas and Models",
+        "content": "Schemas define the structure of documents, and models provide an interface to interact with the collection.",
+        "examples": [
+          {
+            "code": "const userSchema = new mongoose.Schema({\n  name: String,\n  age: Number,\n  email: { type: String, required: true }\n});\n\nconst User = mongoose.model('User', userSchema);",
+            "description": "Defining a Mongoose schema and creating a model."
+          }
+        ],
+        "quiz": [
+          {
+            "question": "Which Mongoose object defines the structure of documents?",
+            "options": ["Schema", "Model", "Collection", "Database"],
+            "answer": "Schema",
+            "hint": "Think about blueprint of documents.",
+            "explanation": "Schemas define the fields, types, and validations for documents in a collection."
+          }
+        ],
+        "challenge": "Create a schema for a 'Product' with name, price, and category fields and generate a model.",
+        "tips": [
+          "Use required fields to enforce data integrity.",
+          "You can define default values and validation rules in schemas."
+        ]
+      },
+      {
+        "id": 10,
+        "title": "CRUD Operations with Mongoose",
+        "content": "Perform create, read, update, and delete operations using Mongoose models with simplified methods.",
+        "examples": [
+          {
+            "code": "// Create\nconst user = await User.create({ name: 'Alice', age: 25 });\n\n// Read\nconst users = await User.find({ age: { $gt: 20 } });\n\n// Update\nawait User.updateOne({ name: 'Alice' }, { $set: { age: 26 } });\n\n// Delete\nawait User.deleteOne({ name: 'Alice' });",
+            "description": "Performing CRUD operations using a Mongoose model."
+          }
+        ],
+        "quiz": [
+          {
+            "question": "Which method creates a new document in Mongoose?",
+            "options": ["create()", "find()", "updateOne()", "deleteOne()"],
+            "answer": "create()",
+            "hint": "Think about adding new records.",
+            "explanation": "create() adds a new document to the collection via the Mongoose model."
+          }
+        ],
+        "challenge": "Use the 'User' model to insert 3 users, update one user's age, query all users, and delete one user.",
+        "tips": [
+          "Use async/await for cleaner asynchronous code.",
+          "Always handle errors using try/catch blocks."
+        ]
+      }
+    ]
+  },
+   {
+    "section": 5,
+    "title": "Relationships & Advanced Features",
+    "description": "Learn how to structure related data in MongoDB using referencing and embedding, and perform advanced analytics using the aggregation framework.",
+    "lessons": [
+      {
+        "id": 11,
+        "title": "Referencing and Embedding Documents",
+        "content": "MongoDB supports embedding documents for one-to-many relationships or referencing documents using ObjectIds for normalized data.",
+        "examples": [
+          {
+            "code": "// Embedding example\nconst userSchema = new mongoose.Schema({\n  name: String,\n  posts: [{ title: String, content: String }]\n});\n\n// Referencing example\nconst postSchema = new mongoose.Schema({\n  title: String,\n  author: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }\n});",
+            "description": "Embedding keeps related data in the same document, referencing links documents via ObjectId."
+          }
+        ],
+        "quiz": [
+          {
+            "question": "Which method stores related data in the same document?",
+            "options": ["Embedding", "Referencing", "Joins", "Linking Tables"],
+            "answer": "Embedding",
+            "hint": "Think denormalized data inside one document.",
+            "explanation": "Embedding stores related objects directly in the parent document."
+          }
+        ],
+        "challenge": "Create a 'User' schema with embedded 'addresses' array containing street, city, and zip fields.",
+        "tips": [
+          "Use referencing for large datasets to avoid large documents.",
+          "Use embedding for tightly coupled data that is frequently accessed together."
+        ]
+      },
+      {
+        "id": 12,
+        "title": "Aggregation Framework",
+        "content": "MongoDB’s aggregation framework allows powerful data processing using stages like $match, $group, $project, and $sort.",
+        "examples": [
+          {
+            "code": "// Total orders per customer\n db.orders.aggregate([\n  { $match: { status: 'completed' } },\n  { $group: { _id: '$customerId', totalOrders: { $sum: 1 } } },\n  { $sort: { totalOrders: -1 } }\n]);",
+            "description": "Aggregate completed orders by customer and sort descending by total orders."
+          }
+        ],
+        "quiz": [
+          {
+            "question": "Which stage in aggregation groups documents together?",
+            "options": ["$group", "$match", "$project", "$sort"],
+            "answer": "$group",
+            "hint": "Think about summarizing data.",
+            "explanation": "$group combines documents by a specified key and can compute sums, averages, counts, etc."
+          }
+        ],
+        "challenge": "Use aggregation to calculate total sales per product category.",
+        "tips": [
+          "Combine multiple stages in a pipeline for complex analytics.",
+          "Always test aggregation queries on small datasets first."
+        ]
+      }
+    ]
+  },
+  {
+    "section": 6,
+    "title": "Indexing & Performance",
+    "description": "Improve query performance in MongoDB using indexes, and analyze queries to optimize speed and efficiency.",
+    "lessons": [
+      {
+        "id": 13,
+        "title": "Creating Indexes",
+        "content": "Indexes in MongoDB improve query performance by allowing faster lookups on specified fields.",
+        "examples": [
+          {
+            "code": "// Create an index on 'name'\n db.users.createIndex({ name: 1 })\n\n// Create a compound index on 'name' and 'age'\n db.users.createIndex({ name: 1, age: -1 })",
+            "description": "Single-field and compound indexes can significantly speed up queries."
+          }
+        ],
+        "quiz": [
+          {
+            "question": "Which method creates an index in MongoDB?",
+            "options": ["createIndex()", "ensureIndex()", "addIndex()", "makeIndex()"],
+            "answer": "createIndex()",
+            "hint": "Used on collections to speed up queries.",
+            "explanation": "createIndex() adds an index to a collection, improving query performance."
+          }
+        ],
+        "challenge": "Add indexes on the 'email' field of users and 'price' field of products.",
+        "tips": [
+          "Use indexes on fields frequently queried.",
+          "Avoid excessive indexing as it slows down writes."
+        ]
+      },
+      {
+        "id": 14,
+        "title": "Query Optimization & explain()",
+        "content": "The explain() method in MongoDB shows how queries are executed, helping identify bottlenecks and improve performance.",
+        "examples": [
+          {
+            "code": "// Analyze query execution\n db.users.find({ age: { $gt: 25 } }).explain('executionStats')",
+            "description": "Use explain() to check if indexes are used and query efficiency."
+          }
+        ],
+        "quiz": [
+          {
+            "question": "Which method helps analyze query execution in MongoDB?",
+            "options": ["explain()", "analyze()", "profile()", "inspect()"],
+            "answer": "explain()",
+            "hint": "Provides execution stats and index usage.",
+            "explanation": "explain() shows how MongoDB executes a query and whether it uses indexes."
+          }
+        ],
+        "challenge": "Optimize a slow query by adding indexes and verifying with explain().",
+        "tips": [
+          "Always check query plans for large collections.",
+          "Indexes improve read performance but impact write speed."
+        ]
+      }
+    ]
+  },
+  {
+    "section": 7,
+    "title": "MongoDB with Express/Node",
+    "description": "Learn how to integrate MongoDB with Node.js/Express applications to build dynamic backends and REST APIs.",
+    "lessons": [
+      {
+        "id": 15,
+        "title": "Connecting MongoDB to Express",
+        "content": "Use Mongoose and environment variables to securely connect your Express app to a MongoDB database.",
+        "examples": [
+          {
+            "code": "// .env file\nMONGO_URI=mongodb://localhost:27017/mydb\n\n// app.js\nconst mongoose = require('mongoose');\nrequire('dotenv').config();\n\nmongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })\n  .then(() => console.log('MongoDB connected'))\n  .catch(err => console.error(err));",
+            "description": "Connecting a Node.js/Express app to MongoDB securely using environment variables."
+          }
+        ],
+        "quiz": [
+          {
+            "question": "Which library simplifies MongoDB integration with Node.js?",
+            "options": ["Mongoose", "Sequelize", "Knex", "TypeORM"],
+            "answer": "Mongoose",
+            "hint": "Provides schema-based models.",
+            "explanation": "Mongoose is the standard ODM for connecting Node.js applications to MongoDB."
+          }
+        ],
+        "challenge": "Connect your Express app to a local MongoDB database using Mongoose and .env variables.",
+        "tips": [
+          "Never hardcode database URIs in your code.",
+          "Use try/catch to handle connection errors."
+        ]
+      },
+      {
+        "id": 16,
+        "title": "Building a Simple REST API",
+        "content": "Create CRUD routes in Express to interact with MongoDB using Mongoose models.",
+        "examples": [
+          {
+            "code": "// Express CRUD example\nconst express = require('express');\nconst User = require('./models/User');\nconst app = express();\napp.use(express.json());\n\n// Create\napp.post('/users', async (req, res) => {\n  const user = await User.create(req.body);\n  res.json(user);\n});\n\n// Read\napp.get('/users', async (req, res) => {\n  const users = await User.find();\n  res.json(users);\n});",
+            "description": "Basic Express routes to create and read users from MongoDB using Mongoose."
+          }
+        ],
+        "quiz": [
+          {
+            "question": "Which HTTP method is used to update a resource in REST?",
+            "options": ["PUT", "GET", "POST", "DELETE"],
+            "answer": "PUT",
+            "hint": "Think about full replacement of the resource.",
+            "explanation": "PUT is used to update existing resources in REST APIs."
+          }
+        ],
+        "challenge": "Build a full CRUD REST API for a 'Product' model with Express and MongoDB.",
+        "tips": [
+          "Use express.json() middleware to parse request bodies.",
+          "Organize routes and controllers for maintainable code."
+        ]
+      }
+    ]
+  }
+
+
+
+]
+
+
+
+}

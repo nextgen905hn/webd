@@ -1,0 +1,347 @@
+{
+    "course": "Complete Redis ",
+    "sections":[
+  {
+    "section": 1,
+    "title": "Introduction to Redis",
+    "description": "Learn the fundamentals of Redis, an in-memory data store used for caching, real-time analytics, and message brokering. This section covers what Redis is and how to set it up locally.",
+    "lessons": [
+      {
+        "id": 1,
+        "title": "What is Redis and Why Use It",
+        "content": "Redis is an in-memory data store that can be used as a cache, message broker, and key-value database. It is extremely fast due to storing data in memory and supports various data structures like strings, hashes, lists, sets, and sorted sets.",
+        "examples": [
+          {
+            "code": "// Redis can be used for caching\n// Example: Storing user session in cache\nSET user:1001 \"{\\\"name\\\":\\\"Alice\\\", \\\"role\\\":\\\"admin\\\"}\" EX 3600",
+            "description": "Using Redis to store a user session that expires after 1 hour."
+          }
+        ],
+        "quiz": [
+          {
+            "question": "Which of the following is NOT a typical use case of Redis?",
+            "options": ["Relational joins", "Caching", "Message brokering", "Real-time analytics"],
+            "answer": "Relational joins",
+            "hint": "Redis is key-value based, not relational.",
+            "explanation": "Redis is not used for relational database operations like joins; it is primarily for caching, messaging, and fast key-value storage."
+          }
+        ],
+        "challenge": "Explain three scenarios where Redis can improve performance in a web application.",
+        "tips": [
+          "Redis stores data in memory for extremely fast access.",
+          "It supports TTL to automatically expire keys."
+        ]
+      },
+      {
+        "id": 2,
+        "title": "Installing and Running Redis",
+        "content": "Redis can be installed locally on Windows, macOS, or Linux. The Redis CLI allows you to interact with the database, run commands, and check the server status.",
+        "examples": [
+          {
+            "code": "# macOS (Homebrew)\nbrew install redis\nbrew services start redis\n\n# Test Redis CLI\nredis-cli ping",
+            "description": "Installing Redis via Homebrew on macOS and checking server status with PING command."
+          }
+        ],
+        "quiz": [
+          {
+            "question": "Which command checks if the Redis server is running?",
+            "options": ["PING", "STATUS", "CHECK", "HELLO"],
+            "answer": "PING",
+            "hint": "Common Redis health check command.",
+            "explanation": "Sending PING to Redis returns PONG if the server is running."
+          }
+        ],
+        "challenge": "Install Redis locally and verify it is running using redis-cli.",
+        "tips": [
+          "Use Redis Desktop Manager or another GUI for easier exploration.",
+          "Always check Redis version after installation to ensure compatibility."
+        ]
+      }
+    ]
+  },
+  {
+    "section": 2,
+    "title": "Redis Basics",
+    "description": "Understand core Redis data types and basic commands for storing, retrieving, and manipulating data.",
+    "lessons": [
+      {
+        "id": 3,
+        "title": "Redis Data Types",
+        "content": "Redis supports multiple data types: Strings, Lists, Sets, Hashes, and Sorted Sets. Each type has specialized commands and use cases, like queues, rankings, or structured objects.",
+        "examples": [
+          {
+            "code": "SET mykey \"Hello Redis\"\nLPUSH mylist \"Task1\"\nSADD myset \"user1\"\nHSET user:1001 name \"Alice\" age 25\nZADD leaderboard 100 \"player1\"",
+            "description": "Examples showing Redis commands for different data types."
+          }
+        ],
+        "quiz": [
+          {
+            "question": "Which Redis data type is best suited for storing unique elements?",
+            "options": ["Set", "List", "Hash", "String"],
+            "answer": "Set",
+            "hint": "It automatically removes duplicates.",
+            "explanation": "Sets in Redis only store unique values, making them ideal for lists of distinct items."
+          }
+        ],
+        "challenge": "Create a Redis Hash for a product with fields: name, price, stock.",
+        "tips": [
+          "Use Lists for queues or ordered data.",
+          "Use Sorted Sets for leaderboards with scores."
+        ]
+      },
+      {
+        "id": 4,
+        "title": "Basic Redis Commands",
+        "content": "Learn essential Redis commands like SET, GET, DEL, EXISTS, INCR, and EXPIRE to manage data and implement TTL.",
+        "examples": [
+          {
+            "code": "SET counter 0\nINCR counter\nGET counter\nEXPIRE counter 60\nDEL counter\nEXISTS counter",
+            "description": "Using commands to manipulate keys and values, increment counters, set expiration, and check existence."
+          }
+        ],
+        "quiz": [
+          {
+            "question": "Which command increments a numeric value in Redis?",
+            "options": ["INCR", "SET", "GET", "DEL"],
+            "answer": "INCR",
+            "hint": "It only works on numeric strings.",
+            "explanation": "INCR increases the integer value of a key by 1."
+          }
+        ],
+        "challenge": "Create a key 'visits', increment it on each API call, and set it to expire after 10 minutes.",
+        "tips": [
+          "Use EXPIRE to automatically remove old cache entries.",
+          "Check key existence with EXISTS before operating."
+        ]
+      }
+    ]
+  },
+  {
+    "section": 3,
+    "title": "Advanced Data Structures",
+    "description": "Learn how to work with complex Redis data structures and implement time-based caching with TTL.",
+    "lessons": [
+      {
+        "id": 5,
+        "title": "Working with Lists, Sets, and Hashes",
+        "content": "Lists support push/pop operations, Sets support unique element management, and Hashes store structured objects in key-value pairs.",
+        "examples": [
+          {
+            "code": "LPUSH tasks \"Task1\" \"Task2\"\nRPUSH tasks \"Task3\"\nLPOP tasks\nSADD users \"user1\" \"user2\"\nHSET session:1001 token \"abc123\" user \"Alice\"",
+            "description": "Examples demonstrating operations on lists, sets, and hashes."
+          }
+        ],
+        "quiz": [
+          {
+            "question": "Which command removes the first element of a Redis list?",
+            "options": ["LPOP", "RPOP", "DEL", "POP"],
+            "answer": "LPOP",
+            "hint": "Left-pop removes from the head.",
+            "explanation": "LPOP removes and returns the first element of a list."
+          }
+        ],
+        "challenge": "Implement a task queue using LPUSH and RPOP in Redis.",
+        "tips": [
+          "Lists are ideal for queues (FIFO) or stacks (LIFO).",
+          "Use Hashes to store multiple fields for a single entity efficiently."
+        ]
+      },
+      {
+        "id": 6,
+        "title": "Using Sorted Sets and TTL",
+        "content": "Sorted Sets allow ranking items with scores, and TTL lets keys expire automatically after a set time.",
+        "examples": [
+          {
+            "code": "ZADD leaderboard 50 \"player1\"\nZADD leaderboard 100 \"player2\"\nZRANGE leaderboard 0 -1 WITHSCORES\nSET temp_key \"data\" EX 60",
+            "description": "Using Sorted Sets for rankings and EXPIRE (TTL) for auto-deleting keys."
+          }
+        ],
+        "quiz": [
+          {
+            "question": "Which Redis data type maintains order based on scores?",
+            "options": ["Sorted Set", "List", "Set", "Hash"],
+            "answer": "Sorted Set",
+            "hint": "Used for leaderboards and ranking systems.",
+            "explanation": "Sorted Sets store members with scores and always keep them sorted by score."
+          }
+        ],
+        "challenge": "Create a leaderboard for top 5 scores and remove entries after 1 hour using TTL.",
+        "tips": [
+          "Use TTL for session storage or temporary data.",
+          "Sorted Sets are perfect for ranking and scoring systems."
+        ]
+      }
+    ]
+  },
+  {
+    "section": 4,
+    "title": "Redis with Node.js",
+    "description": "Integrate Redis with Node.js to improve performance, implement caching, and manage data efficiently.",
+    "lessons": [
+      {
+        "id": 7,
+        "title": "Connecting Redis with Node.js",
+        "content": "Install the 'redis' package and connect using async/await. Redis clients allow storing and retrieving data from Node.js applications.",
+        "examples": [
+          {
+            "code": "const redis = require('redis');\nconst client = redis.createClient();\n\nclient.on('connect', () => console.log('Redis connected'));\nclient.on('error', (err) => console.error(err));",
+            "description": "Connecting a Node.js application to Redis and handling connection events."
+          }
+        ],
+        "quiz": [
+          {
+            "question": "Which npm package is commonly used for Redis in Node.js?",
+            "options": ["redis", "ioredis", "node-redis", "mongodb"],
+            "answer": "redis",
+            "hint": "Official Redis client for Node.js.",
+            "explanation": "The 'redis' package is widely used to connect Node.js applications to Redis."
+          }
+        ],
+        "challenge": "Set up a Node.js app that connects to Redis and logs a success message on connection.",
+        "tips": [
+          "Use async/await for Redis commands in modern Node.js apps.",
+          "Always handle error events to prevent crashes."
+        ]
+      },
+      {
+        "id": 8,
+        "title": "Storing and Retrieving Data",
+        "content": "Use Redis commands in Node.js to SET, GET, and manage key-value data asynchronously.",
+        "examples": [
+          {
+            "code": "await client.set('name', 'Alice');\nconst value = await client.get('name');\nconsole.log(value); // Alice",
+            "description": "Storing and retrieving a simple key-value pair in Redis using Node.js."
+          }
+        ],
+        "quiz": [
+          {
+            "question": "Which Redis command retrieves the value of a key?",
+            "options": ["GET", "SET", "INCR", "DEL"],
+            "answer": "GET",
+            "hint": "Think read operation.",
+            "explanation": "GET returns the value stored for a specified key."
+          }
+        ],
+        "challenge": "Store user session data in Redis and retrieve it on request.",
+        "tips": [
+          "Always check if keys exist before retrieving.",
+          "Use JSON.stringify/parse for storing objects."
+        ]
+      },
+      {
+        "id": 9,
+        "title": "Implementing Caching",
+        "content": "Cache frequently requested data in Redis to reduce database load and improve API response times.",
+        "examples": [
+          {
+            "code": "// Example caching middleware\nasync function cache(req, res, next) {\n  const data = await client.get(req.originalUrl);\n  if (data) return res.send(JSON.parse(data));\n  next();\n}",
+            "description": "Middleware that serves cached responses from Redis if available."
+          }
+        ],
+        "quiz": [
+          {
+            "question": "Why use Redis for caching in Node.js?",
+            "options": ["To speed up response times", "To store files", "To replace databases", "To style pages"],
+            "answer": "To speed up response times",
+            "hint": "Caching avoids repeated heavy computations or DB queries.",
+            "explanation": "Redis caching stores frequently accessed data in memory for fast retrieval."
+          }
+        ],
+        "challenge": "Implement caching for an Express API endpoint using Redis.",
+        "tips": [
+          "Always set expiration for cached data to avoid stale responses.",
+          "Use Redis for read-heavy workloads to improve performance."
+        ]
+      }
+    ]
+  },
+  {
+    "section": 5,
+    "title": "Redis Use Cases",
+    "description": "Explore practical use cases of Redis in web applications including session management, authentication, rate-limiting, and background jobs.",
+    "lessons": [
+      {
+        "id": 10,
+        "title": "Session Storage and Authentication",
+        "content": "Redis is commonly used to store user sessions for Express apps, making authentication scalable and fast.",
+        "examples": [
+          {
+            "code": "// Express session with Redis\nconst session = require('express-session');\nconst RedisStore = require('connect-redis')(session);\n\napp.use(session({\n  store: new RedisStore({ client }),\n  secret: 'keyboard cat',\n  resave: false,\n  saveUninitialized: false\n}));",
+            "description": "Storing Express session data in Redis to persist user login state."
+          }
+        ],
+        "quiz": [
+          {
+            "question": "Why use Redis for session storage?",
+            "options": ["Fast access and scalability", "Slow disk storage", "Static HTML pages", "Styling CSS"],
+            "answer": "Fast access and scalability",
+            "hint": "Sessions should be quick and scalable.",
+            "explanation": "Redis stores sessions in memory, enabling quick access and handling many concurrent users."
+          }
+        ],
+        "challenge": "Configure an Express app to store session data in Redis for logged-in users.",
+        "tips": [
+          "Always set secure options for production sessions.",
+          "Use TTL to expire sessions automatically."
+        ]
+      },
+      {
+        "id": 11,
+        "title": "Rate Limiting and Queues",
+        "content": "Use Redis to implement API rate limiting, throttling, and background job queues with lists or sorted sets.",
+        "examples": [
+          {
+            "code": "// Rate limiting example\nconst rateLimit = require('express-rate-limit');\nconst RedisStore = require('rate-limit-redis');\n\napp.use(rateLimit({\n  store: new RedisStore({ client }),\n  windowMs: 60 * 1000,\n  max: 10\n}));",
+            "description": "Throttling API requests to 10 per minute per user using Redis."
+          }
+        ],
+        "quiz": [
+          {
+            "question": "Which Redis feature helps implement rate-limiting?",
+            "options": ["INCR with TTL", "SETEX", "Lists", "Hashes"],
+            "answer": "INCR with TTL",
+            "hint": "Increment counter for each request and expire it.",
+            "explanation": "INCR combined with TTL allows tracking request counts over time for rate-limiting."
+          }
+        ],
+        "challenge": "Implement a simple job queue using Redis lists for background tasks.",
+        "tips": [
+          "Use sorted sets for priority queues.",
+          "Always monitor queue length to avoid memory issues."
+        ]
+      }
+    ]
+  },
+  {
+    "section": 6,
+    "title": "Redis Administration & Best Practices",
+    "description": "Learn about persistence, backup, security, and monitoring for production-ready Redis deployments.",
+    "lessons": [
+      {
+        "id": 12,
+        "title": "Persistence, Backup, and Security",
+        "content": "Redis provides RDB snapshots and AOF persistence options. Use strong passwords, firewalls, and monitoring tools to secure and manage Redis in production.",
+        "examples": [
+          {
+            "code": "# Enable RDB snapshots in redis.conf\nsave 900 1\nsave 300 10\nsave 60 10000\n\n# Set password\nrequirepass yourpassword",
+            "description": "Example Redis configuration for snapshot persistence and password protection."
+          }
+        ],
+        "quiz": [
+          {
+            "question": "Which Redis feature persists data to disk?",
+            "options": ["RDB/AOF", "TTL", "Lists", "Sets"],
+            "answer": "RDB/AOF",
+            "hint": "Use snapshots or append-only files.",
+            "explanation": "RDB snapshots and AOF logs allow Redis data to survive restarts."
+          }
+        ],
+        "challenge": "Configure Redis to require a password and take periodic snapshots of the database.",
+        "tips": [
+          "Use monitoring tools like RedisInsight or Prometheus.",
+          "Regularly backup Redis data to prevent accidental loss."
+        ]
+      }
+    ]
+  }
+]
+}
