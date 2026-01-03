@@ -29,6 +29,7 @@ import Animated, {
   withSequence,
   withDelay,
 } from "react-native-reanimated";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const { width, height } = Dimensions.get("window");
 const isSmallDevice = width < 375;
@@ -153,7 +154,7 @@ export default function ReminderScreen() {
         body: 'If you see this, notifications are working!',
         android: {
           channelId,
-          smallIcon: 'ic_launcher', // Using default launcher icon
+          smallIcon: 'ic_launcher',
           pressAction: { id: 'default' },
           color: '#8B5CF6',
           importance: 4,
@@ -227,6 +228,7 @@ export default function ReminderScreen() {
     }
   }
 
+  // 🔥 FIXED: Main scheduling function without repeatFrequency
   async function scheduleDailyNotification() {
     try {
       console.log('🚀 Starting notification scheduling...');
@@ -279,10 +281,9 @@ export default function ReminderScreen() {
 
       setIsLoading(true);
 
-      // Cancel previous notifications and triggers
-      await notifee.cancelAllNotifications();
-      await notifee.cancelTriggerNotifications();
-      console.log('🗑️ Previous notifications cancelled');
+      // 🔥 FIXED: Only cancel this specific notification, not all
+      await notifee.cancelNotification('daily-learning-reminder');
+      console.log('🗑️ Previous notification cancelled');
 
       // Ensure channel exists
       if (Platform.OS === 'android') {
@@ -296,7 +297,7 @@ export default function ReminderScreen() {
         });
       }
 
-      // FIXED: Calculate next trigger time correctly for DAILY repeat
+      // Calculate next trigger time
       const now = new Date();
       const selected = new Date();
       
@@ -316,11 +317,11 @@ export default function ReminderScreen() {
       console.log('🎯 Scheduling for:', selected.toLocaleString());
       console.log('⏱️ Time until notification:', Math.round((selected.getTime() - now.getTime()) / 1000 / 60), 'minutes');
 
-      // Create trigger configuration
+      // 🔥 FIXED: Create trigger WITHOUT repeatFrequency
       const trigger = {
         type: TriggerType.TIMESTAMP,
         timestamp: selected.getTime(),
-        repeatFrequency: RepeatFrequency.DAILY,
+        // ❌ NO repeatFrequency - it doesn't work reliably on Android
       };
 
       // Add alarmManager only if we have permission (Android 12+)
@@ -360,7 +361,7 @@ export default function ReminderScreen() {
             importance: 4,
             sound: 'default',
             vibrationPattern: [300, 500],
-            smallIcon: 'ic_launcher', // FIXED: Using default launcher icon
+            smallIcon: 'ic_launcher',
             color: '#8B5CF6',
             showTimestamp: true,
             autoCancel: true,
@@ -380,6 +381,13 @@ export default function ReminderScreen() {
       );
 
       console.log('✅ Notification scheduled successfully! ID:', notificationId);
+
+      // 🔥 SAVE user's preferred time for rescheduling
+      await AsyncStorage.setItem('reminderTime', JSON.stringify({
+        hours: date.getHours(),
+        minutes: date.getMinutes()
+      }));
+      console.log('💾 Reminder time saved to storage');
 
       // Verify it was actually scheduled
       const verified = await verifyScheduledNotifications();
@@ -401,10 +409,10 @@ export default function ReminderScreen() {
         minute: '2-digit',
       });
 
-      let message = `Daily reminder scheduled for ${timeString} every day! 🎉`;
+      let message = `Daily reminder scheduled for ${timeString}! 🎉\n\nNote: The notification will automatically reschedule itself each day after it appears.`;
       
       if (Platform.OS === 'android' && Platform.Version >= 31 && !usingAlarmManager) {
-        message += '\n\n⚠️ Note: For exact timing, enable "Alarms & reminders" in settings.';
+        message += '\n\n⚠️ For exact timing, enable "Alarms & reminders" in settings.';
       }
 
       Alert.alert(
@@ -694,6 +702,8 @@ export default function ReminderScreen() {
     </View>
   );
 }
+
+// Keep your existing styles here...
 
 const styles = StyleSheet.create({
   container: {
