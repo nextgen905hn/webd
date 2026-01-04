@@ -432,8 +432,8 @@ export default function HomeScreen() {
               <Text style={styles.sectionTitle}>Learning Paths</Text>
               <Text style={styles.sectionSubtitle}>Choose your tech stack</Text>
             </View>
-            <TouchableOpacity style={styles.seeAllButton} activeOpacity={0.7}>
-              <Text style={styles.seeAllText}>View All</Text>
+            <TouchableOpacity style={styles.seeAllButton} activeOpacity={0.7} onPress={() => navigation.navigate("Codeeditor")}>
+              <Text style={styles.seeAllText}>Code Editor</Text>
               <Ionicons name="arrow-forward" size={14} color="#6C5CE7" />
             </TouchableOpacity>
           </View>

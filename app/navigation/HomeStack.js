@@ -9,6 +9,7 @@ import Certificate from "../screens/Home/Certificate"
 import  LessonQuiz from "../screens/Home/LessonQuiz"
 import  Testresult from "../screens/Home/Testresult"
 import  ProjectDetails from "../screens/Home/ProjectDetails"
+import IDE from '../screens/IDE/IDE';
 
 const Stack = createNativeStackNavigator();
 
@@ -20,11 +21,12 @@ export default function HomeStack() {
       <Stack.Screen name="Projects" component={Projects} options={{ title: 'Projects' }} />
          <Stack.Screen name="ProjectDetails" component={ProjectDetails} options={{ title: 'ProjectDetails' }} />
 
-    <Stack.Screen name="FinalTest" component={FinalTest} options={{ title: 'FinalTest' }} />
+      
+      <Stack.Screen name="FinalTest" component={FinalTest} options={{ title: 'FinalTest' }} />
       <Stack.Screen name="Certificate" component={Certificate} options={{ title: 'Certificate' }} />
       <Stack.Screen name="LessonQuiz" component={LessonQuiz} options={{ title: 'LessonQuiz' }} />
       <Stack.Screen name="Testresult" component={Testresult} options={{ title: 'Testresult' }} />
-
+      <Stack.Screen name="Codeeditor" component={IDE} options={{ title: 'Codeeditor' }} />
       <Stack.Screen name="LessonDetails" component={LessonDetailsScreen} options={{ title: 'LessonDetails' }} />
     </Stack.Navigator>
   );
