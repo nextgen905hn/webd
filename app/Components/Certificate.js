@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
-import Svg, { Defs, LinearGradient, Stop, Rect, Circle } from "react-native-svg";
+import Svg, { Defs, LinearGradient, Stop, Rect, Path, Line } from "react-native-svg";
 
 export default function CertificateCard({
   name,
@@ -10,250 +10,208 @@ export default function CertificateCard({
   width,
   height,
 }) {
-
-  // Scale factor based on width (1000 = base width)
   const scale = width / 1000;
-  const strokeWidth = 24 * scale;
 
   return (
     <View style={[styles.container, { width, height }]}>
-      {/* Animated Background Pattern */}
+      {/* Clean Background */}
       <View style={[styles.bgContainer]}>
         <Svg width={width} height={height} style={StyleSheet.absoluteFill}>
-          <Defs>
-            <LinearGradient id="bgGrad" x1="0" y1="0" x2="1" y2="1">
-              <Stop offset="0" stopColor="#f8fafc" />
-              <Stop offset="0.5" stopColor="#f1f5f9" />
-              <Stop offset="1" stopColor="#e2e8f0" />
-            </LinearGradient>
-          </Defs>
-          <Rect width={width} height={height} fill="url(#bgGrad)" />
+          <Rect width={width} height={height} fill="#ffffff" />
           
-          {/* Decorative Circles */}
-          <Circle cx={width * 0.1} cy={height * 0.15} r={60 * scale} fill="#8E2DE2" opacity={0.03} />
-          <Circle cx={width * 0.9} cy={height * 0.2} r={80 * scale} fill="#4A00E0" opacity={0.04} />
-          <Circle cx={width * 0.85} cy={height * 0.85} r={100 * scale} fill="#00C6FF" opacity={0.05} />
-          <Circle cx={width * 0.15} cy={height * 0.9} r={70 * scale} fill="#8E2DE2" opacity={0.04} />
+          {/* Elegant Border Frame */}
+          <Rect
+            x={60 * scale}
+            y={60 * scale}
+            width={width - 120 * scale}
+            height={height - 120 * scale}
+            fill="none"
+            stroke="#1a365d"
+            strokeWidth={3 * scale}
+          />
+          <Rect
+            x={68 * scale}
+            y={68 * scale}
+            width={width - 136 * scale}
+            height={height - 136 * scale}
+            fill="none"
+            stroke="#1a365d"
+            strokeWidth={1 * scale}
+          />
+          
+          {/* Corner Ornaments */}
+          {[
+            { x: 80 * scale, y: 80 * scale, rotate: 0 },
+            { x: width - 80 * scale, y: 80 * scale, rotate: 90 },
+            { x: 80 * scale, y: height - 80 * scale, rotate: 270 },
+            { x: width - 80 * scale, y: height - 80 * scale, rotate: 180 },
+          ].map((corner, i) => (
+            <Path
+              key={i}
+              d={`M ${corner.x} ${corner.y} l ${20 * scale} 0 M ${corner.x} ${corner.y} l 0 ${20 * scale}`}
+              stroke="#2563eb"
+              strokeWidth={2 * scale}
+              strokeLinecap="round"
+              transform={`rotate(${corner.rotate} ${corner.x} ${corner.y})`}
+            />
+          ))}
         </Svg>
       </View>
 
-      {/* Premium Gradient Border */}
-      <Svg width={width} height={height} style={StyleSheet.absoluteFill}>
-        <Defs>
-          <LinearGradient id="edgeGrad" x1="0" y1="0" x2="1" y2="1">
-            <Stop offset="0" stopColor="#8E2DE2" stopOpacity={0.9} />
-            <Stop offset="0.3" stopColor="#4A00E0" />
-            <Stop offset="0.7" stopColor="#6366F1" />
-            <Stop offset="1" stopColor="#00C6FF" stopOpacity={0.7} />
-          </LinearGradient>
-        </Defs>
-        <Rect
-          x={strokeWidth / 2}
-          y={strokeWidth / 2}
-          rx={28 * scale}
-          ry={28 * scale}
-          width={width - strokeWidth}
-          height={height - strokeWidth}
-          fill="none"
-          stroke="url(#edgeGrad)"
-          strokeWidth={strokeWidth}
-          strokeLinejoin="round"
-        />
-      </Svg>
-
-      {/* Inner Card Content */}
-      <View style={[styles.card, { 
-        margin: 40 * scale, 
-        padding: 44 * scale,
-        borderRadius: 20 * scale,
-        borderWidth: 4 * scale,
-        borderColor: '#8E2DE2',
+      {/* Content */}
+      <View style={[styles.content, { 
+        paddingHorizontal: 100 * scale,
+        paddingVertical: 80 * scale,
       }]}>
-        {/* Header Section */}
-        <View style={styles.headerSection}>
-          <View style={[styles.badge, { 
-            paddingVertical: 10 * scale, 
-            paddingHorizontal: 20 * scale,
-            borderRadius: 20 * scale,
+        {/* Header */}
+        <View style={styles.header}>
+          {/* Logo/Seal */}
+          <View style={[styles.seal, {
+            width: 80 * scale,
+            height: 80 * scale,
+            borderRadius: 40 * scale,
+            borderWidth: 3 * scale,
           }]}>
-            <Text style={[styles.badgeText, { fontSize: 16 * scale }]}>
-              ✨ OFFICIAL CERTIFICATE
-            </Text>
+            <Text style={[styles.sealText, { fontSize: 28 * scale }]}>WD</Text>
           </View>
           
-          <Text style={[styles.certTitle, { 
-            fontSize: 48 * scale, 
-            marginTop: 20 * scale,
-            lineHeight: 56 * scale,
+          <Text style={[styles.institution, { 
+            fontSize: 22 * scale,
+            marginTop: 16 * scale,
           }]}>
-            Certificate of Achievement
+            Web Development Academy
           </Text>
           
-          <View style={[styles.divider, { 
-            width: 80 * scale, 
-            height: 4 * scale,
-            borderRadius: 2 * scale,
-            marginVertical: 20 * scale,
-          }]} />
+          <Text style={[styles.tagline, { 
+            fontSize: 13 * scale,
+            marginTop: 6 * scale,
+          }]}>
+            EXCELLENCE IN EDUCATION
+          </Text>
         </View>
 
-        {/* Main Content */}
-        <View style={styles.contentSection}>
-          <Text style={[styles.small, { fontSize: 18 * scale }]}>
-            This certifies that
+        {/* Title */}
+        <View style={[styles.titleSection, { marginTop: 40 * scale }]}>
+          <Text style={[styles.certType, { fontSize: 15 * scale }]}>
+            CERTIFICATE OF COMPLETION
           </Text>
           
-          <Text style={[styles.name, { 
-            fontSize: 42 * scale, 
-            marginTop: 16 * scale,
-            lineHeight: 50 * scale,
+          <Svg width={120 * scale} height={3 * scale} style={{ marginVertical: 16 * scale }}>
+            <Line
+              x1="0"
+              y1="1.5"
+              x2={120 * scale}
+              y2="1.5"
+              stroke="#2563eb"
+              strokeWidth={3}
+            />
+          </Svg>
+        </View>
+
+        {/* Body */}
+        <View style={[styles.body, { marginTop: 30 * scale }]}>
+          <Text style={[styles.bodyText, { fontSize: 16 * scale }]}>
+            This is to certify that
+          </Text>
+          
+          <Text style={[styles.recipientName, { 
+            fontSize: 40 * scale,
+            marginTop: 20 * scale,
+            marginBottom: 20 * scale,
           }]}>
             {name}
           </Text>
           
-          <Text style={[styles.small, { 
-            fontSize: 18 * scale, 
-            marginTop: 20 * scale,
+          <Text style={[styles.bodyText, { 
+            fontSize: 16 * scale,
+            marginBottom: 16 * scale,
           }]}>
-            has successfully completed
+            has successfully completed the requirements for
           </Text>
           
-          <View style={[styles.courseTag, {
-            marginTop: 16 * scale,
-            paddingVertical: 16 * scale,
-            paddingHorizontal: 28 * scale,
-            borderRadius: 16 * scale,
+          <Text style={[styles.courseName, { 
+            fontSize: 28 * scale,
+            marginTop: 10 * scale,
           }]}>
-            <Text style={[styles.course, { fontSize: 26 * scale }]}>
-              {course}
-            </Text>
-          </View>
-
-          {/* Achievement Icons */}
-          <View style={[styles.achievementRow, { 
-            marginTop: 28 * scale,
-            gap: 16 * scale,
+            {course}
+          </Text>
+          
+          <Text style={[styles.completionText, { 
+            fontSize: 15 * scale,
+            marginTop: 30 * scale,
           }]}>
-            <View style={[styles.achievementBadge, {
-              width: 56 * scale,
-              height: 56 * scale,
-              borderRadius: 14 * scale,
-            }]}>
-              <Text style={[styles.achievementIcon, { fontSize: 28 * scale }]}>
-                🎓
-              </Text>
-            </View>
-            <View style={[styles.achievementBadge, {
-              width: 56 * scale,
-              height: 56 * scale,
-              borderRadius: 14 * scale,
-            }]}>
-              <Text style={[styles.achievementIcon, { fontSize: 28 * scale }]}>
-                🏆
-              </Text>
-            </View>
-            <View style={[styles.achievementBadge, {
-              width: 56 * scale,
-              height: 56 * scale,
-              borderRadius: 14 * scale,
-            }]}>
-              <Text style={[styles.achievementIcon, { fontSize: 28 * scale }]}>
-                ⭐
-              </Text>
-            </View>
-          </View>
+            Demonstrating proficiency and dedication in the field of study
+          </Text>
         </View>
 
-        {/* Footer Section */}
-        <View style={[styles.footerSection, { marginTop: 28 * scale }]}>
-          {/* Meta Info */}
-          <View style={[styles.metaRow, { marginBottom: 24 * scale }]}>
-            <View style={styles.metaItem}>
-              <Text style={[styles.metaLabel, { fontSize: 13 * scale }]}>
-                ISSUED ON
+        {/* Footer */}
+        <View style={[styles.footer, { marginTop: 50 * scale }]}>
+          <View style={styles.footerRow}>
+            {/* Date Section */}
+            <View style={styles.footerItem}>
+              <Text style={[styles.footerLabel, { fontSize: 11 * scale }]}>
+                DATE OF COMPLETION
               </Text>
-              <Text style={[styles.metaValue, { fontSize: 16 * scale }]}>
-                {date}
-              </Text>
-            </View>
-            
-            <View style={[styles.separator, { 
-              width: 2 * scale, 
-              height: 36 * scale,
-            }]} />
-            
-            <View style={styles.metaItem}>
-              <Text style={[styles.metaLabel, { fontSize: 13 * scale }]}>
-                CERTIFICATE ID
-              </Text>
-              <Text style={[styles.metaValue, { fontSize: 16 * scale }]}>
-                {certId}
-              </Text>
-            </View>
-          </View>
-
-          {/* Signature Row */}
-          <View style={[styles.signatureRow, { marginBottom: 20 * scale }]}>
-            <View style={styles.signatureBlock}>
-                <Text style={[styles.signatureText, { 
-                  fontSize: 48 * scale, 
-                  fontFamily: "MomoSignature-Regular",
-                  lineHeight: 48 * scale,
-                }]}>
-                  Saad
-                </Text>
-            
-              <View style={[styles.signatureLine, { 
-                width: 140 * scale, 
-                height: 2 * scale,
-                marginTop: 10 * scale,
-              }]} />
-              <Text style={[styles.signatureLabel, { 
+              <Text style={[styles.footerValue, { 
                 fontSize: 14 * scale,
                 marginTop: 8 * scale,
               }]}>
-                Chief Instructor
+                {date}
               </Text>
+              <View style={[styles.underline, { 
+                width: 140 * scale,
+                marginTop: 8 * scale,
+              }]} />
             </View>
 
-            <View style={styles.logoBlock}>
-              <View style={[styles.logoCircle, { 
-                width: 76 * scale, 
-                height: 76 * scale, 
-                borderRadius: 18 * scale,
-              }]}>
-                <Text style={[styles.logoText, { fontSize: 30 * scale }]}>
-                  PL
-                </Text>
-              </View>
-              <Text style={[styles.logoLabel, { 
-                fontSize: 14 * scale,
-                marginTop: 10 * scale,
-              }]}>
-                Pro Learning
+            {/* Certificate ID */}
+            <View style={styles.footerItem}>
+              <Text style={[styles.footerLabel, { fontSize: 11 * scale }]}>
+                CERTIFICATE ID
               </Text>
+              <Text style={[styles.footerValue, { 
+                fontSize: 14 * scale,
+                marginTop: 8 * scale,
+              }]}>
+                {certId}
+              </Text>
+              <View style={[styles.underline, { 
+                width: 140 * scale,
+                marginTop: 8 * scale,
+              }]} />
             </View>
           </View>
 
-          {/* Verification Section */}
-          <View style={[styles.verifySection, {
-            paddingVertical: 12 * scale,
-            paddingHorizontal: 20 * scale,
-            borderRadius: 12 * scale,
-          }]}>
-            <Text style={[styles.verifyText, { fontSize: 13 * scale }]}>
-              🔒 Verify authenticity at: prolearning.com/verify/{certId}
-            </Text>
+          {/* Signature */}
+          <View style={[styles.signatureSection, { marginTop: 40 * scale }]}>
+            <View style={styles.signatureBox}>
+              <Text style={[styles.signature, { 
+                fontSize: 36 * scale,
+                fontFamily: "MomoSignature-Regular",
+              }]}>
+                James.
+
+              </Text>
+              <View style={[styles.signatureLine, { 
+                width: 180 * scale,
+                marginTop: 10 * scale,
+              }]} />
+              <Text style={[styles.signatureTitle, { 
+                fontSize: 13 * scale,
+                marginTop: 8 * scale,
+              }]}>
+                Program Director
+              </Text>
+              <Text style={[styles.signatureName, { fontSize: 12 * scale }]}>
+James Anderson
+
+              </Text>
+            </View>
           </View>
         </View>
-      </View>
 
-      {/* Corner Accent */}
-      <View style={[styles.cornerAccent, { 
-        width: 120 * scale, 
-        height: 120 * scale,
-        borderTopLeftRadius: 28 * scale,
-      }]} />
+  
+      </View>
     </View>
   );
 }
@@ -261,182 +219,149 @@ export default function CertificateCard({
 const styles = StyleSheet.create({
   container: {
     overflow: "hidden",
-    borderRadius: 28,
-    backgroundColor: "#f8fafc",
+    backgroundColor: "#ffffff",
     alignSelf: "center",
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 12 },
-    shadowOpacity: 0.15,
-    shadowRadius: 24,
-    elevation: 12,
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.1,
+    shadowRadius: 16,
+    elevation: 8,
   },
   bgContainer: {
     ...StyleSheet.absoluteFillObject,
   },
-  card: {
+  content: {
     flex: 1,
-    backgroundColor: "#ffffff",
-    alignItems: "center",
-    justifyContent: "space-between",
-    shadowColor: "#8E2DE2",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.06,
-    shadowRadius: 12,
-  },
-  headerSection: {
-    width: "100%",
     alignItems: "center",
   },
-  badge: {
-    backgroundColor: "#f0f9ff",
-    borderWidth: 1,
-    borderColor: "#bae6fd",
+  header: {
+    alignItems: "center",
   },
-  badgeText: {
-    color: "#0369a1",
-    fontWeight: "800",
-    letterSpacing: 1,
+  seal: {
+    backgroundColor: "#1e40af",
+    justifyContent: "center",
+    alignItems: "center",
+    borderColor: "#1e40af",
   },
-  certTitle: {
+  sealText: {
+    color: "#ffffff",
     fontWeight: "900",
-    color: "#0f172a",
-    textAlign: "center",
-    letterSpacing: -0.5,
+    letterSpacing: 2,
   },
-  divider: {
-    backgroundColor: "#8E2DE2",
-  },
-  contentSection: {
-    width: "100%",
-    alignItems: "center",
-    flex: 1,
-    justifyContent: "center",
-  },
-  small: {
-    color: "#64748b",
-    fontWeight: "500",
-    textAlign: "center",
-  },
-  name: {
-    fontWeight: "900",
-    color: "#1e293b",
-    textAlign: "center",
-    letterSpacing: -0.5,
-  },
-  courseTag: {
-    backgroundColor: "#f5f3ff",
-    borderWidth: 2,
-    borderColor: "#8E2DE2",
-  },
-  course: {
-    fontWeight: "800",
-    color: "#5b21b6",
-    textAlign: "center",
-  },
-  achievementRow: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  achievementBadge: {
-    backgroundColor: "#fef3c7",
-    alignItems: "center",
-    justifyContent: "center",
-    borderWidth: 2,
-    borderColor: "#fbbf24",
-  },
-  achievementIcon: {
-    textAlign: "center",
-  },
-  footerSection: {
-    width: "100%",
-  },
-  metaRow: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    alignItems: "center",
-    paddingVertical: 12,
-    backgroundColor: "#f8fafc",
-    borderRadius: 12,
-  },
-  metaItem: {
-    alignItems: "center",
-    flex: 1,
-  },
-  separator: {
-    backgroundColor: "#e2e8f0",
-  },
-  metaLabel: {
-    color: "#94a3b8",
+  institution: {
     fontWeight: "700",
+    color: "#1a365d",
+    textAlign: "center",
     letterSpacing: 1,
-    marginBottom: 4,
+    textTransform: "uppercase",
   },
-  metaValue: {
-    color: "#475569",
-    fontWeight: "700",
-  },
-  signatureRow: {
-    width: "100%",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "flex-end",
-  },
-  signatureBlock: {
-    alignItems: "flex-start",
-  },
-  signatureText: {
-    color: "#8E2DE2",
-  },
-  signatureFallback: {
-    color: "#8E2DE2",
-    fontStyle: "italic",
-    fontWeight: "700",
-  },
-  signatureLine: {
-    backgroundColor: "#cbd5e1",
-  },
-  signatureLabel: {
+  tagline: {
     color: "#64748b",
     fontWeight: "600",
+    letterSpacing: 2,
     textTransform: "uppercase",
+  },
+  titleSection: {
+    alignItems: "center",
+  },
+  certType: {
+    fontWeight: "700",
+    color: "#1a365d",
+    letterSpacing: 3,
+    textTransform: "uppercase",
+  },
+  body: {
+    alignItems: "center",
+    width: "100%",
+  },
+  bodyText: {
+    color: "#475569",
+    fontWeight: "400",
+    textAlign: "center",
+    lineHeight: 24,
+  },
+  recipientName: {
+    fontWeight: "400",
+    color: "#1a365d",
+    textAlign: "center",
+    fontStyle: "italic",
+    borderBottomWidth: 2,
+    borderBottomColor: "#cbd5e1",
+    paddingBottom: 8,
+  },
+  courseName: {
+    fontWeight: "700",
+    color: "#2563eb",
+    textAlign: "center",
     letterSpacing: 0.5,
   },
-  logoBlock: {
-    alignItems: "center",
-  },
-  logoCircle: {
-    backgroundColor: "#f5f3ff",
-    alignItems: "center",
-    justifyContent: "center",
-    borderWidth: 3,
-    borderColor: "#8E2DE2",
-  },
-  logoText: {
-    color: "#5b21b6",
-    fontWeight: "900",
-    letterSpacing: -1,
-  },
-  logoLabel: {
+  completionText: {
     color: "#64748b",
-    fontWeight: "700",
-  },
-  verifySection: {
-    backgroundColor: "#f1f5f9",
-    alignItems: "center",
-    borderWidth: 1,
-    borderColor: "#e2e8f0",
-  },
-  verifyText: {
-    color: "#64748b",
-    fontWeight: "600",
+    fontWeight: "400",
     textAlign: "center",
+    fontStyle: "italic",
+    lineHeight: 22,
   },
-  cornerAccent: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    backgroundColor: "#8E2DE2",
-    opacity: 0.03,
+  footer: {
+    width: "100%",
+    alignItems: "center",
+  },
+  footerRow: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    width: "100%",
+  },
+  footerItem: {
+    alignItems: "center",
+  },
+  footerLabel: {
+    color: "#94a3b8",
+    fontWeight: "600",
+    letterSpacing: 1.5,
+    textTransform: "uppercase",
+  },
+  footerValue: {
+    color: "#1e293b",
+    fontWeight: "600",
+  },
+  underline: {
+    height: 1,
+    backgroundColor: "#cbd5e1",
+  },
+  signatureSection: {
+    width: "100%",
+    alignItems: "center",
+  },
+  signatureBox: {
+    alignItems: "center",
+  },
+  signature: {
+    color: "#1e40af",
+  },
+  signatureLine: {
+    height: 2,
+    backgroundColor: "#1a365d",
+  },
+  signatureTitle: {
+    color: "#475569",
+    fontWeight: "600",
+    textTransform: "uppercase",
+    letterSpacing: 1,
+  },
+  signatureName: {
+    color: "#64748b",
+    fontWeight: "400",
+    marginTop: 2,
+  },
+  verificationBar: {
+    backgroundColor: "#f8fafc",
+    width: "100%",
+    alignItems: "center",
+    borderTopWidth: 1,
+    borderTopColor: "#e2e8f0",
+  },
+  verificationText: {
+    color: "#94a3b8",
+    fontWeight: "500",
   },
 });
