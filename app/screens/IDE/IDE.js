@@ -211,6 +211,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#161b22',
     borderBottomWidth: 1,
     borderBottomColor: '#21262d',
+    marginTop: 5,
   },
   headerLeft: {
     flexDirection: 'row',
